@@ -3,8 +3,8 @@ import { SearchOutlined } from "@ant-design/icons";
 import React from "react";
 import styled from "styled-components";
 
-import ProjectCard from "../components/ProjectCard";
-import { useFetchProjects } from "../hooks/projects";
+import ProjectCard from "../components/project-card";
+import { useFetchAllProjects } from "../hooks/projects";
 
 const StyledHome = styled.div`
   margin-top: 64px;
@@ -31,7 +31,7 @@ const StyledSubheading = styled.div`
 `;
 
 export default (props) => {
-  const projects = useFetchProjects();
+  const projects = useFetchAllProjects();
 
   return (
     <StyledHome>
@@ -40,8 +40,8 @@ export default (props) => {
       <StyledSubheading>{projects.length} Projects</StyledSubheading>
       <Row style={{ marginTop: "32px" }}>
         {projects.map((p) => (
-          <Col lg={6}>
-            <ProjectCard icon={p.icon} name={p.name} />
+          <Col lg={6} md={8} sm={12} xs={24}>
+            <ProjectCard icon={p.icon} name={p.name} address={p.governorAddress} />
           </Col>
         ))}
       </Row>

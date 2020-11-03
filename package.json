@@ -25,6 +25,7 @@
     "react-helmet": "^6.1.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "^3.4.3",
+    "react-time-ago": "^6.2.0",
     "standard-version": "^9.0.0",
     "styled-components": "^5.2.0",
     "web3": "^1.3.0"

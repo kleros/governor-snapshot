@@ -1,15 +1,18 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import { ReactComponent as EtherscanLogo } from "../assets/logos/etherscan.svg";
+import { capitalizeString } from "../util/text"
 
 const CardFragment = styled.div`
+  margin: 15px 10px;
   background: #fff;
   border-radius: 3px;
-  box-shadow: 0px 6px 24px rgba(77, 0, 180, 0.25);
+  box-shadow: 0px 6px 28px rgba(77, 0, 180, 0.25);
   cursor: pointer;
 
   &:hover {
-    box-shadow: 0px 6px 16px rgba(77, 0, 180, 0.25);
+    box-shadow: 0px 6px 8px rgba(77, 0, 180, 0.25);
   }
 `;
 const ProjectCard = styled.div`
@@ -28,19 +31,30 @@ const ProjectFooter = styled.div`
   height: 40px;
   width: 100%;
 `;
+const EtherscanLink = styled.a`
+  float: right;
+  margin: 10px;
+`
 
-export default ({ icon, name }) => {
+export default ({ icon, name, address }) => {
   return (
     <CardFragment>
       <Link to={`/${name}`}>
         <ProjectCard>
           {icon}
           <ProjectName>
-            {name.charAt(0).toUpperCase() + name.slice(1)}
+            {capitalizeString(name)}
           </ProjectName>
         </ProjectCard>
-        <ProjectFooter />
       </Link>
+      <ProjectFooter>
+        <EtherscanLink
+          target="_blank"
+          rel="noopener noreferrer"
+          href={`https://etherscan.io/address/${address}#code`}>
+          <EtherscanLogo />
+        </EtherscanLink>
+      </ProjectFooter>
     </CardFragment>
   );
 };

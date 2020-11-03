@@ -46,7 +46,8 @@ const StyledCol = styled(Col)`
   }
 `;
 const StyledLayoutContent = styled(Layout.Content)`
-  background: #f2f2f2;
+  background: #fff;
+  font-family: Open Sans;
   min-height: 100vh;
   padding: 0px 9.375vw 120px 9.375vw;
 `;

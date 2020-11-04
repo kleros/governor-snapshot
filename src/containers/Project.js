@@ -61,6 +61,7 @@ export default (props) => {
     match: { params },
   } = props;
   const [listsShown, setListsShown] = useState("current");
+  const [pendingLists, setPendingLists] = useState([])
 
   const projectInfo = useFetchProjectByName(params.projectName);
   const governorContractInstance = new props.web3.eth.Contract(
@@ -124,7 +125,7 @@ export default (props) => {
           </StyledSelect>
         </Col>
         <Col lg={4} md={12} sm={12} xs={12}>
-          <NewListModal />
+          <NewListModal setPendingLists={setPendingLists} />
         </Col>
       </ListOptionsRow>
       <ListViewer governorContractInstance={governorContractInstance} />

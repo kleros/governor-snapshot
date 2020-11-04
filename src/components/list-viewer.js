@@ -9,8 +9,8 @@ const NoListsText = styled.div`
   color: #cccccc;
 `;
 
-export default ({ governorContractInstance }) => {
+export default ({ governorContractInstance, pendingLists }) => {
   const submittedLists = useFetchSubmittedLists(governorContractInstance);
-  if (!submittedLists || !submittedLists.length)
+  if (!submittedLists || !submittedLists.length || !pendingLists)
     return <NoListsText>No Lists Yet</NoListsText>;
 };

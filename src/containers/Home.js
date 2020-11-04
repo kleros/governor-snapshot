@@ -41,7 +41,11 @@ export default (props) => {
       <Row style={{ marginTop: "32px" }}>
         {projects.map((p) => (
           <Col lg={6} md={8} sm={12} xs={24}>
-            <ProjectCard icon={p.icon} name={p.name} address={p.governorAddress} />
+            <ProjectCard
+              icon={p.icon}
+              name={p.name}
+              address={p.governorAddress}
+            />
           </Col>
         ))}
       </Row>

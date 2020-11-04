@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { ReactComponent as EtherscanLogo } from "../assets/logos/etherscan.svg";
-import { capitalizeString } from "../util/text"
+import { capitalizeString } from "../util/text";
 
 const CardFragment = styled.div`
   margin: 15px 10px;
@@ -34,7 +34,7 @@ const ProjectFooter = styled.div`
 const EtherscanLink = styled.a`
   float: right;
   margin: 10px;
-`
+`;
 
 export default ({ icon, name, address }) => {
   return (
@@ -42,16 +42,15 @@ export default ({ icon, name, address }) => {
       <Link to={`/${name}`}>
         <ProjectCard>
           {icon}
-          <ProjectName>
-            {capitalizeString(name)}
-          </ProjectName>
+          <ProjectName>{capitalizeString(name)}</ProjectName>
         </ProjectCard>
       </Link>
       <ProjectFooter>
         <EtherscanLink
           target="_blank"
           rel="noopener noreferrer"
-          href={`https://etherscan.io/address/${address}#code`}>
+          href={`https://etherscan.io/address/${address}#code`}
+        >
           <EtherscanLogo />
         </EtherscanLink>
       </ProjectFooter>

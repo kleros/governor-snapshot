@@ -71,13 +71,13 @@ class App extends PureComponent {
           <Layout>
             <StyledHeader>
               <Row>
-                <StyledCol lg={4} md={4} sm={16} xs={0}>
+                <StyledCol lg={4} md={4} sm={16} xs={12}>
                   <KlerosLogo />
                 </StyledCol>
                 <Col
                   lg={16}
                   md={16}
-                  xs={0}
+                  xs={12}
                   style={{
                     textAlign: "center",
                     color: "rgba(255, 255, 255, 0.85)",

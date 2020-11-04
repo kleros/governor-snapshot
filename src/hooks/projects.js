@@ -13,7 +13,7 @@ export const useFetchAllProjects = () => {
 };
 
 export const useFetchProjectByName = (name) => {
-  const _project = Projects.filter(p => p.name === name)
+  const _project = Projects.filter((p) => p.name === name);
 
-  return _project[0]
-}
+  return _project[0];
+};

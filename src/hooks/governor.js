@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import Web3 from 'web3'
-import { orderParametersByHash } from '../util/tx-hash'
+import Web3 from "web3";
+import { orderParametersByHash } from "../util/tx-hash";
 
 /**
  Fetch the time of the start of the session.
@@ -163,34 +163,55 @@ export const useFetchSubmittedLists = (governorContractInstance) => {
   return listTxData;
 };
 
-export const useFetchListSubmissionCost = (governorContractInstance, arbitratorContractInstance) => {
-  const [ submissionBaseDeposit, setSubmissionBaseDeposit ] = useState(0)
-  const [ extraData, setExtraData ] = useState('0x')
-  const [ costPerList, setCostPerList ] = useState(0)
+export const useFetchListSubmissionCost = (
+  governorContractInstance,
+  arbitratorContractInstance
+) => {
+  const [submissionBaseDeposit, setSubmissionBaseDeposit] = useState(0);
+  const [extraData, setExtraData] = useState("0x");
+  const [costPerList, setCostPerList] = useState(0);
 
   useEffect(() => {
-    governorContractInstance.methods.submissionBaseDeposit().call().then(r => setSubmissionBaseDeposit(r))
-    governorContractInstance.methods.arbitratorExtraData().call().then(r => setExtraData(r))
-  }, [governorContractInstance])
+    governorContractInstance.methods
+      .submissionBaseDeposit()
+      .call()
+      .then((r) => setSubmissionBaseDeposit(r));
+    governorContractInstance.methods
+      .arbitratorExtraData()
+      .call()
+      .then((r) => setExtraData(r));
+  }, [governorContractInstance]);
 
   useEffect(() => {
-    arbitratorContractInstance.methods.arbitrationCost(extraData).call().then(r => {
-      const _web3 = new Web3()
+    arbitratorContractInstance.methods
+      .arbitrationCost(extraData)
+      .call()
+      .then((r) => {
+        const _web3 = new Web3();
 
-      setCostPerList(
-        _web3.utils.toBN(submissionBaseDeposit).add(_web3.utils.toBN(r))
-      )
-    })
-  }, [extraData])
+        setCostPerList(
+          _web3.utils.toBN(submissionBaseDeposit).add(_web3.utils.toBN(r))
+        );
+      });
+  }, [extraData]);
 
-  return costPerList
-}
+  return costPerList;
+};
 
-export const useSubmitPendingList = (txs, governorContractInstance, costPerTx, account) => {
-  const { addresses, values, data, dataSizes, titles } = orderParametersByHash(txs)
+export const useSubmitPendingList = (
+  txs,
+  governorContractInstance,
+  costPerTx,
+  account
+) => {
+  const { addresses, values, data, dataSizes, titles } = orderParametersByHash(
+    txs
+  );
 
-  governorContractInstance.methods.submitList(addresses, values, data, dataSizes, titles).send({
-    value: costPerTx,
-    from: account
-  })
-}
+  governorContractInstance.methods
+    .submitList(addresses, values, data, dataSizes, titles)
+    .send({
+      value: costPerTx,
+      from: account,
+    });
+};

@@ -19,31 +19,31 @@ export const useFetchProjectByName = (name) => {
 };
 
 export const useFetchMethodsForContract = (contractAddress) => {
-  const [ methods, setMethods ] = useState([])
+  const [methods, setMethods] = useState([]);
 
   useEffect(() => {
     const _fetchABI = async () => {
       const abiQuery = await fetch(
         `https://api.etherscan.io/api?module=contract&action=getabi&address=${contractAddress}`
-      ).then(response => response.json())
+      ).then((response) => response.json());
       if (abiQuery.status === "1") {
-        const _abi = JSON.parse(abiQuery.result)
-        const _methods = []
-        await Promise.all(_abi.map((abiItem, i) => {
-          if (!abiItem.constant && abiItem.type == 'function') {
-             _methods.push(
-               {
-                 name: abiItem.name,
-                 inputs: abiItem.inputs
-               }
-             )
-          }
-        }))
-        setMethods(_methods)
+        const _abi = JSON.parse(abiQuery.result);
+        const _methods = [];
+        await Promise.all(
+          _abi.map((abiItem, i) => {
+            if (!abiItem.constant && abiItem.type == "function") {
+              _methods.push({
+                name: abiItem.name,
+                inputs: abiItem.inputs,
+              });
+            }
+          })
+        );
+        setMethods(_methods);
       }
-    }
-    _fetchABI()
-  }, [contractAddress])
+    };
+    _fetchABI();
+  }, [contractAddress]);
 
-  return methods
-}
+  return methods;
+};

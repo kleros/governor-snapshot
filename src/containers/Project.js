@@ -58,37 +58,41 @@ const StyledSelect = styled(Select)`
   min-width: 220px;
 `;
 const ReturnButton = styled.div`
-  color: #009AFF;
+  color: #009aff;
   font-size: 16px;
   line-height: 22px;
   cursor: pointer;
   margin: 20px 0px;
-`
+`;
 
 export default (props) => {
   const {
     match: { params },
   } = props;
   const [listsShown, setListsShown] = useState("current");
-  const [pendingLists, setPendingLists] = useState([
-    {
-      "title": "Update Non Technical Juror Fee",
-      "address": "0x988b3a538b618c7a603e1c11ab82cd16dbe28069",
-      "value": "0",
-      "data": "0x85c855f3000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000032d26d12e980b600000"
-    },
-    {
-      "title": "Update English Language Juror Fee",
-      "address": "0x988b3a538b618c7a603e1c11ab82cd16dbe28069",
-      "value": "0",
-      "data": "0x14c855f3000000000000000000000000000000000000000000000000000000000000000700000000000000000000000000000000000000000000032d26d12e980b600000"
-    },
-  ])
+  // const [pendingLists, setPendingLists] = useState([
+  //   {
+  //     title: "Update Non Technical Juror Fee",
+  //     address: "0x988b3a538b618c7a603e1c11ab82cd16dbe28069",
+  //     value: "0",
+  //     data:
+  //       "0x85c855f3000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000032d26d12e980b600000",
+  //   },
+  //   {
+  //     title: "Update English Language Juror Fee",
+  //     address: "0x988b3a538b618c7a603e1c11ab82cd16dbe28069",
+  //     value: "0",
+  //     data:
+  //       "0x14c855f3000000000000000000000000000000000000000000000000000000000000000700000000000000000000000000000000000000000000032d26d12e980b600000",
+  //   },
+  // ]);
+  const [pendingLists, setPendingLists] = useState([]);
 
   const addToPendingLists = (newList) => {
-    const pendingListsCopy = [...pendingLists]
-    setPendingLists(pendingListsCopy.push(newList))
-  }
+    const pendingListsCopy = [...pendingLists];
+    pendingListsCopy.push(newList);
+    setPendingLists(pendingListsCopy);
+  };
 
   const projectInfo = useFetchProjectByName(params.projectName);
   const governorContractInstance = new props.web3.eth.Contract(
@@ -157,15 +161,26 @@ export default (props) => {
           </StyledSelect>
         </Col>
         <Col lg={4} md={12} sm={12} xs={12}>
-          <NewListModal setPendingLists={setPendingLists} disabled={pendingLists.length > 0}/>
+          <NewListModal
+            setPendingLists={addToPendingLists}
+            disabled={pendingLists.length > 0}
+          />
         </Col>
       </ListOptionsRow>
-      {
-        pendingLists.length > 0 ? (
-          <ReturnButton onClick={() => setPendingLists([])}><ArrowLeftOutlined /> Return</ReturnButton>
-        ) : ''
-      }
-      <ListViewer governorContractInstance={governorContractInstance} arbitratorContractInstance={arbitratorContractInstance} account={account} pendingLists={pendingLists} />
+      {pendingLists.length > 0 ? (
+        <ReturnButton onClick={() => setPendingLists([])}>
+          <ArrowLeftOutlined /> Return
+        </ReturnButton>
+      ) : (
+        ""
+      )}
+      <ListViewer
+        governorContractInstance={governorContractInstance}
+        arbitratorContractInstance={arbitratorContractInstance}
+        account={account}
+        pendingLists={pendingLists}
+        addToPendingLists={addToPendingLists}
+      />
     </StyledProjectHome>
   );
 };

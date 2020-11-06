@@ -1,10 +1,10 @@
-import { Row, Col } from 'antd';
-import React from 'react';
-import styled from 'styled-components';
+import { Row, Col } from "antd";
+import React from "react";
+import styled from "styled-components";
 import { monthIndexToAbbrev } from "../../util/text";
 
 const TopMenu = styled.div`
-  background: #FFFFFF;
+  background: #ffffff;
   box-shadow: 0px 6px 24px rgba(77, 0, 180, 0.25);
   border-radius: 3px;
   color: rgba(0, 0, 0, 0.85);
@@ -27,14 +27,18 @@ const Dot = styled.div`
   display: inline-block;
 `;
 
-export default ({ listNumber, numberOfTxs, submittedAt, submitter, setShowHide }) => {
+export default ({
+  listNumber,
+  numberOfTxs,
+  submittedAt,
+  submitter,
+  setShowHide,
+}) => {
   return (
     <TopMenu onClick={setShowHide}>
       <Row>
-        <Col lg={4}>
-          List {listNumber}
-        </Col>
-        <Col lg={4} style={{color: '#4D00B4'}}>
+        <Col lg={4}>List {listNumber}</Col>
+        <Col lg={4} style={{ color: "#4D00B4" }}>
           {numberOfTxs} TXs
         </Col>
         <Col lg={6}>
@@ -45,21 +49,21 @@ export default ({ listNumber, numberOfTxs, submittedAt, submitter, setShowHide }
               marginBottom: "1px",
             }}
           />
-          {
-            submittedAt ? (
-              <div>Submitted on {`${monthIndexToAbbrev(
-                  submittedAt.getUTCMonth()
-                )} ${submittedAt.getUTCDate()}, ${submittedAt.getUTCFullYear()}`}
-              </div>
-            ) : (
-              <div style={{display: 'inline-block'}}>Not submitted yet</div>
-            )
-          }
+          {submittedAt ? (
+            <div>
+              Submitted on{" "}
+              {`${monthIndexToAbbrev(
+                submittedAt.getUTCMonth()
+              )} ${submittedAt.getUTCDate()}, ${submittedAt.getUTCFullYear()}`}
+            </div>
+          ) : (
+            <div style={{ display: "inline-block" }}>Not submitted yet</div>
+          )}
         </Col>
         <Col lg={10}>
-          <div style={{float: 'right'}}>Submitter</div>
+          <div style={{ float: "right" }}>Submitter</div>
         </Col>
       </Row>
     </TopMenu>
-  )
-}
+  );
+};

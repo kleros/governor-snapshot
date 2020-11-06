@@ -1,7 +1,9 @@
 import React from "react";
 import styled from "styled-components";
 
-import { useFetchSubmittedLists } from "../hooks/governor";
+import ListBox from './list-box/index'
+
+import { useFetchSubmittedLists, useFetchListSubmissionCost } from "../hooks/governor";
 
 const NoListsText = styled.div`
   font-size: 16px;
@@ -9,8 +11,17 @@ const NoListsText = styled.div`
   color: #cccccc;
 `;
 
-export default ({ governorContractInstance, pendingLists }) => {
+export default ({ governorContractInstance, arbitratorContractInstance, pendingLists, account }) => {
   const submittedLists = useFetchSubmittedLists(governorContractInstance);
-  if (!submittedLists || !submittedLists.length || !pendingLists)
+  const costPerlist = useFetchListSubmissionCost(governorContractInstance, arbitratorContractInstance);
+
+  if (pendingLists && pendingLists.length) {
+    return (
+      <ListBox txs={pendingLists} account={account} submittable={true} showByDefault={true} costPerTx={costPerlist} governorContractInstance={governorContractInstance} />
+    )
+  }
+
+  if (!submittedLists || !submittedLists.length)
     return <NoListsText>No Lists Yet</NoListsText>;
+
 };

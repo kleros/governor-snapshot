@@ -1,5 +1,5 @@
 import { Col, Row, Select } from "antd";
-import { InfoCircleOutlined } from "@ant-design/icons";
+import { InfoCircleOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 import React, { useState } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
@@ -7,7 +7,9 @@ import InfoBanner from "../components/info-banner";
 import NewListModal from "../components/new-list-modal";
 import ListViewer from "../components/list-viewer";
 import GovernorInterface from "../constants/abis/governor.json";
+import ArbitratorInterface from "../constants/abis/court.json";
 import { useFetchProjectByName } from "../hooks/projects";
+import { useFetchAccount } from "../hooks/account";
 import { capitalizeString } from "../util/text";
 
 const Dot = styled.div`
@@ -55,19 +57,49 @@ const StyledSelect = styled(Select)`
   line-height: 22px;
   min-width: 220px;
 `;
+const ReturnButton = styled.div`
+  color: #009AFF;
+  font-size: 16px;
+  line-height: 22px;
+  cursor: pointer;
+  margin: 20px 0px;
+`
 
 export default (props) => {
   const {
     match: { params },
   } = props;
   const [listsShown, setListsShown] = useState("current");
-  const [pendingLists, setPendingLists] = useState([])
+  const [pendingLists, setPendingLists] = useState([
+    {
+      "title": "Update Non Technical Juror Fee",
+      "address": "0x988b3a538b618c7a603e1c11ab82cd16dbe28069",
+      "value": "0",
+      "data": "0x85c855f3000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000032d26d12e980b600000"
+    },
+    {
+      "title": "Update English Language Juror Fee",
+      "address": "0x988b3a538b618c7a603e1c11ab82cd16dbe28069",
+      "value": "0",
+      "data": "0x14c855f3000000000000000000000000000000000000000000000000000000000000000700000000000000000000000000000000000000000000032d26d12e980b600000"
+    },
+  ])
+
+  const addToPendingLists = (newList) => {
+    const pendingListsCopy = [...pendingLists]
+    setPendingLists(pendingListsCopy.push(newList))
+  }
 
   const projectInfo = useFetchProjectByName(params.projectName);
   const governorContractInstance = new props.web3.eth.Contract(
     GovernorInterface.abi,
     projectInfo.governorAddress
   );
+  const arbitratorContractInstance = new props.web3.eth.Contract(
+    ArbitratorInterface.abi,
+    projectInfo.arbitratorAddress
+  );
+  const account = useFetchAccount(props.web3);
 
   return (
     <StyledProjectHome>
@@ -93,7 +125,7 @@ export default (props) => {
       </Row>
       <InfoBanner
         governorContractInstance={governorContractInstance}
-        web3={props.web3}
+        account={account}
       />
       <ListOptionsRow>
         <Col lg={20} md={12} sm={12} xs={12}>
@@ -125,10 +157,15 @@ export default (props) => {
           </StyledSelect>
         </Col>
         <Col lg={4} md={12} sm={12} xs={12}>
-          <NewListModal setPendingLists={setPendingLists} />
+          <NewListModal setPendingLists={setPendingLists} disabled={pendingLists.length > 0}/>
         </Col>
       </ListOptionsRow>
-      <ListViewer governorContractInstance={governorContractInstance} />
+      {
+        pendingLists.length > 0 ? (
+          <ReturnButton onClick={() => setPendingLists([])}><ArrowLeftOutlined /> Return</ReturnButton>
+        ) : ''
+      }
+      <ListViewer governorContractInstance={governorContractInstance} arbitratorContractInstance={arbitratorContractInstance} account={account} pendingLists={pendingLists} />
     </StyledProjectHome>
   );
 };

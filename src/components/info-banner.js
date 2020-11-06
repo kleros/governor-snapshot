@@ -2,7 +2,6 @@ import { Row, Col, Button } from "antd";
 import React from "react";
 import styled from "styled-components";
 import { useFetchSessionStart, useFetchSessionEnd } from "../hooks/governor";
-import { useFetchAccount } from "../hooks/account";
 import { monthIndexToAbbrev } from "../util/text";
 import TimeAgo from "./time-ago";
 
@@ -26,8 +25,7 @@ const StyledTimeAgo = styled(TimeAgo)`
   line-height: 26px;
 `;
 
-export default ({ governorContractInstance, web3 }) => {
-  const account = useFetchAccount(web3);
+export default ({ governorContractInstance, account }) => {
   const sessionStart = useFetchSessionStart(governorContractInstance);
   const sessionEnd = useFetchSessionEnd(governorContractInstance);
 

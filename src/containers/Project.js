@@ -70,23 +70,13 @@ export default (props) => {
     match: { params },
   } = props;
   const [listsShown, setListsShown] = useState("current");
-  // const [pendingLists, setPendingLists] = useState([
-  //   {
-  //     title: "Update Non Technical Juror Fee",
-  //     address: "0x988b3a538b618c7a603e1c11ab82cd16dbe28069",
-  //     value: "0",
-  //     data:
-  //       "0x85c855f3000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000032d26d12e980b600000",
-  //   },
-  //   {
-  //     title: "Update English Language Juror Fee",
-  //     address: "0x988b3a538b618c7a603e1c11ab82cd16dbe28069",
-  //     value: "0",
-  //     data:
-  //       "0x14c855f3000000000000000000000000000000000000000000000000000000000000000700000000000000000000000000000000000000000000032d26d12e980b600000",
-  //   },
-  // ]);
-  const [pendingLists, setPendingLists] = useState([]);
+  // const [pendingLists, setPendingLists] = useState([]);
+  const [pendingLists, setPendingLists] = useState([{
+    title: 'Test Decoded Input',
+    value: '0',
+    data: '0x115d53760000000000000000000000000000000000000000000000000000000000000001',
+    address: '0x988b3a538b618c7a603e1c11ab82cd16dbe28069'
+  }]);
 
   const addToPendingLists = (newList) => {
     const pendingListsCopy = [...pendingLists];
@@ -164,6 +154,7 @@ export default (props) => {
           <NewListModal
             setPendingLists={addToPendingLists}
             disabled={pendingLists.length > 0}
+            web3={props.web3}
           />
         </Col>
       </ListOptionsRow>
@@ -180,6 +171,7 @@ export default (props) => {
         account={account}
         pendingLists={pendingLists}
         addToPendingLists={addToPendingLists}
+        web3={props.web3}
       />
     </StyledProjectHome>
   );

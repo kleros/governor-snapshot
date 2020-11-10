@@ -5,12 +5,14 @@ import ListBoxLists from "./lists";
 
 export default ({
   txs,
-  account,
+  submitter,
   submittable,
   costPerTx,
   governorContractInstance,
   showByDefault,
   addToPendingLists,
+  submittedAt,
+  web3
 }) => {
   const [showLists, setShowLists] = useState(showByDefault);
 
@@ -23,18 +25,19 @@ export default ({
       <ListBoxTopMenu
         listNumber={1}
         numberOfTxs={txs.length}
-        submittedAt={null}
-        submitter={account}
+        submittedAt={submittedAt}
+        submitter={submitter}
         setShowHide={showHideLists}
       />
       {showLists ? (
         <ListBoxLists
           txs={txs}
           submittable={submittable}
-          submitter={account}
+          submitter={submitter}
           governorContractInstance={governorContractInstance}
           costPerTx={costPerTx}
           addToPendingLists={addToPendingLists}
+          web3={web3}
         />
       ) : (
         ""

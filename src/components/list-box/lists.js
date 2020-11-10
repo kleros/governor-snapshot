@@ -1,8 +1,10 @@
-import { Row, Col, Button } from "antd";
-import React, { Fragment, useState } from "react";
+import { Row, Col, Button, Tooltip } from "antd";
+import React, { Fragment, useState, useEffect } from "react";
 import styled from "styled-components";
 import { useSubmitPendingList } from "../../hooks/governor";
+import { useFetchMethodsForContract } from "../../hooks/projects";
 import NewTxModal from "../new-list-modal";
+import Web3 from 'web3'
 
 const ListsContainer = styled.div`
   background: #ffffff;
@@ -28,12 +30,33 @@ export default ({
   governorContractInstance,
   costPerTx,
   addToPendingLists,
+  web3
 }) => {
   const [selectedTx, setSelectedTx] = useState(1);
+  const [ decodedData, setDecodedData ] = useState();
+  const [ _, abi ] = useFetchMethodsForContract(txs[selectedTx - 1].address);
+
+  useEffect(() => {
+    let methodName
+    let parameters
+    const tx = txs[selectedTx - 1]
+    for (let i=0; i < abi.length; i++) {
+      if (abi[i].name && !abi[i].constant) {
+        const methodSig = web3.eth.abi.encodeFunctionSignature(abi[i])
+        if (tx.data.substring(0,10) === methodSig) {
+          const _parameters = abi[i].inputs.length ? web3.eth.abi.decodeParameters(abi[i].inputs, tx.data.substring(10,tx.data.length)) : {}
+          parameters = Object.keys(_parameters).splice(abi[i].inputs.length+1, abi[i].inputs.length*2).map(k => `${k} : ${_parameters[k]}`)
+          methodName = abi[i].name
+          break
+        }
+      }
+    }
+    setDecodedData(`${methodName}(${parameters})`)
+  }, [ abi, selectedTx ])
 
   return (
     <Row>
-      <Col lg={16}>
+      <Col lg={16} xs={24}>
         <ListsContainer>
           <EnumeratedListsContainer>
             {txs.map((tx, i) => {
@@ -61,9 +84,9 @@ export default ({
                   );
                 }}
               >
-                Submit List with {costPerTx} ETH Deposit
+                <Tooltip title="This deposit will be returned if your list is executed. Deposit can be lost in the event of a dispute.">{`Submit List with ${Web3.utils.fromWei(String(costPerTx))} ETH Deposit`}</Tooltip>
               </SubmitListsButton>
-              <NewTxModal setPendingLists={addToPendingLists} addTx={true} />
+              <NewTxModal setPendingLists={addToPendingLists} addTx={true} web3={web3} />
             </div>
           ) : (
             ""
@@ -85,7 +108,7 @@ export default ({
         />
         <ListBreakdownBox
           header={"Decoded Contract Input"}
-          content={txs[selectedTx - 1].decodedData}
+          content={decodedData}
         />
       </Col>
     </Row>

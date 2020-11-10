@@ -88,7 +88,7 @@ export const useFetchSessionEnd = (governorContractInstance) => {
  param: governorContractInstance - web3 Contract object
  return: Date object at the end of the session
  */
-export const useFetchSubmittedLists = (governorContractInstance) => {
+export const useFetchSubmittedLists = (governorContractInstance, web3) => {
   const [sessionListIDs, setSessionListIDs] = useState([]);
   const [listEventLogs, setListEventLogs] = useState([]);
   const [numberOfTxs, setNumberOfTxs] = useState([]);
@@ -132,28 +132,41 @@ export const useFetchSubmittedLists = (governorContractInstance) => {
   // Get transaction info for each List
   useEffect(() => {
     const _fetchTxInfo = async () => {
-      const _txInfo = await Promise.all(
-        sessionListIDs.map(async (_listID, i) => {
-          const txs = [];
-          const titles = listEventLogs[i].returnValues._description.split(",");
-          for (let j = 0; j < numberOfTxs[i]; j++) {
-            const info = await governorContractInstance.methods
+      let _txInfo = []
+      if (listEventLogs.length && numberOfTxs && sessionListIDs) {
+        _txInfo = await Promise.all(
+          sessionListIDs.map(async (_listID, i) => {
+            const txs = [];
+            const titles = listEventLogs[i][0].returnValues._description.split(",");
+            for (let j = 0; j < numberOfTxs[i]; j++) {
+              // Get tx info
+              const info = await governorContractInstance.methods
               .getTransactionInfo(_listID, j)
               .call();
-            txs.push({
-              title: titles[j],
-              data: info.data || "0x",
-              address: info.target,
-              value: info.value,
-            });
-          }
-          return {
-            submitter: listEventLogs[i].returnValues._submitter,
-            txs,
-            listID: _listID,
-          };
-        })
-      );
+              txs.push({
+                title: titles[j],
+                data: info.data || "0x",
+                address: info.target,
+                value: info.value
+              });
+              console.log(listEventLogs[i][0])
+            }
+            const submittedAt = (await new Promise((resolve, reject) => {
+              web3.eth.getBlock(listEventLogs[i][0].blockNumber, (error, result) => {
+                if (error) reject(error)
+
+                resolve(result)
+              })
+            })).timestamp
+            return {
+              submitter: listEventLogs[i][0].returnValues._submitter,
+              submittedAt: new Date(Number(submittedAt) * 1000),
+              txs,
+              listID: _listID,
+            };
+          })
+        );
+      }
       setListTxData(_txInfo);
     };
 

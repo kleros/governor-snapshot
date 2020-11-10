@@ -20,6 +20,7 @@ export const useFetchProjectByName = (name) => {
 
 export const useFetchMethodsForContract = (contractAddress) => {
   const [methods, setMethods] = useState([]);
+  const [abi, setAbi] = useState([]);
 
   useEffect(() => {
     const _fetchABI = async () => {
@@ -28,6 +29,7 @@ export const useFetchMethodsForContract = (contractAddress) => {
       ).then((response) => response.json());
       if (abiQuery.status === "1") {
         const _abi = JSON.parse(abiQuery.result);
+        setAbi(_abi)
         const _methods = [];
         await Promise.all(
           _abi.map((abiItem, i) => {
@@ -42,8 +44,8 @@ export const useFetchMethodsForContract = (contractAddress) => {
         setMethods(_methods);
       }
     };
-    _fetchABI();
+    if (contractAddress) _fetchABI();
   }, [contractAddress]);
 
-  return methods;
+  return [ methods, abi ];
 };

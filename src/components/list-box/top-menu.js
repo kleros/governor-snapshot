@@ -1,4 +1,5 @@
 import { Row, Col } from "antd";
+import makeBlockie from 'ethereum-blockies-base64';
 import React from "react";
 import styled from "styled-components";
 import { monthIndexToAbbrev } from "../../util/text";
@@ -26,6 +27,15 @@ const Dot = styled.div`
   border-radius: 50%;
   display: inline-block;
 `;
+const Identicon = styled.a`
+  margin-left: 10px;
+  img {
+    height: 22px;
+    border-radius: 22px;
+    vertical-align: middle;
+    margin-bottom: 5px
+  }
+`
 
 export default ({
   listNumber,
@@ -37,11 +47,11 @@ export default ({
   return (
     <TopMenu onClick={setShowHide}>
       <Row>
-        <Col lg={4}>List {listNumber}</Col>
-        <Col lg={4} style={{ color: "#4D00B4" }}>
+        <Col lg={4} md={4} sm={4} xs={12}>List {listNumber}</Col>
+        <Col lg={4} md={4} sm={4} xs={12} style={{ color: "#4D00B4" }}>
           {numberOfTxs} TXs
         </Col>
-        <Col lg={6}>
+        <Col lg={10} md={10} sm={16} xs={24}>
           <Dot
             style={{
               backgroundColor: "#4D00B4",
@@ -50,7 +60,7 @@ export default ({
             }}
           />
           {submittedAt ? (
-            <div>
+            <div style={{ display: "inline-block" }}>
               Submitted on{" "}
               {`${monthIndexToAbbrev(
                 submittedAt.getUTCMonth()
@@ -60,8 +70,21 @@ export default ({
             <div style={{ display: "inline-block" }}>Not submitted yet</div>
           )}
         </Col>
-        <Col lg={10}>
-          <div style={{ float: "right" }}>Submitter</div>
+        <Col lg={6} md={6} sm={0} xs={0}>
+          <div style={{ float: "right" }}>
+            Submitter
+            <Identicon
+              href={`https://etherscan.io/address/${submitter}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {
+                submitter ? (
+                  <img src={makeBlockie(submitter)} />
+                ) : ''
+              }
+            </Identicon>
+          </div>
         </Col>
       </Row>
     </TopMenu>

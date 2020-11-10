@@ -1,4 +1,4 @@
-import { Button, Modal, Input, Radio } from "antd";
+import { Button, Modal, Input, Radio, Select } from "antd";
 import React, { useState, Fragment, useEffect } from "react";
 import { useFetchMethodsForContract } from "../hooks/projects";
 import styled from "styled-components";
@@ -43,8 +43,17 @@ const StyledRadioOption = styled(Radio)`
 const StyledSubmit = styled(Button)`
   margin: 20px 0px;
 `;
+const StyledSelect = styled(Select)`
+  background: #ffffff;
+  border: 1px solid #cccccc;
+  box-sizing: border-box;
+  border-radius: 3px;
+  font-size: 16px;
+  line-height: 22px;
+  min-width: 220px;
+`;
 
-export default ({ setPendingLists, disabled, addTx }) => {
+export default ({ setPendingLists, disabled, addTx, web3 }) => {
   const [visible, setVisible] = useState(false);
   const [inputType, setInputType] = useState("data");
   const [title, setTitle] = useState();
@@ -52,11 +61,58 @@ export default ({ setPendingLists, disabled, addTx }) => {
   const [value, setValue] = useState();
   const [data, setData] = useState();
   const [submittable, setSubmittable] = useState(true);
-  const methods = useFetchMethodsForContract(address);
+  const [methodSelected, setMethodSelected] = useState();
+  const [methodInputs, setMethodInputs] = useState([]);
+  const [ methods, abi ] = useFetchMethodsForContract(address);
+
+  const methodToData = () => {
+    const contractInstance = new web3.eth.Contract(abi, address)
+    return contractInstance.methods[methodSelected](...methodInputs).encodeABI()
+  }
+
+  const clearForm = () => {
+    setInputType('data');
+    setTitle(undefined);
+    setAddress(undefined);
+    setValue(undefined);
+    setData(undefined);
+    setSubmittable(true);
+    setMethodSelected(undefined);
+    setMethodInputs([]);
+    setVisible(false);
+  }
+
+  const submitNewTx = () => {
+    if (inputType === 'data') {
+      setPendingLists({
+        title,
+        address,
+        value,
+        data,
+      });
+      clearForm();
+    } else {
+      // get data from inputs
+      const _data = methodToData()
+      setPendingLists({
+        title,
+        address,
+        value,
+        data: _data,
+      });
+      clearForm();
+    }
+  }
 
   useEffect(() => {
     if (methods.length && !data) setInputType("contract");
   }, [methods]);
+
+  const _setMethodInput = (val, index) => {
+    const _methodInputs = [...methodInputs];
+    _methodInputs[index] = val;
+    setMethodInputs(_methodInputs);
+  }
 
   useEffect(() => {
     if (title && address && value && data) {
@@ -118,20 +174,44 @@ export default ({ setPendingLists, disabled, addTx }) => {
             onChange={(e) => setData(e.target.value)}
           />
         ) : (
-          <div>placeholder</div>
+          <Fragment>
+            <div>
+              <StyledSelect onChange={setMethodSelected}>
+                {
+                  methods.map(m => {
+                    return (
+                      <Select.Option key={m.name} value={m.name}>
+                        {m.name}
+                      </Select.Option>
+                    )
+                  })
+                }
+              </StyledSelect>
+            </div>
+            {
+              methodSelected ? (
+                <div>
+                  {
+                    (methods.filter(a => a.name === methodSelected)[0].inputs).map((input, i) => {
+                      return (
+                        <div key={i}>
+                          <InputLabel>{input.name}</InputLabel>
+                          <Input
+                            placeholder={input.type}
+                            onChange={(e) => _setMethodInput(e.target.value, i)}
+                          />
+                        </div>
+                      )
+                    })
+                  }
+                </div>
+              ) : ''
+            }
+          </Fragment>
         )}
         <StyledSubmit
           type="primary"
-          disabled={!submittable}
-          onClick={() => {
-            setPendingLists({
-              title,
-              address,
-              value,
-              data,
-            });
-            setVisible(false);
-          }}
+          onClick={submitNewTx}
         >
           Submit
         </StyledSubmit>

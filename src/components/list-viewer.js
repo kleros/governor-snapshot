@@ -20,8 +20,9 @@ export default ({
   pendingLists,
   account,
   addToPendingLists,
+  web3
 }) => {
-  const submittedLists = useFetchSubmittedLists(governorContractInstance);
+  const submittedLists = useFetchSubmittedLists(governorContractInstance, web3);
   const costPerlist = useFetchListSubmissionCost(
     governorContractInstance,
     arbitratorContractInstance
@@ -31,12 +32,13 @@ export default ({
     return (
       <ListBox
         txs={pendingLists}
-        account={account}
+        submitter={account}
         submittable={true}
         showByDefault={true}
         costPerTx={costPerlist}
         governorContractInstance={governorContractInstance}
         addToPendingLists={addToPendingLists}
+        web3={web3}
       />
     );
   }
@@ -45,6 +47,14 @@ export default ({
     return <NoListsText>No Lists Yet</NoListsText>;
 
   return (
-    <ListBox txs={submittedLists} submittable={false} showByDefault={false} />
+    <div>
+       { submittedLists.length ? (
+           submittedLists.map(sub => (
+             <ListBox txs={sub.txs} submittable={false} showByDefault={false} submittedAt={sub.submittedAt} submitter={sub.submitter} web3={web3} />
+           ))
+         ) : ''
+       }
+    </div>
+
   );
 };

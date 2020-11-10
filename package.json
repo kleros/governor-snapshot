@@ -19,6 +19,7 @@
     "@kleros/react-components": "^4.1.2",
     "@loadable/component": "^5.14.0",
     "antd": "^4.7.2",
+    "ethereum-blockies-base64": "^1.0.2",
     "ethers": "^5.0.17",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",

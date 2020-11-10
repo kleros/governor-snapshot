@@ -2,6 +2,7 @@ import { Row, Col } from "antd";
 import makeBlockie from 'ethereum-blockies-base64';
 import React from "react";
 import styled from "styled-components";
+import { useFetchSubmissionHash } from '../../hooks/governor'
 import { monthIndexToAbbrev } from "../../util/text";
 
 const TopMenu = styled.div`
@@ -36,6 +37,15 @@ const Identicon = styled.a`
     margin-bottom: 5px
   }
 `
+const WithdrawList = styled.div`
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 22px;
+  color: #009AFF;
+  cursor: pointer;
+  display: inline-block;
+  margin-right: 20px;
+`
 
 export default ({
   listNumber,
@@ -43,15 +53,30 @@ export default ({
   submittedAt,
   submitter,
   setShowHide,
+  withdrawable,
+  governorContractInstance,
+  account
 }) => {
+  const submissionHash = useFetchSubmissionHash(governorContractInstance, listNumber);
+  console.log(submissionHash)
+
+  const sendWithdrawSubmission = () => {
+    governorContractInstance.methods.withdrawTransactionList(
+      listNumber,
+      submissionHash
+    ).send({
+      from: account
+    })
+  }
+
   return (
     <TopMenu onClick={setShowHide}>
       <Row>
-        <Col lg={4} md={4} sm={4} xs={12}>List {listNumber}</Col>
-        <Col lg={4} md={4} sm={4} xs={12} style={{ color: "#4D00B4" }}>
+        <Col lg={3} md={4} sm={4} xs={12}>List {listNumber}</Col>
+        <Col lg={3} md={4} sm={4} xs={12} style={{ color: "#4D00B4" }}>
           {numberOfTxs} TXs
         </Col>
-        <Col lg={10} md={10} sm={16} xs={24}>
+        <Col lg={12} md={10} sm={16} xs={24}>
           <Dot
             style={{
               backgroundColor: "#4D00B4",
@@ -65,6 +90,11 @@ export default ({
               {`${monthIndexToAbbrev(
                 submittedAt.getUTCMonth()
               )} ${submittedAt.getUTCDate()}, ${submittedAt.getUTCFullYear()}`}
+              {
+                withdrawable ? (
+                  <WithdrawList onClick={sendWithdrawSubmission} style={{marginLeft: '20px'}}>Withdraw List</WithdrawList>
+                ) : ''
+              }
             </div>
           ) : (
             <div style={{ display: "inline-block" }}>Not submitted yet</div>

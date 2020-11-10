@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import ListBoxTopMenu from "./top-menu";
 import ListBoxLists from "./lists";
+import { useIsWithdrawable } from '../../hooks/governor';
+import WithdrawBanner from '../withdraw-banner';
 
 export default ({
   txs,
@@ -15,9 +17,12 @@ export default ({
   listID,
   web3,
   abiCache,
-  setAbiCache
+  setAbiCache,
+  account
 }) => {
   const [showLists, setShowLists] = useState(showByDefault);
+  // If list is pending it won't have submittedAt timestamp
+  const [isWithdrawable, timeout] = useIsWithdrawable(governorContractInstance, submittedAt || new Date());
 
   const showHideLists = () => {
     setShowLists(!showLists);
@@ -31,6 +36,9 @@ export default ({
         submittedAt={submittedAt}
         submitter={submitter}
         setShowHide={showHideLists}
+        withdrawable={isWithdrawable && !submittable && submitter === account}
+        governorContractInstance={governorContractInstance}
+        account={account}
       />
       {showLists ? (
         <ListBoxLists
@@ -47,6 +55,11 @@ export default ({
       ) : (
         ""
       )}
+      {
+        isWithdrawable && !submittable && submitter === account ? (
+          <WithdrawBanner timeout={timeout} />
+        ) : ''
+      }
     </div>
   );
 };

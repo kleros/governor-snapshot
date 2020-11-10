@@ -1,5 +1,5 @@
 import { Row, Col, Button, Tooltip, Spin } from "antd";
-import { LoadingOutlined } from '@ant-design/icons';
+import { LoadingOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import React, { Fragment, useState, useEffect } from "react";
 import styled from "styled-components";
 import { useSubmitPendingList } from "../../hooks/governor";
@@ -62,7 +62,9 @@ export default ({
       if (methodName)
         setDecodedData(`${methodName}(${parameters})`)
       else
-        setDecodedData(`Not Available`)
+        setDecodedData((
+          <Tooltip title={"ABI must be verified on Etherscan"}>Not available <InfoCircleOutlined /></Tooltip>
+        ))
     }
   }, [ abi, selectedTx, loading ])
 

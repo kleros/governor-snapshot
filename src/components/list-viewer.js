@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 
 import ListBox from "./list-box/index";
+import DisputeBanner from './dispute-banner';
 
 import {
   useFetchSubmittedLists,
@@ -66,8 +67,15 @@ export default ({
                web3={web3}
                abiCache={abiCache}
                setAbiCache={setAbiCache}
+               governorContractInstance={governorContractInstance}
+               account={account}
              />
            ))
+         ) : ''
+       }
+       {
+         submittedLists.length > 1 ? (
+           <DisputeBanner />
          ) : ''
        }
     </div>

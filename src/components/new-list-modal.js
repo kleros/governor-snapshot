@@ -1,4 +1,4 @@
-import { Button, Modal, Input, Radio, Select } from "antd";
+import { Button, Modal, Input, Radio, Select, Tooltip } from "antd";
 import React, { useState, Fragment, useEffect } from "react";
 import { useFetchMethodsForContract } from "../hooks/projects";
 import styled from "styled-components";
@@ -58,9 +58,9 @@ export default ({ setPendingLists, disabled, addTx, web3, abiCache, setAbiCache 
   const [inputType, setInputType] = useState("data");
   const [title, setTitle] = useState();
   const [address, setAddress] = useState();
-  const [value, setValue] = useState();
+  const [value, setValue] = useState("0");
   const [data, setData] = useState();
-  const [submittable, setSubmittable] = useState(true);
+  const [submittable, setSubmittable] = useState(false);
   const [methodSelected, setMethodSelected] = useState();
   const [methodInputs, setMethodInputs] = useState([]);
   const [ methods, abi ] = useFetchMethodsForContract(address, abiCache, setAbiCache);
@@ -115,12 +115,24 @@ export default ({ setPendingLists, disabled, addTx, web3, abiCache, setAbiCache 
   }
 
   useEffect(() => {
-    if (title && address && value && data) {
-      if (!submittable) setSubmittable(true);
-    } else {
-      if (submittable) setSubmittable(false);
+    if (title && address && value) {
+      if (inputType == "contract") {
+        // Check to see if all inputs are filled
+        const numberOfInputs = methods.filter(a => a.name === methodSelected)[0].inputs.length
+        if (numberOfInputs === methodInputs.length) {
+          if (!submittable) setSubmittable(true);
+        } else if (submittable) {
+           setSubmittable(false);
+        }
+      } else if (inputType == "data") {
+        if (data) {
+          if (!submittable) setSubmittable(true);
+        } else if (submittable) {
+           setSubmittable(false);
+        }
+      }
     }
-  }, [title, address, value, data]);
+  }, [title, address, value, data, methodSelected, methodInputs]);
 
   return (
     <Fragment>
@@ -141,16 +153,19 @@ export default ({ setPendingLists, disabled, addTx, web3, abiCache, setAbiCache 
         <InputLabel>Title</InputLabel>
         <Input
           placeholder={"eg. Update Non Technical Juror Fee"}
+          value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
         <InputLabel>Contract Address</InputLabel>
         <Input
           placeholder={"eg. 0x60B2AbfDfaD9c0873242f59f2A8c32A3Cc682f80"}
+          value={address}
           onChange={(e) => setAddress(e.target.value)}
         />
-        <InputLabel>Value</InputLabel>
+      <InputLabel><Tooltip title="in WEI">Value</Tooltip></InputLabel>
         <Input
           placeholder={"eg. 0"}
+          value={value}
           onChange={(e) => setValue(e.target.value)}
         />
         <Radio.Group
@@ -211,6 +226,7 @@ export default ({ setPendingLists, disabled, addTx, web3, abiCache, setAbiCache 
         )}
         <StyledSubmit
           type="primary"
+          disabled={!submittable}
           onClick={submitNewTx}
         >
           Submit

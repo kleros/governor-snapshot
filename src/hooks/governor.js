@@ -180,7 +180,7 @@ export const useFetchListSubmissionCost = (
   arbitratorContractInstance
 ) => {
   const [submissionBaseDeposit, setSubmissionBaseDeposit] = useState(0);
-  const [extraData, setExtraData] = useState("0x");
+  const [extraData, setExtraData] = useState("0x00");
   const [costPerList, setCostPerList] = useState(0);
 
   useEffect(() => {
@@ -205,7 +205,7 @@ export const useFetchListSubmissionCost = (
           _web3.utils.toBN(submissionBaseDeposit).add(_web3.utils.toBN(r))
         );
       });
-  }, [extraData]);
+  }, [extraData, submissionBaseDeposit]);
 
   return costPerList;
 };
@@ -227,3 +227,31 @@ export const useSubmitPendingList = (
       from: account,
     });
 };
+
+export const useIsWithdrawable = (governorContractInstance, submittedAt) => {
+  const [timeout, setTimeout] = useState(0);
+
+  // Fetch timeout for this contract
+  useEffect(() => {
+    governorContractInstance.methods.withdrawTimeout().call().then(r => setTimeout(r));
+  }, [ governorContractInstance ])
+
+  const now = new Date()
+
+  return [
+    ((Number(timeout) * 1000)) + submittedAt.getTime() > now.getTime(),
+    new Date(
+      (Number(timeout) * 1000) + submittedAt.getTime()
+    )
+  ]
+}
+
+export const useFetchSubmissionHash = (governorContractInstance, listID) => {
+  const [ submissionHash, setSubmissionHash ] = useState()
+
+  useEffect(() => {
+    governorContractInstance.methods.submissions(listID).call().then(r => setSubmissionHash(r.listHash))
+  }, [governorContractInstance, listID])
+
+  return submissionHash
+}

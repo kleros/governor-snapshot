@@ -1,4 +1,5 @@
-import { Row, Col, Button, Tooltip } from "antd";
+import { Row, Col, Button, Tooltip, Spin } from "antd";
+import { LoadingOutlined } from '@ant-design/icons';
 import React, { Fragment, useState, useEffect } from "react";
 import styled from "styled-components";
 import { useSubmitPendingList } from "../../hooks/governor";
@@ -12,7 +13,7 @@ const ListsContainer = styled.div`
   border-radius: 3px;
   padding: 16px 0px;
   width: 97%;
-  height: 100%;
+  height: 98%;
   margin-bottom: 10px;
 `;
 const EnumeratedListsContainer = styled.div`
@@ -34,25 +35,31 @@ export default ({
 }) => {
   const [selectedTx, setSelectedTx] = useState(1);
   const [ decodedData, setDecodedData ] = useState();
-  const [ _, abi ] = useFetchMethodsForContract(txs[selectedTx - 1].address);
+  const [ _, abi, loading ] = useFetchMethodsForContract(txs[selectedTx - 1].address);
 
   useEffect(() => {
-    let methodName
-    let parameters
-    const tx = txs[selectedTx - 1]
-    for (let i=0; i < abi.length; i++) {
-      if (abi[i].name && !abi[i].constant) {
-        const methodSig = web3.eth.abi.encodeFunctionSignature(abi[i])
-        if (tx.data.substring(0,10) === methodSig) {
-          const _parameters = abi[i].inputs.length ? web3.eth.abi.decodeParameters(abi[i].inputs, tx.data.substring(10,tx.data.length)) : {}
-          parameters = Object.keys(_parameters).splice(abi[i].inputs.length+1, abi[i].inputs.length*2).map(k => `${k} : ${_parameters[k]}`)
-          methodName = abi[i].name
-          break
+    if (loading) {
+      setDecodedData((
+        <Spin indicator={<LoadingOutlined />} />
+      ))
+    } else {
+      let methodName
+      let parameters
+      const tx = txs[selectedTx - 1]
+      for (let i=0; i < abi.length; i++) {
+        if (abi[i].name && !abi[i].constant) {
+          const methodSig = web3.eth.abi.encodeFunctionSignature(abi[i])
+          if (tx.data.substring(0,10) === methodSig) {
+            const _parameters = abi[i].inputs.length ? web3.eth.abi.decodeParameters(abi[i].inputs, tx.data.substring(10,tx.data.length)) : {}
+            parameters = Object.keys(_parameters).splice(abi[i].inputs.length+1, abi[i].inputs.length*2).map(k => `${k} : ${_parameters[k]}`)
+            methodName = abi[i].name
+            break
+          }
         }
       }
+      setDecodedData(`${methodName}(${parameters})`)
     }
-    setDecodedData(`${methodName}(${parameters})`)
-  }, [ abi, selectedTx ])
+  }, [ abi, selectedTx, loading ])
 
   return (
     <Row>

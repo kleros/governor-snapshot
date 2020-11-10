@@ -70,13 +70,7 @@ export default (props) => {
     match: { params },
   } = props;
   const [listsShown, setListsShown] = useState("current");
-  // const [pendingLists, setPendingLists] = useState([]);
-  const [pendingLists, setPendingLists] = useState([{
-    title: 'Test Decoded Input',
-    value: '0',
-    data: '0x115d53760000000000000000000000000000000000000000000000000000000000000001',
-    address: '0x988b3a538b618c7a603e1c11ab82cd16dbe28069'
-  }]);
+  const [pendingLists, setPendingLists] = useState([]);
 
   const addToPendingLists = (newList) => {
     const pendingListsCopy = [...pendingLists];
@@ -123,7 +117,7 @@ export default (props) => {
       />
       <ListOptionsRow>
         <Col lg={20} md={12} sm={12} xs={12}>
-          <StyledSelect onChange={setListsShown} defaultValue="current">
+          <StyledSelect onChange={setListsShown} defaultValue="current" disabled={true}>
             <Select.Option value="current">
               <span>
                 <Dot

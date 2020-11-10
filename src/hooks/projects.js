@@ -21,8 +21,10 @@ export const useFetchProjectByName = (name) => {
 export const useFetchMethodsForContract = (contractAddress) => {
   const [methods, setMethods] = useState([]);
   const [abi, setAbi] = useState([]);
+  const [ loading, setLoading ] = useState(false)
 
   useEffect(() => {
+    if (contractAddress) setLoading(true)
     const _fetchABI = async () => {
       const abiQuery = await fetch(
         `https://api.etherscan.io/api?module=contract&action=getabi&address=${contractAddress}`
@@ -42,10 +44,16 @@ export const useFetchMethodsForContract = (contractAddress) => {
           })
         );
         setMethods(_methods);
+        setLoading(false)
+      } else {
+        // If we have a no api error wait 5 seconds
+        setTimeout(() => {
+          _fetchABI()
+        }, 5000)
       }
     };
     if (contractAddress) _fetchABI();
   }, [contractAddress]);
 
-  return [ methods, abi ];
+  return [ methods, abi, loading ];
 };

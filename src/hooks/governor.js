@@ -149,7 +149,6 @@ export const useFetchSubmittedLists = (governorContractInstance, web3) => {
                 address: info.target,
                 value: info.value
               });
-              console.log(listEventLogs[i][0])
             }
             const submittedAt = (await new Promise((resolve, reject) => {
               web3.eth.getBlock(listEventLogs[i][0].blockNumber, (error, result) => {

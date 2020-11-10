@@ -53,7 +53,7 @@ const StyledSelect = styled(Select)`
   min-width: 220px;
 `;
 
-export default ({ setPendingLists, disabled, addTx, web3 }) => {
+export default ({ setPendingLists, disabled, addTx, web3, abiCache, setAbiCache }) => {
   const [visible, setVisible] = useState(false);
   const [inputType, setInputType] = useState("data");
   const [title, setTitle] = useState();
@@ -63,7 +63,7 @@ export default ({ setPendingLists, disabled, addTx, web3 }) => {
   const [submittable, setSubmittable] = useState(true);
   const [methodSelected, setMethodSelected] = useState();
   const [methodInputs, setMethodInputs] = useState([]);
-  const [ methods, abi ] = useFetchMethodsForContract(address);
+  const [ methods, abi ] = useFetchMethodsForContract(address, abiCache, setAbiCache);
 
   const methodToData = () => {
     const contractInstance = new web3.eth.Contract(abi, address)

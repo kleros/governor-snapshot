@@ -12,7 +12,10 @@ export default ({
   showByDefault,
   addToPendingLists,
   submittedAt,
-  web3
+  listID,
+  web3,
+  abiCache,
+  setAbiCache
 }) => {
   const [showLists, setShowLists] = useState(showByDefault);
 
@@ -23,7 +26,7 @@ export default ({
   return (
     <div>
       <ListBoxTopMenu
-        listNumber={1}
+        listNumber={listID}
         numberOfTxs={txs.length}
         submittedAt={submittedAt}
         submitter={submitter}
@@ -38,6 +41,8 @@ export default ({
           costPerTx={costPerTx}
           addToPendingLists={addToPendingLists}
           web3={web3}
+          abiCache={abiCache}
+          setAbiCache={setAbiCache}
         />
       ) : (
         ""

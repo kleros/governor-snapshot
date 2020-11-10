@@ -18,19 +18,44 @@ export const useFetchProjectByName = (name) => {
   return _project[0];
 };
 
-export const useFetchMethodsForContract = (contractAddress) => {
+export const useFetchMethodsForContract = (contractAddress, abiCache={}, setAbiCache=()=>{}) => {
   const [methods, setMethods] = useState([]);
   const [abi, setAbi] = useState([]);
   const [ loading, setLoading ] = useState(false)
 
   useEffect(() => {
+    // Set loading
     if (contractAddress) setLoading(true)
+    // Fetch ABI
     const _fetchABI = async () => {
-      const abiQuery = await fetch(
-        `https://api.etherscan.io/api?module=contract&action=getabi&address=${contractAddress}`
-      ).then((response) => response.json());
-      if (abiQuery.status === "1") {
-        const _abi = JSON.parse(abiQuery.result);
+      let _abi = abiCache[contractAddress]
+
+      // Fetch from etherscan
+      if (!_abi) {
+        const abiQuery = await fetch(
+          `https://api.etherscan.io/api?module=contract&action=getabi&address=${contractAddress}`
+        ).then((response) => response.json());
+        if (abiQuery.status === "1") {
+          _abi = JSON.parse(abiQuery.result);
+          // Cache results
+          setAbiCache({
+            ...abiCache,
+            [contractAddress]: _abi
+          })
+        } else {
+          if (abiQuery.result === "Max rate limit reached, please use API Key for higher rate limit") {
+            // If we have a no api error wait 5 seconds
+            setTimeout(() => {
+              _fetchABI()
+            }, 5000)
+          } else {
+            setLoading(false)
+          }
+        }
+      }
+
+      if (_abi) {
+        // Set the selected ABI
         setAbi(_abi)
         const _methods = [];
         await Promise.all(
@@ -45,11 +70,6 @@ export const useFetchMethodsForContract = (contractAddress) => {
         );
         setMethods(_methods);
         setLoading(false)
-      } else {
-        // If we have a no api error wait 5 seconds
-        setTimeout(() => {
-          _fetchABI()
-        }, 5000)
       }
     };
     if (contractAddress) _fetchABI();

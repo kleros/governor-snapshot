@@ -20,7 +20,9 @@ export default ({
   pendingLists,
   account,
   addToPendingLists,
-  web3
+  web3,
+  abiCache,
+  setAbiCache
 }) => {
   const submittedLists = useFetchSubmittedLists(governorContractInstance, web3);
   const costPerlist = useFetchListSubmissionCost(
@@ -32,6 +34,7 @@ export default ({
     return (
       <ListBox
         txs={pendingLists}
+        listID={"1"}
         submitter={account}
         submittable={true}
         showByDefault={true}
@@ -39,6 +42,8 @@ export default ({
         governorContractInstance={governorContractInstance}
         addToPendingLists={addToPendingLists}
         web3={web3}
+        abiCache={abiCache}
+        setAbiCache={setAbiCache}
       />
     );
   }
@@ -49,8 +54,19 @@ export default ({
   return (
     <div>
        { submittedLists.length ? (
-           submittedLists.map(sub => (
-             <ListBox txs={sub.txs} submittable={false} showByDefault={false} submittedAt={sub.submittedAt} submitter={sub.submitter} web3={web3} />
+           submittedLists.map((sub, i) => (
+             <ListBox
+               key={i}
+               listID={sub.listID}
+               txs={sub.txs}
+               submittable={false}
+               showByDefault={false}
+               submittedAt={sub.submittedAt}
+               submitter={sub.submitter}
+               web3={web3}
+               abiCache={abiCache}
+               setAbiCache={setAbiCache}
+             />
            ))
          ) : ''
        }

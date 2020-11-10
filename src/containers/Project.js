@@ -71,6 +71,8 @@ export default (props) => {
   } = props;
   const [listsShown, setListsShown] = useState("current");
   const [pendingLists, setPendingLists] = useState([]);
+  // Cache ABIs
+  const [ abiCache, setAbiCache ] = useState({})
 
   const addToPendingLists = (newList) => {
     const pendingListsCopy = [...pendingLists];
@@ -149,6 +151,8 @@ export default (props) => {
             setPendingLists={addToPendingLists}
             disabled={pendingLists.length > 0}
             web3={props.web3}
+            abiCache={abiCache}
+            setAbiCache={setAbiCache}
           />
         </Col>
       </ListOptionsRow>
@@ -166,6 +170,8 @@ export default (props) => {
         pendingLists={pendingLists}
         addToPendingLists={addToPendingLists}
         web3={props.web3}
+        abiCache={abiCache}
+        setAbiCache={setAbiCache}
       />
     </StyledProjectHome>
   );

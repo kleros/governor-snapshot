@@ -13,7 +13,7 @@ const ListsContainer = styled.div`
   border-radius: 3px;
   padding: 16px 0px;
   width: 97%;
-  height: 98%;
+  height: 97%;
   margin-bottom: 10px;
 `;
 const EnumeratedListsContainer = styled.div`
@@ -31,11 +31,13 @@ export default ({
   governorContractInstance,
   costPerTx,
   addToPendingLists,
-  web3
+  web3,
+  abiCache,
+  setAbiCache
 }) => {
   const [selectedTx, setSelectedTx] = useState(1);
   const [ decodedData, setDecodedData ] = useState();
-  const [ _, abi, loading ] = useFetchMethodsForContract(txs[selectedTx - 1].address);
+  const [ _, abi, loading ] = useFetchMethodsForContract(txs[selectedTx - 1].address, abiCache, setAbiCache);
 
   useEffect(() => {
     if (loading) {
@@ -57,7 +59,10 @@ export default ({
           }
         }
       }
-      setDecodedData(`${methodName}(${parameters})`)
+      if (methodName)
+        setDecodedData(`${methodName}(${parameters})`)
+      else
+        setDecodedData(`Not Available`)
     }
   }, [ abi, selectedTx, loading ])
 

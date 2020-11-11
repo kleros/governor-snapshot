@@ -132,31 +132,38 @@ export const useFetchSubmittedLists = (governorContractInstance, web3) => {
   // Get transaction info for each List
   useEffect(() => {
     const _fetchTxInfo = async () => {
-      let _txInfo = []
-      if (listEventLogs.length && numberOfTxs && sessionListIDs) {
+      let _txInfo = [];
+      if (listEventLogs.length && sessionListIDs && listEventLogs.length === sessionListIDs.length && numberOfTxs ) {
         _txInfo = await Promise.all(
           sessionListIDs.map(async (_listID, i) => {
             const txs = [];
-            const titles = listEventLogs[i][0].returnValues._description.split(",");
+            const titles = listEventLogs[i][0].returnValues._description.split(
+              ","
+            );
             for (let j = 0; j < numberOfTxs[i]; j++) {
               // Get tx info
               const info = await governorContractInstance.methods
-              .getTransactionInfo(_listID, j)
-              .call();
+                .getTransactionInfo(_listID, j)
+                .call();
               txs.push({
                 title: titles[j],
                 data: info.data || "0x",
                 address: info.target,
-                value: info.value
+                value: info.value,
               });
             }
-            const submittedAt = (await new Promise((resolve, reject) => {
-              web3.eth.getBlock(listEventLogs[i][0].blockNumber, (error, result) => {
-                if (error) reject(error)
+            const submittedAt = (
+              await new Promise((resolve, reject) => {
+                web3.eth.getBlock(
+                  listEventLogs[i][0].blockNumber,
+                  (error, result) => {
+                    if (error) reject(error);
 
-                resolve(result)
+                    resolve(result);
+                  }
+                );
               })
-            })).timestamp
+            ).timestamp;
             return {
               submitter: listEventLogs[i][0].returnValues._submitter,
               submittedAt: new Date(Number(submittedAt) * 1000),
@@ -233,25 +240,123 @@ export const useIsWithdrawable = (governorContractInstance, submittedAt) => {
 
   // Fetch timeout for this contract
   useEffect(() => {
-    governorContractInstance.methods.withdrawTimeout().call().then(r => setTimeout(r));
-  }, [ governorContractInstance ])
+    governorContractInstance.methods
+      .withdrawTimeout()
+      .call()
+      .then((r) => setTimeout(r));
+  }, [governorContractInstance]);
 
-  const now = new Date()
+  const now = new Date();
 
   return [
-    ((Number(timeout) * 1000)) + submittedAt.getTime() > now.getTime(),
-    new Date(
-      (Number(timeout) * 1000) + submittedAt.getTime()
-    )
-  ]
-}
+    Number(timeout) * 1000 + submittedAt.getTime() > now.getTime(),
+    new Date(Number(timeout) * 1000 + submittedAt.getTime()),
+  ];
+};
 
 export const useFetchSubmissionHash = (governorContractInstance, listID) => {
-  const [ submissionHash, setSubmissionHash ] = useState()
+  const [submissionHash, setSubmissionHash] = useState();
 
   useEffect(() => {
-    governorContractInstance.methods.submissions(listID).call().then(r => setSubmissionHash(r.listHash))
-  }, [governorContractInstance, listID])
+    governorContractInstance.methods
+      .submissions(listID)
+      .call()
+      .then((r) => setSubmissionHash(r.listHash));
+  }, [governorContractInstance, listID]);
 
-  return submissionHash
-}
+  return submissionHash;
+};
+
+export const useFetchSession = (governorContractInstance) => {
+  const [currentSessionNumber, setCurrentSessionNumber] = useState(0);
+  const [session, setSession] = useState({});
+
+  useEffect(() => {
+    governorContractInstance.methods
+      .getCurrentSessionNumber()
+      .call()
+      .then((r) => setCurrentSessionNumber(r));
+  }, [governorContractInstance]);
+
+  useEffect(() => {
+    governorContractInstance.methods
+      .sessions(currentSessionNumber)
+      .call()
+      .then((r) => setSession(r));
+  }, [currentSessionNumber]);
+
+  return {
+    ...session,
+    currentSessionNumber,
+  };
+};
+
+export const useFetchRoundInfo = (governorContractInstance, sessionNumber) => {
+  const [numberOfRounds, setNumberOfRounds] = useState(0);
+  const [roundInformation, setRoundInformation] = useState({});
+
+  useEffect(() => {
+    governorContractInstance.methods
+      .getSessionRoundsNumber(sessionNumber)
+      .call()
+      .then((r) => setNumberOfRounds(r));
+  }, [governorContractInstance]);
+
+  useEffect(() => {
+    governorContractInstance.methods
+      .getRoundInfo(sessionNumber, numberOfRounds)
+      .call()
+      .then((r) => setRoundInformation(r));
+  }, [numberOfRounds]);
+
+  return {
+    ...roundInformation,
+    numberOfRounds,
+  };
+};
+
+export const useFetchArbitratorExtraData = (governorContractInstance) => {
+  const [arbitratorExtraData, setArbitratorExtraData] = useState("0x0");
+
+  useEffect(() => {
+    governorContractInstance.methods
+      .arbitratorExtraData()
+      .call()
+      .then((r) => setArbitratorExtraData(r));
+  }, [governorContractInstance]);
+
+  return arbitratorExtraData;
+};
+
+export const useFetchCrowdfundingVariables = (governorContractInstance) => {
+  const [winnerMultiplier, setWinnerMultiplier] = useState("0");
+  const [loserMultiplier, setLoserMultiplier] = useState("0");
+  const [sharedMultiplier, setSharedMultiplier] = useState("0");
+  const [multiplierDivisor, setMultiplierDivisor] = useState("1");
+
+  useEffect(() => {
+    governorContractInstance.methods
+      .winnerMultiplier()
+      .call()
+      .then((r) => setWinnerMultiplier(r));
+    governorContractInstance.methods
+      .loserMultiplier()
+      .call()
+      .then((r) => setLoserMultiplier(r));
+    governorContractInstance.methods
+      .sharedMultiplier()
+      .call()
+      .then((r) => setSharedMultiplier(r));
+    governorContractInstance.methods
+      .MULTIPLIER_DIVISOR()
+      .call()
+      .then((r) => setMultiplierDivisor(r));
+  }, [governorContractInstance]);
+
+  return {
+    winnerMultiplier,
+    loserMultiplier,
+    sharedMultiplier,
+    multiplierDivisor,
+  };
+};

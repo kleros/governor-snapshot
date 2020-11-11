@@ -6,10 +6,12 @@ import { Link } from "react-router-dom";
 import InfoBanner from "../components/info-banner";
 import NewListModal from "../components/new-list-modal";
 import ListViewer from "../components/list-viewer";
+import AppealModule from "../components/appeal-module";
 import GovernorInterface from "../constants/abis/governor.json";
 import ArbitratorInterface from "../constants/abis/court.json";
 import { useFetchProjectByName } from "../hooks/projects";
 import { useFetchAccount } from "../hooks/account";
+import { useFetchSession } from "../hooks/governor";
 import { capitalizeString } from "../util/text";
 
 const Dot = styled.div`
@@ -72,7 +74,7 @@ export default (props) => {
   const [listsShown, setListsShown] = useState("current");
   const [pendingLists, setPendingLists] = useState([]);
   // Cache ABIs
-  const [ abiCache, setAbiCache ] = useState({})
+  const [abiCache, setAbiCache] = useState({});
 
   const addToPendingLists = (newList) => {
     const pendingListsCopy = [...pendingLists];
@@ -80,6 +82,7 @@ export default (props) => {
     setPendingLists(pendingListsCopy);
   };
 
+  // Web3 Objects
   const projectInfo = useFetchProjectByName(params.projectName);
   const governorContractInstance = new props.web3.eth.Contract(
     GovernorInterface.abi,
@@ -90,6 +93,8 @@ export default (props) => {
     projectInfo.arbitratorAddress
   );
   const account = useFetchAccount(props.web3);
+
+  const session = useFetchSession(governorContractInstance);
 
   return (
     <StyledProjectHome>
@@ -119,7 +124,11 @@ export default (props) => {
       />
       <ListOptionsRow>
         <Col lg={20} md={12} sm={12} xs={12}>
-          <StyledSelect onChange={setListsShown} defaultValue="current" disabled={true}>
+          <StyledSelect
+            onChange={setListsShown}
+            defaultValue="current"
+            disabled={true}
+          >
             <Select.Option value="current">
               <span>
                 <Dot
@@ -173,6 +182,14 @@ export default (props) => {
         abiCache={abiCache}
         setAbiCache={setAbiCache}
       />
+    {session.disputeID ?
+      <AppealModule
+        session={session}
+        governorContractInstance={governorContractInstance}
+        arbitratorContractInstance={arbitratorContractInstance}
+        web3={props.web3}
+        account={account}
+      /> : ""}
     </StyledProjectHome>
   );
 };

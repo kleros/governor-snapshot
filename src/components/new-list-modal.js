@@ -53,7 +53,14 @@ const StyledSelect = styled(Select)`
   min-width: 220px;
 `;
 
-export default ({ setPendingLists, disabled, addTx, web3, abiCache, setAbiCache }) => {
+export default ({
+  setPendingLists,
+  disabled,
+  addTx,
+  web3,
+  abiCache,
+  setAbiCache,
+}) => {
   const [visible, setVisible] = useState(false);
   const [inputType, setInputType] = useState("data");
   const [title, setTitle] = useState();
@@ -63,15 +70,21 @@ export default ({ setPendingLists, disabled, addTx, web3, abiCache, setAbiCache 
   const [submittable, setSubmittable] = useState(false);
   const [methodSelected, setMethodSelected] = useState();
   const [methodInputs, setMethodInputs] = useState([]);
-  const [ methods, abi ] = useFetchMethodsForContract(address, abiCache, setAbiCache);
+  const [methods, abi] = useFetchMethodsForContract(
+    address,
+    abiCache,
+    setAbiCache
+  );
 
   const methodToData = () => {
-    const contractInstance = new web3.eth.Contract(abi, address)
-    return contractInstance.methods[methodSelected](...methodInputs).encodeABI()
-  }
+    const contractInstance = new web3.eth.Contract(abi, address);
+    return contractInstance.methods[methodSelected](
+      ...methodInputs
+    ).encodeABI();
+  };
 
   const clearForm = () => {
-    setInputType('data');
+    setInputType("data");
     setTitle(undefined);
     setAddress(undefined);
     setValue(undefined);
@@ -80,10 +93,10 @@ export default ({ setPendingLists, disabled, addTx, web3, abiCache, setAbiCache 
     setMethodSelected(undefined);
     setMethodInputs([]);
     setVisible(false);
-  }
+  };
 
   const submitNewTx = () => {
-    if (inputType === 'data') {
+    if (inputType === "data") {
       setPendingLists({
         title,
         address,
@@ -93,7 +106,7 @@ export default ({ setPendingLists, disabled, addTx, web3, abiCache, setAbiCache 
       clearForm();
     } else {
       // get data from inputs
-      const _data = methodToData()
+      const _data = methodToData();
       setPendingLists({
         title,
         address,
@@ -102,7 +115,7 @@ export default ({ setPendingLists, disabled, addTx, web3, abiCache, setAbiCache 
       });
       clearForm();
     }
-  }
+  };
 
   useEffect(() => {
     if (methods.length && !data) setInputType("contract");
@@ -112,23 +125,25 @@ export default ({ setPendingLists, disabled, addTx, web3, abiCache, setAbiCache 
     const _methodInputs = [...methodInputs];
     _methodInputs[index] = val;
     setMethodInputs(_methodInputs);
-  }
+  };
 
   useEffect(() => {
     if (title && address && value) {
       if (inputType == "contract") {
         // Check to see if all inputs are filled
-        const numberOfInputs = methods.filter(a => a.name === methodSelected)[0].inputs.length
+        const numberOfInputs = methods.filter(
+          (a) => a.name === methodSelected
+        )[0].inputs.length;
         if (numberOfInputs === methodInputs.length) {
           if (!submittable) setSubmittable(true);
         } else if (submittable) {
-           setSubmittable(false);
+          setSubmittable(false);
         }
       } else if (inputType == "data") {
         if (data) {
           if (!submittable) setSubmittable(true);
         } else if (submittable) {
-           setSubmittable(false);
+          setSubmittable(false);
         }
       }
     }
@@ -162,7 +177,9 @@ export default ({ setPendingLists, disabled, addTx, web3, abiCache, setAbiCache 
           value={address}
           onChange={(e) => setAddress(e.target.value)}
         />
-      <InputLabel><Tooltip title="in WEI">Value</Tooltip></InputLabel>
+        <InputLabel>
+          <Tooltip title="in WEI">Value</Tooltip>
+        </InputLabel>
         <Input
           placeholder={"eg. 0"}
           value={value}
@@ -192,36 +209,34 @@ export default ({ setPendingLists, disabled, addTx, web3, abiCache, setAbiCache 
           <Fragment>
             <div>
               <StyledSelect onChange={setMethodSelected}>
-                {
-                  methods.map(m => {
-                    return (
-                      <Select.Option key={m.name} value={m.name}>
-                        {m.name}
-                      </Select.Option>
-                    )
-                  })
-                }
+                {methods.map((m) => {
+                  return (
+                    <Select.Option key={m.name} value={m.name}>
+                      {m.name}
+                    </Select.Option>
+                  );
+                })}
               </StyledSelect>
             </div>
-            {
-              methodSelected ? (
-                <div>
-                  {
-                    (methods.filter(a => a.name === methodSelected)[0].inputs).map((input, i) => {
-                      return (
-                        <div key={i}>
-                          <InputLabel>{input.name}</InputLabel>
-                          <Input
-                            placeholder={input.type}
-                            onChange={(e) => _setMethodInput(e.target.value, i)}
-                          />
-                        </div>
-                      )
-                    })
-                  }
-                </div>
-              ) : ''
-            }
+            {methodSelected ? (
+              <div>
+                {methods
+                  .filter((a) => a.name === methodSelected)[0]
+                  .inputs.map((input, i) => {
+                    return (
+                      <div key={i}>
+                        <InputLabel>{input.name}</InputLabel>
+                        <Input
+                          placeholder={input.type}
+                          onChange={(e) => _setMethodInput(e.target.value, i)}
+                        />
+                      </div>
+                    );
+                  })}
+              </div>
+            ) : (
+              ""
+            )}
           </Fragment>
         )}
         <StyledSubmit

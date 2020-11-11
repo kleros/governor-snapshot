@@ -18,17 +18,21 @@ export const useFetchProjectByName = (name) => {
   return _project[0];
 };
 
-export const useFetchMethodsForContract = (contractAddress, abiCache={}, setAbiCache=()=>{}) => {
+export const useFetchMethodsForContract = (
+  contractAddress,
+  abiCache = {},
+  setAbiCache = () => {}
+) => {
   const [methods, setMethods] = useState([]);
   const [abi, setAbi] = useState([]);
-  const [ loading, setLoading ] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     // Set loading
-    if (contractAddress) setLoading(true)
+    if (contractAddress) setLoading(true);
     // Fetch ABI
     const _fetchABI = async () => {
-      let _abi = abiCache[contractAddress]
+      let _abi = abiCache[contractAddress];
 
       // Fetch from etherscan
       if (!_abi) {
@@ -40,23 +44,26 @@ export const useFetchMethodsForContract = (contractAddress, abiCache={}, setAbiC
           // Cache results
           setAbiCache({
             ...abiCache,
-            [contractAddress]: _abi
-          })
+            [contractAddress]: _abi,
+          });
         } else {
-          if (abiQuery.result === "Max rate limit reached, please use API Key for higher rate limit") {
+          if (
+            abiQuery.result ===
+            "Max rate limit reached, please use API Key for higher rate limit"
+          ) {
             // If we have a no api error wait 5 seconds
             setTimeout(() => {
-              _fetchABI()
-            }, 5000)
+              _fetchABI();
+            }, 5000);
           } else {
-            setLoading(false)
+            setLoading(false);
           }
         }
       }
 
       if (_abi) {
         // Set the selected ABI
-        setAbi(_abi)
+        setAbi(_abi);
         const _methods = [];
         await Promise.all(
           _abi.map((abiItem, i) => {
@@ -69,11 +76,11 @@ export const useFetchMethodsForContract = (contractAddress, abiCache={}, setAbiC
           })
         );
         setMethods(_methods);
-        setLoading(false)
+        setLoading(false);
       }
     };
     if (contractAddress) _fetchABI();
   }, [contractAddress]);
 
-  return [ methods, abi, loading ];
+  return [methods, abi, loading];
 };

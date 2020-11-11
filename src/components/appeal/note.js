@@ -2,19 +2,19 @@ import { Row, Col } from "antd";
 import { InfoCircleOutlined } from "@ant-design/icons";
 import React from "react";
 import styled from "styled-components";
-import TimeAgo from "./time-ago";
 
-const WithdrawBanner = styled.div`
-  border: 1px solid #ff9900;
+const DisputeBanner = styled.div`
+  border: 1px solid #009aff;
   box-sizing: border-box;
   border-radius: 3px;
   padding: 25px 24px;
+  margin: 25px 0px;
 `;
 const Heading = styled.div`
   font-weight: 600;
   font-size: 16px;
   line-height: 22px;
-  color: #ff9900;
+  color: #009aff;
 `;
 const Subtext = styled.div`
   font-size: 14px;
@@ -22,29 +22,25 @@ const Subtext = styled.div`
   color: rgba(0, 0, 0, 0.85);
 `;
 const StyledInfoCol = styled(Col)`
-  color: #ff9900;
+  color: #009aff;
   font-size: 24px;
   line-height: 34px;
 `;
 
-export default ({ timeout }) => {
+export default ({}) => {
   return (
-    <WithdrawBanner>
+    <DisputeBanner>
       <Row>
         <StyledInfoCol lg={2}>
           <InfoCircleOutlined />
         </StyledInfoCol>
         <Col lg={22}>
           <Heading>
-            The list has been submitted. Withdrawl timeout:{" "}
-            <TimeAgo date={timeout || new Date()} />
+            External contributors can fund the appeal and win rewards.
           </Heading>
-          <Subtext>
-            If you notice someone has posted a similar list or you spot a
-            mistake, withdraw your list in order to avoid a dispute.
-          </Subtext>
+          <Subtext>Note that if you fund the winning side of the dispute you will be gain ETH from funders of the other side.</Subtext>
         </Col>
       </Row>
-    </WithdrawBanner>
+    </DisputeBanner>
   );
 };

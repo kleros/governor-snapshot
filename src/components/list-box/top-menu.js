@@ -1,8 +1,8 @@
 import { Row, Col } from "antd";
-import makeBlockie from 'ethereum-blockies-base64';
+import makeBlockie from "ethereum-blockies-base64";
 import React from "react";
 import styled from "styled-components";
-import { useFetchSubmissionHash } from '../../hooks/governor'
+import { useFetchSubmissionHash } from "../../hooks/governor";
 import { monthIndexToAbbrev } from "../../util/text";
 
 const TopMenu = styled.div`
@@ -34,18 +34,18 @@ const Identicon = styled.a`
     height: 22px;
     border-radius: 22px;
     vertical-align: middle;
-    margin-bottom: 5px
+    margin-bottom: 5px;
   }
-`
+`;
 const WithdrawList = styled.div`
   font-weight: 600;
   font-size: 16px;
   line-height: 22px;
-  color: #009AFF;
+  color: #009aff;
   cursor: pointer;
   display: inline-block;
   margin-right: 20px;
-`
+`;
 
 export default ({
   listNumber,
@@ -55,24 +55,27 @@ export default ({
   setShowHide,
   withdrawable,
   governorContractInstance,
-  account
+  account,
 }) => {
-  const submissionHash = useFetchSubmissionHash(governorContractInstance, listNumber);
-  console.log(submissionHash)
+  const submissionHash = useFetchSubmissionHash(
+    governorContractInstance,
+    listNumber
+  );
 
   const sendWithdrawSubmission = () => {
-    governorContractInstance.methods.withdrawTransactionList(
-      listNumber,
-      submissionHash
-    ).send({
-      from: account
-    })
-  }
+    governorContractInstance.methods
+      .withdrawTransactionList(listNumber, submissionHash)
+      .send({
+        from: account,
+      });
+  };
 
   return (
     <TopMenu onClick={setShowHide}>
       <Row>
-        <Col lg={3} md={4} sm={4} xs={12}>List {listNumber}</Col>
+        <Col lg={3} md={4} sm={4} xs={12}>
+          List {listNumber}
+        </Col>
         <Col lg={3} md={4} sm={4} xs={12} style={{ color: "#4D00B4" }}>
           {numberOfTxs} TXs
         </Col>
@@ -90,11 +93,19 @@ export default ({
               {`${monthIndexToAbbrev(
                 submittedAt.getUTCMonth()
               )} ${submittedAt.getUTCDate()}, ${submittedAt.getUTCFullYear()}`}
-              {
-                withdrawable ? (
-                  <WithdrawList onClick={sendWithdrawSubmission} style={{marginLeft: '20px'}}>Withdraw List</WithdrawList>
-                ) : ''
-              }
+              {withdrawable ? (
+                <WithdrawList
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    sendWithdrawSubmission();
+                  }}
+                  style={{ marginLeft: "20px" }}
+                >
+                  Withdraw List
+                </WithdrawList>
+              ) : (
+                ""
+              )}
             </div>
           ) : (
             <div style={{ display: "inline-block" }}>Not submitted yet</div>
@@ -108,11 +119,7 @@ export default ({
               target="_blank"
               rel="noopener noreferrer"
             >
-              {
-                submitter ? (
-                  <img src={makeBlockie(submitter)} />
-                ) : ''
-              }
+              {submitter ? <img src={makeBlockie(submitter)} /> : ""}
             </Identicon>
           </div>
         </Col>

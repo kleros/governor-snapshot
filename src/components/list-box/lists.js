@@ -1,11 +1,11 @@
 import { Row, Col, Button, Tooltip, Spin } from "antd";
-import { LoadingOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import { LoadingOutlined, InfoCircleOutlined } from "@ant-design/icons";
 import React, { Fragment, useState, useEffect } from "react";
 import styled from "styled-components";
 import { useSubmitPendingList } from "../../hooks/governor";
 import { useFetchMethodsForContract } from "../../hooks/projects";
 import NewTxModal from "../new-list-modal";
-import Web3 from 'web3'
+import Web3 from "web3";
 
 const ListsContainer = styled.div`
   background: #ffffff;
@@ -33,40 +33,50 @@ export default ({
   addToPendingLists,
   web3,
   abiCache,
-  setAbiCache
+  setAbiCache,
 }) => {
   const [selectedTx, setSelectedTx] = useState(1);
-  const [ decodedData, setDecodedData ] = useState();
-  const [ _, abi, loading ] = useFetchMethodsForContract(txs[selectedTx - 1].address, abiCache, setAbiCache);
+  const [decodedData, setDecodedData] = useState();
+  const [_, abi, loading] = useFetchMethodsForContract(
+    txs[selectedTx - 1].address,
+    abiCache,
+    setAbiCache
+  );
 
   useEffect(() => {
     if (loading) {
-      setDecodedData((
-        <Spin indicator={<LoadingOutlined />} />
-      ))
+      setDecodedData(<Spin indicator={<LoadingOutlined />} />);
     } else {
-      let methodName
-      let parameters
-      const tx = txs[selectedTx - 1]
-      for (let i=0; i < abi.length; i++) {
+      let methodName;
+      let parameters;
+      const tx = txs[selectedTx - 1];
+      for (let i = 0; i < abi.length; i++) {
         if (abi[i].name && !abi[i].constant) {
-          const methodSig = web3.eth.abi.encodeFunctionSignature(abi[i])
-          if (tx.data.substring(0,10) === methodSig) {
-            const _parameters = abi[i].inputs.length ? web3.eth.abi.decodeParameters(abi[i].inputs, tx.data.substring(10,tx.data.length)) : {}
-            parameters = Object.keys(_parameters).splice(abi[i].inputs.length+1, abi[i].inputs.length*2).map(k => `${k} : ${_parameters[k]}`)
-            methodName = abi[i].name
-            break
+          const methodSig = web3.eth.abi.encodeFunctionSignature(abi[i]);
+          if (tx.data.substring(0, 10) === methodSig) {
+            const _parameters = abi[i].inputs.length
+              ? web3.eth.abi.decodeParameters(
+                  abi[i].inputs,
+                  tx.data.substring(10, tx.data.length)
+                )
+              : {};
+            parameters = Object.keys(_parameters)
+              .splice(abi[i].inputs.length + 1, abi[i].inputs.length * 2)
+              .map((k) => `${k} : ${_parameters[k]}`);
+            methodName = abi[i].name;
+            break;
           }
         }
       }
-      if (methodName)
-        setDecodedData(`${methodName}(${parameters})`)
+      if (methodName) setDecodedData(`${methodName}(${parameters})`);
       else
-        setDecodedData((
-          <Tooltip title={"ABI must be verified on Etherscan"}>Not available <InfoCircleOutlined /></Tooltip>
-        ))
+        setDecodedData(
+          <Tooltip title={"ABI must be verified on Etherscan"}>
+            Not available <InfoCircleOutlined />
+          </Tooltip>
+        );
     }
-  }, [ abi, selectedTx, loading ])
+  }, [abi, selectedTx, loading]);
 
   return (
     <Row>
@@ -98,9 +108,15 @@ export default ({
                   );
                 }}
               >
-                <Tooltip title="This deposit will be returned if your list is executed. Deposit can be lost in the event of a dispute.">{`Submit List with ${Web3.utils.fromWei(String(costPerTx))} ETH Deposit`}</Tooltip>
+                <Tooltip title="This deposit will be returned if your list is executed. Deposit can be lost in the event of a dispute.">{`Submit List with ${Web3.utils.fromWei(
+                  String(costPerTx)
+                )} ETH Deposit`}</Tooltip>
               </SubmitListsButton>
-              <NewTxModal setPendingLists={addToPendingLists} addTx={true} web3={web3} />
+              <NewTxModal
+                setPendingLists={addToPendingLists}
+                addTx={true}
+                web3={web3}
+              />
             </div>
           ) : (
             ""

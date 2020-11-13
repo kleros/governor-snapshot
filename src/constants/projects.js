@@ -19,15 +19,5 @@ export default [
     icon: <KlerosLogo />,
     governorAddress: "0x5355629eebb23b4b86a623f8d247b5fe44005613",
     arbitratorAddress: "0x60b2abfdfad9c0873242f59f2a8c32a3cc682f80",
-  },
-  {
-    name: "kleros",
-    icon: <KlerosLogo />,
-    governorAddress: "0xe5bcea6f87aaee4a81f64dfdb4d30d400e0e5cf4",
-  },
-  {
-    name: "kleros",
-    icon: <KlerosLogo />,
-    governorAddress: "0xe5bcea6f87aaee4a81f64dfdb4d30d400e0e5cf4",
-  },
+  }
 ];

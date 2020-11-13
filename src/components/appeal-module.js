@@ -45,7 +45,7 @@ export default ({
   // Get appeal information from Governor
   const sessionRoundInformation = useFetchRoundInfo(
     governorContractInstance,
-    session.sessionNumber || "0"
+    session.currentSessionNumber || "0"
   );
   const arbitratorExtraData = useFetchArbitratorExtraData(
     governorContractInstance
@@ -55,7 +55,8 @@ export default ({
   );
   const submittedLists = useFetchSubmittedLists(
     governorContractInstance,
-    web3
+    web3,
+    session.currentSessionNumber
   );
 
   // Get appeal information from Arbitrator

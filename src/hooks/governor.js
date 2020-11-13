@@ -17,7 +17,7 @@ export const useFetchSessionNumber = (governorContractInstance) => {
       .then((r) => {
         setSessionNumber(Number(r));
       });
-  }, []);
+  }, [governorContractInstance]);
 
   return sessionNumber;
 };
@@ -48,11 +48,10 @@ export const useFetchSessionStart = (governorContractInstance) => {
  param: governorContractInstance - web3 Contract object
  return: Date object at the end of the session
  */
-export const useFetchSessionEnd = (governorContractInstance) => {
+export const useFetchSessionEnd = (governorContractInstance, sessionNumber) => {
   const [submissionTimeout, setSubmissionTimeout] = useState(0);
   const [durationOffset, setDurationOffset] = useState(0);
   const sessionStart = useFetchSessionStart(governorContractInstance);
-  const sessionNumber = useFetchSessionNumber(governorContractInstance);
 
   // Initial calls
   useEffect(() => {
@@ -88,12 +87,11 @@ export const useFetchSessionEnd = (governorContractInstance) => {
  param: governorContractInstance - web3 Contract object
  return: Date object at the end of the session
  */
-export const useFetchSubmittedLists = (governorContractInstance, web3) => {
+export const useFetchSubmittedLists = (governorContractInstance, web3, sessionNumber) => {
   const [sessionListIDs, setSessionListIDs] = useState([]);
   const [listEventLogs, setListEventLogs] = useState([]);
   const [numberOfTxs, setNumberOfTxs] = useState([]);
   const [listTxData, setListTxData] = useState([]);
-  const sessionNumber = useFetchSessionNumber(governorContractInstance);
 
   // Fetch ListIDs for session
   useEffect(() => {

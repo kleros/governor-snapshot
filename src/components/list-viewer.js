@@ -24,8 +24,9 @@ export default ({
   web3,
   abiCache,
   setAbiCache,
+  session
 }) => {
-  const submittedLists = useFetchSubmittedLists(governorContractInstance, web3);
+  const submittedLists = useFetchSubmittedLists(governorContractInstance, web3, session.currentSessionNumber || "0");
   const costPerlist = useFetchListSubmissionCost(
     governorContractInstance,
     arbitratorContractInstance

@@ -25,10 +25,9 @@ const StyledTimeAgo = styled(TimeAgo)`
   line-height: 26px;
 `;
 
-export default ({ governorContractInstance, account }) => {
+export default ({ governorContractInstance, account, session }) => {
   const sessionStart = useFetchSessionStart(governorContractInstance);
-  const sessionEnd = useFetchSessionEnd(governorContractInstance);
-  const session = useFetchSession(governorContractInstance);
+  const sessionEnd = useFetchSessionEnd(governorContractInstance, session.currentSessionNumber);
 
   const sendExecuteSubmissions = governorContractInstance.methods.executeSubmissions();
   return (

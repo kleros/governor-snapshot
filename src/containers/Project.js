@@ -121,6 +121,7 @@ export default (props) => {
       <InfoBanner
         governorContractInstance={governorContractInstance}
         account={account}
+        session={session}
       />
       <ListOptionsRow>
         <Col lg={20} md={12} sm={12} xs={12}>
@@ -181,6 +182,7 @@ export default (props) => {
         web3={props.web3}
         abiCache={abiCache}
         setAbiCache={setAbiCache}
+        session={session}
       />
     {session.disputeID ?
       <AppealModule

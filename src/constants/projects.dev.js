@@ -19,5 +19,5 @@ export default [
     icon: <KlerosLogo />,
     governorAddress: "0x5355629eebb23b4b86a623f8d247b5fe44005613",
     arbitratorAddress: "0x60b2abfdfad9c0873242f59f2a8c32a3cc682f80",
-  }
+  },
 ];

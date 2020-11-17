@@ -1,7 +1,7 @@
 import { Row, Col, Button } from "antd";
 import React, { Fragment } from "react";
 import styled from "styled-components";
-import { useFetchSessionStart, useFetchSessionEnd, useFetchSession } from "../hooks/governor";
+import { useFetchSessionStart, useFetchSessionEnd } from "../hooks/governor";
 import { monthIndexToAbbrev } from "../util/text";
 import TimeAgo from "./time-ago";
 
@@ -27,7 +27,10 @@ const StyledTimeAgo = styled(TimeAgo)`
 
 export default ({ governorContractInstance, account, session }) => {
   const sessionStart = useFetchSessionStart(governorContractInstance);
-  const sessionEnd = useFetchSessionEnd(governorContractInstance, session.currentSessionNumber);
+  const sessionEnd = useFetchSessionEnd(
+    governorContractInstance,
+    session.currentSessionNumber
+  );
 
   const sendExecuteSubmissions = governorContractInstance.methods.executeSubmissions();
   return (
@@ -50,24 +53,21 @@ export default ({ governorContractInstance, account, session }) => {
         <Col lg={6} md={12} sm={14}>
           {Number(sessionEnd.getTime()) < Number(new Date().getTime()) ? (
             <Fragment>
-              {
-                session && session.disputeID ? (
-                  <div />
-                ) : (
-                  <Button
-                    disabled={!account}
-                    type="primary"
-                    onClick={() =>
-                      sendExecuteSubmissions.send({
-                        from: account,
-                      })
-                    }
-                  >
-                    Execute Submissions
-                  </Button>
-                )
-              }
-
+              {session && session.disputeID ? (
+                <div />
+              ) : (
+                <Button
+                  disabled={!account}
+                  type="primary"
+                  onClick={() =>
+                    sendExecuteSubmissions.send({
+                      from: account,
+                    })
+                  }
+                >
+                  Execute Submissions
+                </Button>
+              )}
             </Fragment>
           ) : (
             <SessionEndText>

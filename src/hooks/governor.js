@@ -87,7 +87,11 @@ export const useFetchSessionEnd = (governorContractInstance, sessionNumber) => {
  param: governorContractInstance - web3 Contract object
  return: Date object at the end of the session
  */
-export const useFetchSubmittedLists = (governorContractInstance, web3, sessionNumber) => {
+export const useFetchSubmittedLists = (
+  governorContractInstance,
+  web3,
+  sessionNumber
+) => {
   const [sessionListIDs, setSessionListIDs] = useState([]);
   const [listEventLogs, setListEventLogs] = useState([]);
   const [numberOfTxs, setNumberOfTxs] = useState([]);
@@ -131,7 +135,12 @@ export const useFetchSubmittedLists = (governorContractInstance, web3, sessionNu
   useEffect(() => {
     const _fetchTxInfo = async () => {
       let _txInfo = [];
-      if (listEventLogs.length && sessionListIDs && listEventLogs.length === sessionListIDs.length && numberOfTxs ) {
+      if (
+        listEventLogs.length &&
+        sessionListIDs &&
+        listEventLogs.length === sessionListIDs.length &&
+        numberOfTxs
+      ) {
         _txInfo = await Promise.all(
           sessionListIDs.map(async (_listID, i) => {
             const txs = [];

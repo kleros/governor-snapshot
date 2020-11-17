@@ -184,14 +184,17 @@ export default (props) => {
         setAbiCache={setAbiCache}
         session={session}
       />
-    {session.disputeID ?
-      <AppealModule
-        session={session}
-        governorContractInstance={governorContractInstance}
-        arbitratorContractInstance={arbitratorContractInstance}
-        web3={props.web3}
-        account={account}
-      /> : ""}
+      {session.disputeID ? (
+        <AppealModule
+          session={session}
+          governorContractInstance={governorContractInstance}
+          arbitratorContractInstance={arbitratorContractInstance}
+          web3={props.web3}
+          account={account}
+        />
+      ) : (
+        ""
+      )}
     </StyledProjectHome>
   );
 };

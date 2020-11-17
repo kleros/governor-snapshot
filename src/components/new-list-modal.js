@@ -52,6 +52,11 @@ const StyledSelect = styled(Select)`
   line-height: 22px;
   min-width: 220px;
 `;
+const Error = styled.div`
+  color: red;
+  font-style: italic;
+  font-size: 12px;
+`;
 
 export default ({
   setPendingLists,
@@ -67,6 +72,7 @@ export default ({
   const [address, setAddress] = useState();
   const [value, setValue] = useState("0");
   const [data, setData] = useState();
+  const [errors, setErrors] = useState([]);
   const [submittable, setSubmittable] = useState(false);
   const [methodSelected, setMethodSelected] = useState();
   const [methodInputs, setMethodInputs] = useState([]);
@@ -119,7 +125,7 @@ export default ({
 
   useEffect(() => {
     if (methods.length && !data) setInputType("contract");
-  }, [methods]);
+  }, [methods, data]);
 
   const _setMethodInput = (val, index) => {
     const _methodInputs = [...methodInputs];
@@ -128,8 +134,11 @@ export default ({
   };
 
   useEffect(() => {
+    let _e = [...errors];
+    let _newErrors = false;
+
     if (title && address && value) {
-      if (inputType == "contract") {
+      if (inputType === "contract") {
         // Check to see if all inputs are filled
         const numberOfInputs = methods.filter(
           (a) => a.name === methodSelected
@@ -139,13 +148,30 @@ export default ({
         } else if (submittable) {
           setSubmittable(false);
         }
-      } else if (inputType == "data") {
+      } else if (inputType === "data") {
         if (data) {
           if (!submittable) setSubmittable(true);
         } else if (submittable) {
           setSubmittable(false);
         }
       }
+    }
+    // Input specific errors
+    if (address) {
+      if (!web3.utils.isAddress(address)) {
+        _e[1] = "Malformed address";
+        setErrors(_e);
+        _newErrors = true;
+      } else {
+        if (_e[1]) {
+          _e[1] = undefined;
+          setErrors(_e);
+        }
+      }
+    }
+
+    if (_newErrors) {
+      setSubmittable(false);
     }
   }, [title, address, value, data, methodSelected, methodInputs]);
 
@@ -177,6 +203,7 @@ export default ({
           value={address}
           onChange={(e) => setAddress(e.target.value)}
         />
+        <Error>{errors[1] || ""}</Error>
         <InputLabel>
           <Tooltip title="in WEI">Value</Tooltip>
         </InputLabel>

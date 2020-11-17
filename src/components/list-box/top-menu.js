@@ -119,7 +119,7 @@ export default ({
               target="_blank"
               rel="noopener noreferrer"
             >
-              {submitter ? <img src={makeBlockie(submitter)} /> : ""}
+              {submitter ? <img src={makeBlockie(submitter)} alt={""} /> : ""}
             </Identicon>
           </div>
         </Col>

@@ -67,7 +67,7 @@ export const useFetchMethodsForContract = (
         const _methods = [];
         await Promise.all(
           _abi.map((abiItem, i) => {
-            if (!abiItem.constant && abiItem.type == "function") {
+            if (!abiItem.constant && abiItem.type === "function") {
               _methods.push({
                 name: abiItem.name,
                 inputs: abiItem.inputs,

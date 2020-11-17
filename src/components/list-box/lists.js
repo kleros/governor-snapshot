@@ -1,6 +1,6 @@
 import { Row, Col, Button, Tooltip, Spin } from "antd";
 import { LoadingOutlined, InfoCircleOutlined } from "@ant-design/icons";
-import React, { Fragment, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useSubmitPendingList } from "../../hooks/governor";
 import { useFetchMethodsForContract } from "../../hooks/projects";

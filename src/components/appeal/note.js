@@ -27,7 +27,7 @@ const StyledInfoCol = styled(Col)`
   line-height: 34px;
 `;
 
-export default ({}) => {
+export default () => {
   return (
     <DisputeBanner>
       <Row>
@@ -38,7 +38,10 @@ export default ({}) => {
           <Heading>
             External contributors can fund the appeal and win rewards.
           </Heading>
-          <Subtext>Note that if you fund the winning side of the dispute you will be gain ETH from funders of the other side.</Subtext>
+          <Subtext>
+            Note that if you fund the winning side of the dispute you will be
+            gain ETH from funders of the other side.
+          </Subtext>
         </Col>
       </Row>
     </DisputeBanner>

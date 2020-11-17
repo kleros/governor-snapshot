@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import styled from "styled-components";
 import ListBoxTopMenu from "./top-menu";
 import ListBoxLists from "./lists";
 import { useIsWithdrawable } from "../../hooks/governor";

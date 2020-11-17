@@ -34,9 +34,7 @@ export default ({ heading, subtext }) => {
           <InfoCircleOutlined />
         </StyledInfoCol>
         <Col lg={22}>
-          <Heading>
-            {heading}
-          </Heading>
+          <Heading>{heading}</Heading>
           <Subtext>{subtext}</Subtext>
         </Col>
       </Row>

@@ -1,0 +1,10 @@
+[build.environment]
+  REACT_APP_CONTEXT='staging'
+
+[context.production.environment]
+  REACT_APP_CONTEXT='production'
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

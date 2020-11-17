@@ -57,7 +57,12 @@ const StyledHeader = styled(Layout.Header)`
 
 class App extends PureComponent {
   render() {
-    const web3 = new Web3(window.ethereum);
+    let web3
+    if (window.web3) {
+      web3 = new Web3(window.web3.currentProvider);
+      window.ethereum.enable();
+    }
+
     return (
       <div>
         <Helmet>

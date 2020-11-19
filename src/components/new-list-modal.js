@@ -1,4 +1,5 @@
 import { Button, Modal, Input, Radio, Select, Tooltip } from "antd";
+import { InfoCircleOutlined } from '@ant-design/icons'
 import React, { useState, Fragment, useEffect } from "react";
 import { useFetchMethodsForContract } from "../hooks/projects";
 import styled from "styled-components";
@@ -57,6 +58,12 @@ const Error = styled.div`
   font-style: italic;
   font-size: 12px;
 `;
+const SubmitEmptyList = styled.div`
+  font-style: italic;
+  cursor: pointer;
+  color: rgba(0, 0, 0, 0.4);
+  font-size: 12px;
+`;
 
 export default ({
   setPendingLists,
@@ -65,6 +72,9 @@ export default ({
   web3,
   abiCache,
   setAbiCache,
+  governorContractInstance,
+  costPerTx,
+  account
 }) => {
   const [visible, setVisible] = useState(false);
   const [inputType, setInputType] = useState("data");
@@ -81,6 +91,13 @@ export default ({
     abiCache,
     setAbiCache
   );
+
+  const submitEmptyList = () => {
+    governorContractInstance.methods.submitList([], [], '0x', [], '').send({
+      from: account,
+      value: costPerTx
+    })
+  }
 
   const methodToData = () => {
     const contractInstance = new web3.eth.Contract(abi, address);
@@ -137,42 +154,45 @@ export default ({
     let _e = [...errors];
     let _newErrors = false;
 
-    if (title && address && value) {
-      if (inputType === "contract") {
-        // Check to see if all inputs are filled
-        const numberOfInputs = methods.filter(
-          (a) => a.name === methodSelected
-        )[0].inputs.length;
-        if (numberOfInputs === methodInputs.length) {
-          if (!submittable) setSubmittable(true);
-        } else if (submittable) {
-          setSubmittable(false);
-        }
-      } else if (inputType === "data") {
-        if (data) {
-          if (!submittable) setSubmittable(true);
-        } else if (submittable) {
-          setSubmittable(false);
+    try {
+      if (title && address && value) {
+        if (inputType === "contract") {
+          // Check to see if all inputs are filled
+          const numberOfInputs = methods.filter(
+            (a) => a.name === methodSelected
+          )[0].inputs.length;
+          if (numberOfInputs === methodInputs.length) {
+            if (!submittable) setSubmittable(true);
+          } else if (submittable) {
+            setSubmittable(false);
+          }
+        } else if (inputType === "data") {
+          if (data) {
+            if (!submittable) setSubmittable(true);
+          } else if (submittable) {
+            setSubmittable(false);
+          }
         }
       }
-    }
-    // Input specific errors
-    if (address) {
-      if (!web3.utils.isAddress(address)) {
-        _e[1] = "Malformed address";
-        setErrors(_e);
-        _newErrors = true;
-      } else {
-        if (_e[1]) {
-          _e[1] = undefined;
+      // Input specific errors
+      if (address) {
+        if (!web3.utils.isAddress(address)) {
+          _e[1] = "Malformed address";
           setErrors(_e);
+          _newErrors = true;
+        } else {
+          if (_e[1]) {
+            _e[1] = undefined;
+            setErrors(_e);
+          }
         }
       }
-    }
 
-    if (_newErrors) {
-      setSubmittable(false);
-    }
+      if (_newErrors) {
+        setSubmittable(false);
+      }
+    } catch (e) {}
+
   }, [title, address, value, data, methodSelected, methodInputs]);
 
   return (
@@ -273,6 +293,14 @@ export default ({
         >
           Submit
         </StyledSubmit>
+        <SubmitEmptyList onClick={submitEmptyList}>
+          <Tooltip
+            title={
+              "Submit an empty list to start a dispute if no actions should be taken for this session"
+            }>
+              Submit Empty List <InfoCircleOutlined />
+          </Tooltip>
+        </SubmitEmptyList>
       </Modal>
     </Fragment>
   );

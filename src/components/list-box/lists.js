@@ -34,6 +34,7 @@ export default ({
   web3,
   abiCache,
   setAbiCache,
+  onClear
 }) => {
   const [selectedTx, setSelectedTx] = useState(1);
   const [decodedData, setDecodedData] = useState();
@@ -42,6 +43,11 @@ export default ({
     abiCache,
     setAbiCache
   );
+
+  const _onClear = (index) => {
+    setSelectedTx(1)
+    onClear(index)
+  }
 
   useEffect(() => {
     if (loading) {
@@ -91,6 +97,8 @@ export default ({
                   txNumber={i + 1}
                   selected={i + 1 === selectedTx}
                   onClick={setSelectedTx}
+                  onClear={_onClear}
+                  submittable={submittable}
                 />
               );
             })}
@@ -171,11 +179,17 @@ const TxRowSelected = styled.div`
   background: rgba(0, 154, 255, 0.06);
   border-left: 4px solid #009aff;
 `;
+const ClearX = styled.div`
+  float: right;
+  cursor: pointer;
+  color: rgba(0, 0, 0, 0.4);
+  margin-right: 5px;
+`
 
-const TxRow = ({ title, txNumber, selected, onClick }) => {
+const TxRow = ({ title, txNumber, selected, onClick, onClear, submittable }) => {
   const _text = `Tx${txNumber}: ${title}`;
 
-  if (selected) return <TxRowSelected>{_text}</TxRowSelected>;
+  if (selected) return <TxRowSelected>{_text} {submittable ? (<ClearX onClick={() => onClear(txNumber - 1)}>x</ClearX>) : ''}</TxRowSelected>;
   else
     return (
       <StyledTxRow

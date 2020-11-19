@@ -18,6 +18,7 @@ export default ({
   abiCache,
   setAbiCache,
   account,
+  onClear
 }) => {
   const [showLists, setShowLists] = useState(showByDefault);
   // If list is pending it won't have submittedAt timestamp
@@ -53,6 +54,7 @@ export default ({
           web3={web3}
           abiCache={abiCache}
           setAbiCache={setAbiCache}
+          onClear={onClear}
         />
       ) : (
         ""

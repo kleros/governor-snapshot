@@ -6,7 +6,6 @@ import DisputeBanner from "./dispute-banner";
 
 import {
   useFetchSubmittedLists,
-  useFetchListSubmissionCost,
 } from "../hooks/governor";
 
 const NoListsText = styled.div`
@@ -25,15 +24,13 @@ export default ({
   abiCache,
   setAbiCache,
   session,
+  costPerTx,
+  onClear
 }) => {
   const submittedLists = useFetchSubmittedLists(
     governorContractInstance,
     web3,
     session.currentSessionNumber || "0"
-  );
-  const costPerlist = useFetchListSubmissionCost(
-    governorContractInstance,
-    arbitratorContractInstance
   );
 
   if (pendingLists && pendingLists.length) {
@@ -44,12 +41,13 @@ export default ({
         submitter={account}
         submittable={true}
         showByDefault={true}
-        costPerTx={costPerlist}
+        costPerTx={costPerTx}
         governorContractInstance={governorContractInstance}
         addToPendingLists={addToPendingLists}
         web3={web3}
         abiCache={abiCache}
         setAbiCache={setAbiCache}
+        onClear={onClear}
       />
     );
   }

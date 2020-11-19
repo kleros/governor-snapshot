@@ -11,7 +11,7 @@ import GovernorInterface from "../constants/abis/governor.json";
 import ArbitratorInterface from "../constants/abis/court.json";
 import { useFetchProjectByName } from "../hooks/projects";
 import { useFetchAccount } from "../hooks/account";
-import { useFetchSession } from "../hooks/governor";
+import { useFetchSession, useFetchListSubmissionCost } from "../hooks/governor";
 import { capitalizeString } from "../util/text";
 
 const Dot = styled.div`
@@ -96,6 +96,19 @@ export default (props) => {
 
   const session = useFetchSession(governorContractInstance);
 
+  const costPerTx = useFetchListSubmissionCost(
+    governorContractInstance,
+    arbitratorContractInstance
+  );
+
+  const clearTx = (index) => {
+    const _pendingLists = [ ...pendingLists ]
+    if (index > -1) {
+      _pendingLists.splice(index, 1)
+      setPendingLists(_pendingLists)
+    }
+  }
+
   return (
     <StyledProjectHome>
       <Row>
@@ -163,6 +176,9 @@ export default (props) => {
             web3={props.web3}
             abiCache={abiCache}
             setAbiCache={setAbiCache}
+            costPerTx={costPerTx}
+            account={account}
+            governorContractInstance={governorContractInstance}
           />
         </Col>
       </ListOptionsRow>
@@ -183,6 +199,8 @@ export default (props) => {
         abiCache={abiCache}
         setAbiCache={setAbiCache}
         session={session}
+        costPerTx={costPerTx}
+        onClear={clearTx}
       />
       {session.disputeID ? (
         <AppealModule

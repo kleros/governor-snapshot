@@ -124,6 +124,8 @@ export default ({
                 setPendingLists={addToPendingLists}
                 addTx={true}
                 web3={web3}
+                governorContractInstance={governorContractInstance}
+                costPerTx={costPerTx}
               />
             </div>
           ) : (

@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { useFetchSessionStart, useFetchSessionEnd } from "../hooks/governor";
 import { monthIndexToAbbrev } from "../util/text";
 import TimeAgo from "./time-ago";
+import SnapshotLogo from '../assets/logos/snapshot.png'
 
 const InfoBanner = styled.div`
   background: #fbf9fe;
@@ -25,7 +26,7 @@ const StyledTimeAgo = styled(TimeAgo)`
   line-height: 26px;
 `;
 
-export default ({ governorContractInstance, account, session }) => {
+export default ({ governorContractInstance, account, session, snapshotSlug }) => {
   const sessionStart = useFetchSessionStart(governorContractInstance);
   const sessionEnd = useFetchSessionEnd(
     governorContractInstance,
@@ -39,7 +40,8 @@ export default ({ governorContractInstance, account, session }) => {
         <Col lg={18} md={12} sm={10}>
           <span>
             Governor decision from{" "}
-            <a href={`https://snapshot.page/#/`}>Snapshot.</a>
+            <img src={SnapshotLogo} style={{height: '16px'}}/>
+            <a href={`https://snapshot.page/#/${snapshotSlug}`}>Snapshot.</a>
           </span>
           <br />
           <span>

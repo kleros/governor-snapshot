@@ -1,5 +1,5 @@
 import { Col, Row, Select } from "antd";
-import { InfoCircleOutlined, ArrowLeftOutlined } from "@ant-design/icons";
+import { ArrowLeftOutlined } from "@ant-design/icons";
 import React, { useState } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
@@ -7,6 +7,7 @@ import InfoBanner from "../components/info-banner";
 import NewListModal from "../components/new-list-modal";
 import ListViewer from "../components/list-viewer";
 import AppealModule from "../components/appeal-module";
+import HowItWorks from "../components/how-it-works"
 import GovernorInterface from "../constants/abis/governor.json";
 import ArbitratorInterface from "../constants/abis/court.json";
 import { useFetchProjectByName } from "../hooks/projects";
@@ -125,16 +126,14 @@ export default (props) => {
           </StyledHeader>
         </Col>
         <Col lg={4} md={6} sm={6} xs={8}>
-          <LinkText style={{ float: "right", lineHeight: "36px" }}>
-            How it works
-            <InfoCircleOutlined style={{ marginLeft: "5px" }} />
-          </LinkText>
+          <HowItWorks />
         </Col>
       </Row>
       <InfoBanner
         governorContractInstance={governorContractInstance}
         account={account}
         session={session}
+        snapshotSlug={projectInfo.snapshotSlug}
       />
       <ListOptionsRow>
         <Col lg={20} md={12} sm={12} xs={12}>

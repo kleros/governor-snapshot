@@ -1,5 +1,4 @@
 import { Button, Modal, Input, Radio, Select, Tooltip } from "antd";
-import { InfoCircleOutlined } from '@ant-design/icons'
 import React, { useState, Fragment, useEffect } from "react";
 import { useFetchMethodsForContract } from "../hooks/projects";
 import styled from "styled-components";
@@ -58,12 +57,6 @@ const Error = styled.div`
   font-style: italic;
   font-size: 12px;
 `;
-const SubmitEmptyList = styled.div`
-  font-style: italic;
-  cursor: pointer;
-  color: rgba(0, 0, 0, 0.4);
-  font-size: 12px;
-`;
 
 export default ({
   setPendingLists,
@@ -91,13 +84,6 @@ export default ({
     abiCache,
     setAbiCache
   );
-
-  const submitEmptyList = () => {
-    governorContractInstance.methods.submitList([], [], '0x', [], '').send({
-      from: account,
-      value: costPerTx
-    })
-  }
 
   const methodToData = () => {
     const contractInstance = new web3.eth.Contract(abi, address);
@@ -293,14 +279,6 @@ export default ({
         >
           Submit
         </StyledSubmit>
-        <SubmitEmptyList onClick={submitEmptyList}>
-          <Tooltip
-            title={
-              "Submit an empty list to start a dispute if no actions should be taken for this session"
-            }>
-              Submit Empty List <InfoCircleOutlined />
-          </Tooltip>
-        </SubmitEmptyList>
       </Modal>
     </Fragment>
   );

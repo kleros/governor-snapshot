@@ -33,7 +33,7 @@ export default ({
     session.currentSessionNumber || "0"
   );
 
-  if (pendingLists && pendingLists.length) {
+  if (pendingLists) {
     return (
       <ListBox
         txs={pendingLists}

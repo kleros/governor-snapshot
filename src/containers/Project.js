@@ -1,4 +1,4 @@
-import { Col, Row, Select } from "antd";
+import { Col, Row, Select, Button } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import React, { useState } from "react";
 import styled from "styled-components";
@@ -73,7 +73,7 @@ export default (props) => {
     match: { params },
   } = props;
   const [listsShown, setListsShown] = useState("current");
-  const [pendingLists, setPendingLists] = useState([]);
+  const [pendingLists, setPendingLists] = useState();
   // Cache ABIs
   const [abiCache, setAbiCache] = useState({});
 
@@ -169,20 +169,16 @@ export default (props) => {
           </StyledSelect>
         </Col>
         <Col lg={4} md={12} sm={12} xs={12}>
-          <NewListModal
-            setPendingLists={addToPendingLists}
-            disabled={pendingLists.length > 0}
-            web3={props.web3}
-            abiCache={abiCache}
-            setAbiCache={setAbiCache}
-            costPerTx={costPerTx}
-            account={account}
-            governorContractInstance={governorContractInstance}
-          />
+          <Button
+            type="primary"
+            disabled={pendingLists}
+            style={{float: 'right'}}
+            onClick={() => setPendingLists([])}
+          >New List</Button>
         </Col>
       </ListOptionsRow>
-      {pendingLists.length > 0 ? (
-        <ReturnButton onClick={() => setPendingLists([])}>
+      {pendingLists ? (
+        <ReturnButton onClick={() => setPendingLists(undefined)}>
           <ArrowLeftOutlined /> Return
         </ReturnButton>
       ) : (

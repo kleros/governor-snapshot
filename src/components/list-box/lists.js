@@ -37,9 +37,10 @@ export default ({
   onClear
 }) => {
   const [selectedTx, setSelectedTx] = useState(1);
+  const tx = txs[selectedTx - 1]
   const [decodedData, setDecodedData] = useState();
   const [_, abi, loading] = useFetchMethodsForContract(
-    txs[selectedTx - 1].address,
+    tx ? tx.address : '',
     abiCache,
     setAbiCache
   );
@@ -49,13 +50,19 @@ export default ({
     onClear(index)
   }
 
+  const submitEmptyList = () => {
+    governorContractInstance.methods.submitList([], [], '0x', [], '').send({
+      from: submitter,
+      value: costPerTx
+    })
+  }
+
   useEffect(() => {
     if (loading) {
       setDecodedData(<Spin indicator={<LoadingOutlined />} />);
     } else {
       let methodName;
       let parameters;
-      const tx = txs[selectedTx - 1];
       for (let i = 0; i < abi.length; i++) {
         if (abi[i].name && !abi[i].constant) {
           const methodSig = web3.eth.abi.encodeFunctionSignature(abi[i]);
@@ -108,12 +115,15 @@ export default ({
               <SubmitListsButton
                 type="primary"
                 onClick={() => {
-                  useSubmitPendingList(
-                    txs,
-                    governorContractInstance,
-                    costPerTx,
-                    submitter
-                  );
+                  if (txs.length)
+                    useSubmitPendingList(
+                      txs,
+                      governorContractInstance,
+                      costPerTx,
+                      submitter
+                    );
+                  else
+                    submitEmptyList()
                 }}
               >
                 <Tooltip title="This deposit will be returned if your list is executed. Deposit can be lost in the event of a dispute.">{`Submit List with ${Web3.utils.fromWei(
@@ -136,15 +146,15 @@ export default ({
       <Col lg={8}>
         <ListBreakdownBox
           header={"Contract Address"}
-          content={txs[selectedTx - 1].address}
+          content={tx ? tx.address : ''}
         />
         <ListBreakdownBox
           header={"Value"}
-          content={txs[selectedTx - 1].value}
+          content={tx ? tx.value : ''}
         />
         <ListBreakdownBox
           header={"Data Input"}
-          content={txs[selectedTx - 1].data}
+          content={tx ? tx.data : ''}
         />
         <ListBreakdownBox
           header={"Decoded Contract Input"}

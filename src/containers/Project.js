@@ -14,6 +14,9 @@ import { useFetchProjectByName } from "../hooks/projects";
 import { useFetchAccount } from "../hooks/account";
 import { useFetchSession, useFetchListSubmissionCost } from "../hooks/governor";
 import { capitalizeString } from "../util/text";
+import {
+  useFetchSubmittedLists,
+} from "../hooks/governor";
 
 const Dot = styled.div`
   height: 8px;
@@ -110,6 +113,12 @@ export default (props) => {
     }
   }
 
+  const submittedLists = useFetchSubmittedLists(
+    governorContractInstance,
+    props.web3,
+    session.currentSessionNumber || "0"
+  );
+
   return (
     <StyledProjectHome>
       <Row>
@@ -134,6 +143,7 @@ export default (props) => {
         account={account}
         session={session}
         snapshotSlug={projectInfo.snapshotSlug}
+        showTimeout={!!submittedLists.length}
       />
       <ListOptionsRow>
         <Col lg={20} md={12} sm={12} xs={12}>
@@ -196,6 +206,7 @@ export default (props) => {
         session={session}
         costPerTx={costPerTx}
         onClear={clearTx}
+        submittedLists={submittedLists}
       />
       {session.disputeID ? (
         <AppealModule

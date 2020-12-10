@@ -4,10 +4,6 @@ import styled from "styled-components";
 import ListBox from "./list-box/index";
 import DisputeBanner from "./dispute-banner";
 
-import {
-  useFetchSubmittedLists,
-} from "../hooks/governor";
-
 const NoListsText = styled.div`
   font-size: 16px;
   line-height: 22px;
@@ -25,14 +21,9 @@ export default ({
   setAbiCache,
   session,
   costPerTx,
-  onClear
+  onClear,
+  submittedLists
 }) => {
-  const submittedLists = useFetchSubmittedLists(
-    governorContractInstance,
-    web3,
-    session.currentSessionNumber || "0"
-  );
-
   if (pendingLists) {
     return (
       <ListBox

@@ -82,12 +82,18 @@ export default ({
         }
       }
       if (methodName) setDecodedData(`${methodName}(${parameters})`);
-      else
-        setDecodedData(
-          <Tooltip title={"ABI must be verified on Etherscan"}>
-            Not available <InfoCircleOutlined />
-          </Tooltip>
-        );
+      else {
+        if (tx) {
+          setDecodedData(
+            <Tooltip title={"ABI must be verified on Etherscan"}>
+              Not available <InfoCircleOutlined />
+            </Tooltip>
+          );
+        } else {
+          setDecodedData(undefined)
+        }
+      }
+
     }
   }, [abi, selectedTx, loading]);
 
@@ -245,7 +251,7 @@ const ListBreakdownBox = ({ header, content }) => {
   return (
     <ListBreakdownContainer>
       <ListBreakdownHeader>{header}</ListBreakdownHeader>
-      <ListBreakdownContent>{content || "Not Available"}</ListBreakdownContent>
+      <ListBreakdownContent>{content || (<br />)}</ListBreakdownContent>
     </ListBreakdownContainer>
   );
 };

@@ -9,6 +9,7 @@ const WithdrawBanner = styled.div`
   box-sizing: border-box;
   border-radius: 3px;
   padding: 25px 24px;
+  margin-bottom: 20px;
 `;
 const Heading = styled.div`
   font-weight: 600;

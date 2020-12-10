@@ -9,4 +9,10 @@ export default [
     arbitratorAddress: "0x988b3a538b618c7a603e1c11ab82cd16dbe28069",
     snapshotSlug: 'kleros'
   },
+  {
+    name: "kleros Kovan",
+    icon: <KlerosLogo />,
+    governorAddress: "0x5355629eebb23b4b86a623f8d247b5fe44005613",
+    arbitratorAddress: "0x60b2abfdfad9c0873242f59f2a8c32a3cc682f80",
+  },
 ];

@@ -26,7 +26,7 @@ const StyledTimeAgo = styled(TimeAgo)`
   line-height: 26px;
 `;
 
-export default ({ governorContractInstance, account, session, snapshotSlug }) => {
+export default ({ governorContractInstance, account, session, snapshotSlug, showTimeout }) => {
   const sessionStart = useFetchSessionStart(governorContractInstance);
   const sessionEnd = useFetchSessionEnd(
     governorContractInstance,
@@ -34,6 +34,7 @@ export default ({ governorContractInstance, account, session, snapshotSlug }) =>
   );
 
   const sendExecuteSubmissions = governorContractInstance.methods.executeSubmissions();
+
   return (
     <InfoBanner>
       <Row>
@@ -55,7 +56,7 @@ export default ({ governorContractInstance, account, session, snapshotSlug }) =>
         <Col lg={6} md={12} sm={14}>
           {Number(sessionEnd.getTime()) < Number(new Date().getTime()) ? (
             <Fragment>
-              {session && session.disputeID ? (
+              {session && Number(session.disputeID) ? (
                 <div />
               ) : (
                 <Button
@@ -72,10 +73,16 @@ export default ({ governorContractInstance, account, session, snapshotSlug }) =>
               )}
             </Fragment>
           ) : (
-            <SessionEndText>
-              List submission in <br />
-              <StyledTimeAgo date={sessionEnd || new Date()} />
-            </SessionEndText>
+            <Fragment>
+              {
+                showTimeout ? (
+                  <SessionEndText>
+                    Session ends in <br />
+                    <StyledTimeAgo date={sessionEnd || new Date()} />
+                  </SessionEndText>
+                ) : ''
+              }
+            </Fragment>
           )}
         </Col>
       </Row>

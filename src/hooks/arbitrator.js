@@ -13,6 +13,26 @@ export const useFetchDispute = (arbitratorContractInstance, disputeID) => {
   return dispute;
 };
 
+export const useFetchDisputeInfo = (arbitratorContractInstance, disputeID) => {
+  const [ disputeInfo, setDisputeInfo ] = useState({})
+
+  useEffect(() => {
+    arbitratorContractInstance.methods.getDispute(disputeID).call().then(r => setDisputeInfo(r))
+  }, [arbitratorContractInstance, disputeID])
+
+  return disputeInfo
+}
+
+export const useFetchPeriodTimes = (arbitratorContractInstance, subcourtID) => {
+  const [ timesPerPeriod, setTimesPerPeriod ] = useState([])
+
+  useEffect(() => {
+    arbitratorContractInstance.methods.getSubcourt(subcourtID).call().then((r) => setTimesPerPeriod(r.timesPerPeriod))
+  }, [arbitratorContractInstance, subcourtID])
+
+  return timesPerPeriod;
+}
+
 export const useFetchCurrentRuling = (
   arbitratorContractInstance,
   disputeID

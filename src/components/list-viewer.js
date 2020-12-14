@@ -2,7 +2,6 @@ import React from "react";
 import styled from "styled-components";
 
 import ListBox from "./list-box/index";
-import DisputeBanner from "./dispute-banner";
 
 const NoListsText = styled.div`
   font-size: 16px;
@@ -22,7 +21,8 @@ export default ({
   session,
   costPerTx,
   onClear,
-  submittedLists
+  submittedLists,
+  setPendingTx
 }) => {
   if (pendingLists) {
     return (
@@ -39,6 +39,7 @@ export default ({
         abiCache={abiCache}
         setAbiCache={setAbiCache}
         onClear={onClear}
+        setPendingTx={setPendingTx}
       />
     );
   }
@@ -66,7 +67,6 @@ export default ({
             />
           ))
         : ""}
-      {submittedLists.length > 1 ? <DisputeBanner /> : ""}
     </div>
   );
 };

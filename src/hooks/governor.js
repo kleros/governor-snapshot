@@ -228,7 +228,8 @@ export const useSubmitPendingList = (
   txs,
   governorContractInstance,
   costPerTx,
-  account
+  account,
+  setPendingTx
 ) => {
   const { addresses, values, data, dataSizes, titles } = orderParametersByHash(
     txs
@@ -239,7 +240,9 @@ export const useSubmitPendingList = (
     .send({
       value: costPerTx,
       from: account,
-    });
+    }).once(
+      'transactionHash', (hash) => {setPendingTx(hash)}
+    ).on('confirmation', () => {setPendingTx(undefined)});
 };
 
 export const useIsWithdrawable = (governorContractInstance, submittedAt) => {

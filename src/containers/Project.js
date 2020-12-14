@@ -1,6 +1,6 @@
 import { Col, Row, Select, Button } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
-import React, { useState } from "react";
+import React, { useState, Fragment } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import InfoBanner from "../components/info-banner";
@@ -14,6 +14,9 @@ import { useFetchProjectByName } from "../hooks/projects";
 import { useFetchAccount } from "../hooks/account";
 import { useFetchSession, useFetchListSubmissionCost } from "../hooks/governor";
 import { capitalizeString } from "../util/text";
+import DisputeBanner from "../components/dispute-banner";
+import DisputeContainer from "../components/dispute-container";
+
 import {
   useFetchSubmittedLists,
 } from "../hooks/governor";
@@ -79,6 +82,8 @@ export default (props) => {
   const [pendingLists, setPendingLists] = useState();
   // Cache ABIs
   const [abiCache, setAbiCache] = useState({});
+  // Tx State
+  const [pendingTx, setPendingTx] = useState(false)
 
   const addToPendingLists = (newList) => {
     const pendingListsCopy = [...pendingLists];
@@ -207,15 +212,25 @@ export default (props) => {
         costPerTx={costPerTx}
         onClear={clearTx}
         submittedLists={submittedLists}
+        setPendingTx={setPendingTx}
       />
       {session.disputeID ? (
-        <AppealModule
-          session={session}
-          governorContractInstance={governorContractInstance}
-          arbitratorContractInstance={arbitratorContractInstance}
-          web3={props.web3}
-          account={account}
-        />
+        <Fragment>
+          <DisputeBanner />
+          <DisputeContainer
+            arbitratorContractInstance={arbitratorContractInstance}
+            disputeID={session.disputeID}
+            web3={props.web3}
+            projectInfo={projectInfo}
+          />
+          <AppealModule
+            session={session}
+            governorContractInstance={governorContractInstance}
+            arbitratorContractInstance={arbitratorContractInstance}
+            web3={props.web3}
+            account={account}
+          />
+        </Fragment>
       ) : (
         ""
       )}

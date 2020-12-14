@@ -34,7 +34,8 @@ export default ({
   web3,
   abiCache,
   setAbiCache,
-  onClear
+  onClear,
+  setPendingTx
 }) => {
   const [selectedTx, setSelectedTx] = useState(1);
   const tx = txs[selectedTx - 1]
@@ -126,7 +127,8 @@ export default ({
                       txs,
                       governorContractInstance,
                       costPerTx,
-                      submitter
+                      submitter,
+                      setPendingTx
                     );
                   else
                     submitEmptyList()

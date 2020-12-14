@@ -18,7 +18,8 @@ export default ({
   abiCache,
   setAbiCache,
   account,
-  onClear
+  onClear,
+  setPendingTx
 }) => {
   const [showLists, setShowLists] = useState(showByDefault);
   // If list is pending it won't have submittedAt timestamp
@@ -55,6 +56,7 @@ export default ({
           abiCache={abiCache}
           setAbiCache={setAbiCache}
           onClear={onClear}
+          setPendingTx={setPendingTx}
         />
       ) : (
         ""

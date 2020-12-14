@@ -37,7 +37,7 @@ export default ({ timeout }) => {
           <Heading>
             A dispute was created. Jurors are evaluating the case.
           </Heading>
-          <Subtext>A decision will be announced soon.</Subtext>
+          <Subtext>Submit evidence and make appeals below.</Subtext>
         </Col>
       </Row>
     </DisputeBanner>

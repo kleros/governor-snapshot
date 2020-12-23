@@ -18,6 +18,8 @@ const ListsContainer = styled.div`
 `;
 const EnumeratedListsContainer = styled.div`
   height: 90%;
+  overflow-y: scroll;
+  max-height: 400px;
 `;
 const SubmitListsButton = styled(Button)`
   float: right;
@@ -40,9 +42,7 @@ export default ({
   const tx = txs[selectedTx - 1]
   const [decodedData, setDecodedData] = useState();
   const [_, abi, loading] = useFetchMethodsForContract(
-    tx ? tx.address : '',
-    abiCache,
-    setAbiCache
+    tx ? tx.address : ''
   );
 
   const _onClear = (index) => {

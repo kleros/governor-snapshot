@@ -1,4 +1,4 @@
-import { Col, Row, Select, Button } from "antd";
+import { Col, Row, Select, Button, Upload, Tooltip } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import React, { useState } from "react";
 import styled from "styled-components";
@@ -12,11 +12,9 @@ import GovernorInterface from "../constants/abis/governor.json";
 import ArbitratorInterface from "../constants/abis/court.json";
 import { useFetchProjectByName } from "../hooks/projects";
 import { useFetchAccount } from "../hooks/account";
-import { useFetchSession, useFetchListSubmissionCost } from "../hooks/governor";
+import { useFetchSession, useFetchListSubmissionCost, useFetchSubmittedLists } from "../hooks/governor";
+import { useLocalStorage } from '../hooks/local';
 import { capitalizeString } from "../util/text";
-import {
-  useFetchSubmittedLists,
-} from "../hooks/governor";
 
 const Dot = styled.div`
   height: 8px;
@@ -69,22 +67,65 @@ const ReturnButton = styled.div`
   line-height: 22px;
   cursor: pointer;
   margin: 20px 0px;
+  width: 100px;
 `;
+const CSVUpload = styled.div`
+  color: #009aff;
+  font-size: 12px;
+  font-style: italic;
+  cursor: pointer;
+  margin-top: 7px;
+`
 
 export default (props) => {
   const {
     match: { params },
   } = props;
+  const [ cachedPendingLists, setPendingListsCache ] = useLocalStorage('CACHED_LISTS', undefined)
   const [listsShown, setListsShown] = useState("current");
-  const [pendingLists, setPendingLists] = useState();
-  // Cache ABIs
-  const [abiCache, setAbiCache] = useState({});
+  const [pendingLists, setPendingLists] = useState(cachedPendingLists);
 
   const addToPendingLists = (newList) => {
     const pendingListsCopy = [...pendingLists];
     pendingListsCopy.push(newList);
+    setPendingListsCache(pendingListsCopy)
     setPendingLists(pendingListsCopy);
   };
+
+  const clearTx = (index) => {
+    const _pendingLists = [ ...pendingLists ]
+    if (index > -1) {
+      _pendingLists.splice(index, 1)
+      setPendingListsCache(_pendingLists)
+      setPendingLists(_pendingLists)
+    }
+  };
+
+  const clearAllPendingLists = () => {
+    setPendingListsCache(undefined)
+    setPendingLists(undefined)
+  }
+
+  const _uploadTxs = (rows) => {
+    console.log(rows)
+    const _rows = []
+    for (let i=0; i < rows.length; i++) {
+      if (rows[i][3] && rows[i][3].substring(0,2) !== '0x')
+        rows[i][3] = '0x' + rows[i][3]
+
+      if (rows[i][0]) {
+        _rows.push({
+          title: rows[i][0],
+          address: rows[i][1],
+          value: rows[i][2],
+          data: rows[i][3]
+        })
+      }
+    }
+
+    setPendingListsCache(_rows)
+    setPendingLists(_rows)
+  }
 
   // Web3 Objects
   const projectInfo = useFetchProjectByName(params.projectName);
@@ -104,14 +145,6 @@ export default (props) => {
     governorContractInstance,
     arbitratorContractInstance
   );
-
-  const clearTx = (index) => {
-    const _pendingLists = [ ...pendingLists ]
-    if (index > -1) {
-      _pendingLists.splice(index, 1)
-      setPendingLists(_pendingLists)
-    }
-  }
 
   const submittedLists = useFetchSubmittedLists(
     governorContractInstance,
@@ -185,10 +218,39 @@ export default (props) => {
             style={{float: 'right'}}
             onClick={() => setPendingLists([])}
           >New List</Button>
+          {
+            pendingLists && pendingLists.length === 0 && (
+              <div>
+                <Upload
+                  accept=".csv"
+                  showUploadList={false}
+                  beforeUpload={file => {
+                    const reader = new FileReader()
+
+                    reader.onload = e => {
+                        const _csvRows = e.target.result.split(/\r?\n/)
+                        const _csvCols = []
+                        _csvRows.forEach(row => {
+                          _csvCols.push(row.split(','))
+                        })
+                        _uploadTxs(_csvCols)
+                    }
+                    reader.readAsText(file)
+
+                    // Prevent upload
+                    return false;
+                }}>
+                  <Tooltip title="Row Format: title, contract address, WEI value, data">
+                    <CSVUpload>Upload CSV</CSVUpload>
+                  </Tooltip>
+              </Upload>
+            </div>
+            )
+          }
         </Col>
       </ListOptionsRow>
       {pendingLists ? (
-        <ReturnButton onClick={() => setPendingLists(undefined)}>
+        <ReturnButton onClick={() => clearAllPendingLists()}>
           <ArrowLeftOutlined /> Return
         </ReturnButton>
       ) : (
@@ -201,8 +263,6 @@ export default (props) => {
         pendingLists={pendingLists}
         addToPendingLists={addToPendingLists}
         web3={props.web3}
-        abiCache={abiCache}
-        setAbiCache={setAbiCache}
         session={session}
         costPerTx={costPerTx}
         onClear={clearTx}

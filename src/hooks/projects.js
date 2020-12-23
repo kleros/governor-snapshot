@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Projects from "../constants/projects";
+import { useLocalStorage } from './local'
 
 export const useFetchAllProjects = () => {
   const [allProjects, setAllProjects] = useState([]);
@@ -19,10 +20,10 @@ export const useFetchProjectByName = (name) => {
 };
 
 export const useFetchMethodsForContract = (
-  contractAddress,
-  abiCache = {},
-  setAbiCache = () => {}
+  contractAddress
 ) => {
+  const [ abiCache, setAbiCache ] = useLocalStorage('ABIS', {})
+
   const [methods, setMethods] = useState([]);
   const [abi, setAbi] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -44,8 +45,8 @@ export const useFetchMethodsForContract = (
           // Cache results
           setAbiCache({
             ...abiCache,
-            [contractAddress]: _abi,
-          });
+            [contractAddress]: _abi
+          })
         } else {
           if (
             abiQuery.result ===

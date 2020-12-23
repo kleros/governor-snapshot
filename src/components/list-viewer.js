@@ -17,8 +17,6 @@ export default ({
   account,
   addToPendingLists,
   web3,
-  abiCache,
-  setAbiCache,
   session,
   costPerTx,
   onClear,
@@ -36,8 +34,6 @@ export default ({
         governorContractInstance={governorContractInstance}
         addToPendingLists={addToPendingLists}
         web3={web3}
-        abiCache={abiCache}
-        setAbiCache={setAbiCache}
         onClear={onClear}
       />
     );
@@ -59,8 +55,6 @@ export default ({
               submittedAt={sub.submittedAt}
               submitter={sub.submitter}
               web3={web3}
-              abiCache={abiCache}
-              setAbiCache={setAbiCache}
               governorContractInstance={governorContractInstance}
               account={account}
             />

@@ -64,7 +64,6 @@ export default ({
   addTx,
   web3,
   abiCache,
-  setAbiCache,
   governorContractInstance,
   costPerTx,
   account
@@ -81,8 +80,6 @@ export default ({
   const [methodInputs, setMethodInputs] = useState([]);
   const [methods, abi] = useFetchMethodsForContract(
     address,
-    abiCache,
-    setAbiCache
   );
 
   const methodToData = () => {
@@ -96,7 +93,7 @@ export default ({
     setInputType("data");
     setTitle(undefined);
     setAddress(undefined);
-    setValue(undefined);
+    setValue("0");
     setData(undefined);
     setSubmittable(true);
     setMethodSelected(undefined);

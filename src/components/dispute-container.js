@@ -49,6 +49,14 @@ const PurpleDivider = styled.div`
   margin: 35px 0px;
   width: 100%;
 `
+const DisputeItemBox = styled.div`
+  background: #FFFFFF;
+  cursor: pointer;
+  margin-top: 10px;
+  padding: 8px 15px;
+  box-shadow: 0px 6px 24px rgba(77, 0, 180, 0.25);
+  border-radius: 3px;
+`
 
 const formatEstimateTime = (seconds) => {
   const days = Math.floor(seconds/86400.0)
@@ -149,6 +157,24 @@ export default ({ disputeID, arbitratorContractInstance, web3, projectInfo }) =>
       </Row>
       <PurpleDivider />
       <Row>
+        <Col lg={4}>Dispute</Col>
+        <Col lg={19} offset={1}>Court</Col>
+      </Row>
+      <Row>
+        <Col lg={4}>
+          <a href={`https://court.kleros.io/cases/${disputeID}`}>
+            <DisputeItemBox>
+              { `# ${disputeID}` }
+            </DisputeItemBox>
+          </a>
+        </Col>
+        <Col lg={19} offset={1}>
+          <DisputeItemBox>
+            {
+              subcourtInfo.name
+            }
+          </DisputeItemBox>
+        </Col>
       </Row>
     </DisputeContainer>
   )

@@ -222,6 +222,8 @@ export default (props) => {
             disputeID={session.disputeID}
             web3={props.web3}
             projectInfo={projectInfo}
+            governorContractInstance={governorContractInstance}
+            account={account}
           />
           <AppealModule
             session={session}

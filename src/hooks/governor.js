@@ -288,6 +288,7 @@ export const useFetchSession = (governorContractInstance) => {
       .then((r) => setCurrentSessionNumber(r));
   }, [governorContractInstance]);
 
+  console.log(currentSessionNumber)
   useEffect(() => {
     governorContractInstance.methods
       .sessions(currentSessionNumber)

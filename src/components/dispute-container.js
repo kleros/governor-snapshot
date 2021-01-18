@@ -2,6 +2,8 @@ import { Col, Row } from 'antd'
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import TimeAgo from "./time-ago";
+import DropdownBar from './dropdown-bar'
+import Evidence from './evidence'
 import PolicyRegistryInterface from "../constants/abis/policy-registry.json";
 import { useFetchDispute, useFetchPeriodTimes, useFetchDisputeInfo } from '../hooks/arbitrator'
 import { useFetchSubcourt } from '../hooks/policy-registry'
@@ -74,7 +76,7 @@ const formatEstimateTime = (seconds) => {
   )
 }
 
-export default ({ disputeID, arbitratorContractInstance, web3, projectInfo }) => {
+export default ({ disputeID, arbitratorContractInstance, web3, projectInfo, governorContractInstance, account }) => {
   const dispute = useFetchDispute(arbitratorContractInstance, disputeID)
   const disputeInfo = useFetchDisputeInfo(arbitratorContractInstance, disputeID)
   const periodTimes = useFetchPeriodTimes(arbitratorContractInstance, dispute.subcourtID || 0)
@@ -176,6 +178,9 @@ export default ({ disputeID, arbitratorContractInstance, web3, projectInfo }) =>
           </DisputeItemBox>
         </Col>
       </Row>
+      <DropdownBar defaultOpen={true}>
+        <Evidence governorContractInstance={governorContractInstance} account={account} />
+      </DropdownBar>
     </DisputeContainer>
   )
 }

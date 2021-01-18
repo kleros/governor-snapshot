@@ -17,7 +17,7 @@ export default [
   {
     name: "kleros Kovan",
     icon: <KlerosLogo />,
-    governorAddress: "0x5355629eebb23b4b86a623f8d247b5fe44005613",
+    governorAddress: "0x58D6128e8dE011E8d821d09A8431b9DA0405392e",
     arbitratorAddress: "0x60b2abfdfad9c0873242f59f2a8c32a3cc682f80",
   },
 ];

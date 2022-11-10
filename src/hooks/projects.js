@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import Projects from "../constants/projects";
-import { useLocalStorage } from './local'
+import { useLocalStorage } from "./local";
+import Networks from "../constants/networks";
 
 export const useFetchAllProjects = () => {
   const [allProjects, setAllProjects] = useState([]);
@@ -20,13 +21,15 @@ export const useFetchProjectByName = (name) => {
 };
 
 export const useFetchMethodsForContract = (
-  contractAddress
+  contractAddress,
+  governorNetwork
 ) => {
   const [ abiCache, setAbiCache ] = useLocalStorage('ABIS', {})
 
   const [methods, setMethods] = useState([]);
   const [abi, setAbi] = useState([]);
   const [loading, setLoading] = useState(false);
+  const network = governorNetwork || Networks[1]; // default mainnet
 
   useEffect(() => {
     // Set loading
@@ -38,7 +41,7 @@ export const useFetchMethodsForContract = (
       // Fetch from etherscan
       if (!_abi) {
         const abiQuery = await fetch(
-          `https://api.etherscan.io/api?module=contract&action=getabi&address=${contractAddress}`
+          network.scan_abi_url(contractAddress)
         ).then((response) => response.json());
         if (abiQuery.status === "1") {
           _abi = JSON.parse(abiQuery.result);

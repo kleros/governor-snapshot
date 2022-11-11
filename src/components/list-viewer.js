@@ -58,6 +58,7 @@ export default ({
               submitter={sub.submitter}
               web3={web3}
               governorContractInstance={governorContractInstance}
+              chain={chain}
               account={account}
             />
           ))

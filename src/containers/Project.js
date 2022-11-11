@@ -179,7 +179,6 @@ export default (props) => {
       </Row>
       <InfoBanner
         governorContractInstance={governorContractInstance}
-        chain={projectInfo.chain}
         account={account}
         session={session}
         snapshotSlug={projectInfo.snapshotSlug}

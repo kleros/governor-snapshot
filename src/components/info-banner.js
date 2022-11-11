@@ -26,7 +26,7 @@ const StyledTimeAgo = styled(TimeAgo)`
   line-height: 26px;
 `;
 
-export default ({ governorContractInstance, chain, account, session, snapshotSlug, showTimeout }) => {
+export default ({ governorContractInstance, account, session, snapshotSlug, showTimeout }) => {
   const sessionStart = useFetchSessionStart(governorContractInstance);
   const sessionEnd = useFetchSessionEnd(
     governorContractInstance,

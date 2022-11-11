@@ -65,6 +65,7 @@ export default ({
   web3,
   abiCache,
   governorContractInstance,
+  chain,
   costPerTx,
   account
 }) => {
@@ -80,6 +81,7 @@ export default ({
   const [methodInputs, setMethodInputs] = useState([]);
   const [methods, abi] = useFetchMethodsForContract(
     address,
+    chain
   );
 
   const methodToData = () => {

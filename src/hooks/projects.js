@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import Projects from "../constants/projects";
-import { useLocalStorage } from './local'
+import { useLocalStorage } from "./local";
 
 export const useFetchAllProjects = () => {
   const [allProjects, setAllProjects] = useState([]);
@@ -20,7 +20,8 @@ export const useFetchProjectByName = (name) => {
 };
 
 export const useFetchMethodsForContract = (
-  contractAddress
+  contractAddress,
+  network
 ) => {
   const [ abiCache, setAbiCache ] = useLocalStorage('ABIS', {})
 
@@ -35,10 +36,10 @@ export const useFetchMethodsForContract = (
     const _fetchABI = async () => {
       let _abi = abiCache[contractAddress];
 
-      // Fetch from etherscan
+      // Fetch from chain block explorer
       if (!_abi) {
         const abiQuery = await fetch(
-          `https://api.etherscan.io/api?module=contract&action=getabi&address=${contractAddress}`
+          network.scanAbiUrl(contractAddress)
         ).then((response) => response.json());
         if (abiQuery.status === "1") {
           _abi = JSON.parse(abiQuery.result);

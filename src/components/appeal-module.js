@@ -37,6 +37,7 @@ const AppealSubtext = styled.div`
 
 export default ({
   governorContractInstance,
+  chain,
   arbitratorContractInstance,
   session,
   web3,
@@ -130,6 +131,7 @@ export default ({
                     }
                     rewardPercentage={i === currentRuling - 1 ? "100" : "50"}
                     governorContractInstance={governorContractInstance}
+                    chain={chain}
                     submissionIndex={i}
                     account={account}
                   />

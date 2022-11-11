@@ -15,6 +15,7 @@ import { useFetchAccount } from "../hooks/account";
 import { useFetchSession, useFetchListSubmissionCost, useFetchSubmittedLists } from "../hooks/governor";
 import { useLocalStorage } from '../hooks/local';
 import { capitalizeString } from "../util/text";
+import { useFetchChainId, askForChainChange } from "../hooks/chain";
 
 const Dot = styled.div`
   height: 8px;
@@ -152,6 +153,11 @@ export default (props) => {
     session.currentSessionNumber || "0"
   );
 
+  const chainId = useFetchChainId(props.web3);
+  if (chainId && chainId != projectInfo.chain.id) {
+    askForChainChange(projectInfo.chain);
+  }
+
   return (
     <StyledProjectHome>
       <Row>
@@ -160,9 +166,9 @@ export default (props) => {
             <Link to="/">Governor</Link>
             {
               <span style={{ fontWeight: "300" }}>
-                {" "}
+                {" "} 
                 / {projectInfo.icon}
-                {capitalizeString(params.projectName)}
+                {capitalizeString(`${params.projectName} @ ${projectInfo.chain.name}`)}
               </span>
             }
           </StyledHeader>
@@ -173,6 +179,7 @@ export default (props) => {
       </Row>
       <InfoBanner
         governorContractInstance={governorContractInstance}
+        chain={projectInfo.chain}
         account={account}
         session={session}
         snapshotSlug={projectInfo.snapshotSlug}
@@ -258,6 +265,7 @@ export default (props) => {
       )}
       <ListViewer
         governorContractInstance={governorContractInstance}
+        chain={projectInfo.chain}
         arbitratorContractInstance={arbitratorContractInstance}
         account={account}
         pendingLists={pendingLists}
@@ -272,6 +280,7 @@ export default (props) => {
         <AppealModule
           session={session}
           governorContractInstance={governorContractInstance}
+          chain={projectInfo.chain}
           arbitratorContractInstance={arbitratorContractInstance}
           web3={props.web3}
           account={account}

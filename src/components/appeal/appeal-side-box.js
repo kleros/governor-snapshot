@@ -57,6 +57,7 @@ export default ({
   amountContributed,
   rewardPercentage,
   governorContractInstance,
+  chain,
   account,
 }) => {
   const amountRemaining = Web3.utils.fromWei(
@@ -74,7 +75,7 @@ export default ({
       <Row>
         <Col lg={3}>
           <Identicon
-            href={`https://etherscan.io/address/${submitter}`}
+            href={chain.scanAddressUrl(submitter)}
             target="_blank"
             rel="noopener noreferrer"
           >

@@ -36,7 +36,7 @@ const EtherscanLink = styled.a`
   margin: 10px;
 `;
 
-export default ({ icon, name, address }) => {
+export default ({ icon, name, address, chain }) => {
   return (
     <CardFragment>
       <Link to={`/${name}`}>
@@ -49,7 +49,7 @@ export default ({ icon, name, address }) => {
         <EtherscanLink
           target="_blank"
           rel="noopener noreferrer"
-          href={`https://etherscan.io/address/${address}#code`}
+          href={chain.scanContractUrl(address)}
         >
           <EtherscanLogo />
         </EtherscanLink>

@@ -55,6 +55,7 @@ export default ({
   setShowHide,
   withdrawable,
   governorContractInstance,
+  chain,
   account,
 }) => {
   const submissionHash = useFetchSubmissionHash(
@@ -115,7 +116,7 @@ export default ({
           <div style={{ float: "right" }}>
             Submitter
             <Identicon
-              href={`https://etherscan.io/address/${submitter}`}
+              href={chain.scanAddressUrl(submitter)}
               target="_blank"
               rel="noopener noreferrer"
             >

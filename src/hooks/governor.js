@@ -234,6 +234,7 @@ export const useSubmitPendingList = (
     txs
   );
 
+  console.log(`calling submit list hehe ${window.ethereum}`);
   governorContractInstance.methods
     .submitList(addresses, values, data, dataSizes, titles)
     .send({

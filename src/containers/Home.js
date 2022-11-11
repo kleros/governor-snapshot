@@ -45,6 +45,7 @@ export default (props) => {
               icon={p.icon}
               name={p.name}
               address={p.governorAddress}
+              chain={p.chain}
             />
           </Col>
         ))}

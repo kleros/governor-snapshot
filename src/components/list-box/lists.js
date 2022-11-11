@@ -31,6 +31,7 @@ export default ({
   submittable,
   submitter,
   governorContractInstance,
+  chain,
   costPerTx,
   addToPendingLists,
   web3,
@@ -42,7 +43,8 @@ export default ({
   const tx = txs[selectedTx - 1]
   const [decodedData, setDecodedData] = useState();
   const [_, abi, loading] = useFetchMethodsForContract(
-    tx ? tx.address : ''
+    tx ? tx.address : '',
+    chain
   );
 
   const _onClear = (index) => {
@@ -85,7 +87,7 @@ export default ({
       else {
         if (tx) {
           setDecodedData(
-            <Tooltip title={"ABI must be verified on Etherscan"}>
+            <Tooltip title={"ABI must be verified on the block explorer"}>
               Not available <InfoCircleOutlined />
             </Tooltip>
           );
@@ -141,6 +143,7 @@ export default ({
                 addTx={true}
                 web3={web3}
                 governorContractInstance={governorContractInstance}
+                chain={chain}
                 costPerTx={costPerTx}
               />
             </div>

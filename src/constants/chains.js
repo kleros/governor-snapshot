@@ -6,7 +6,7 @@ export default {
   1: {
     id: '0x1',
     name: "Mainnet",
-    rpcUrls: ['https://mainnet.infura.io/v3/'],
+    rpcUrls: ['https://mainnet.infura.io/v3'],
     blockExploreUrls: ['https://etherscan.io'],
     nativeCurrency: {
       name: 'ETH',
@@ -21,9 +21,9 @@ export default {
       `https://api.etherscan.io/api?module=contract&action=getabi&address=${contractAddress}`,
   },
   100: {
-    id: '0x60',
+    id: '0x64',
     name: "Gnosis",
-    rpcUrls: ['https://rpc.gnosischain.com/'],
+    rpcUrls: ['https://rpc.gnosischain.com'],
     blockExploreUrls: ['https://blockscout.com'],
     nativeCurrency: {
       name: 'XDAI',

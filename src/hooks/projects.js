@@ -21,14 +21,13 @@ export const useFetchProjectByName = (name) => {
 
 export const useFetchMethodsForContract = (
   contractAddress,
-  network
+  chain
 ) => {
   const [ abiCache, setAbiCache ] = useLocalStorage('ABIS', {})
 
   const [methods, setMethods] = useState([]);
   const [abi, setAbi] = useState([]);
   const [loading, setLoading] = useState(false);
-  const network = governorNetwork || Networks[1]; // default mainnet
 
   useEffect(() => {
     // Set loading
@@ -40,7 +39,7 @@ export const useFetchMethodsForContract = (
       // Fetch from chain block explorer
       if (!_abi) {
         const abiQuery = await fetch(
-          network.scanAbiUrl(contractAddress)
+          chain.scanAbiUrl(contractAddress)
         ).then((response) => response.json());
         if (abiQuery.status === "1") {
           _abi = JSON.parse(abiQuery.result);

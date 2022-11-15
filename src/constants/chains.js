@@ -1,6 +1,5 @@
 import React from "react";
 import { ReactComponent as EtherscanLogo } from "../assets/logos/etherscan.svg";
-import { ReactComponent as GnosisLogo } from "../assets/logos/gnosis.svg";
 
 export default {
   1: {
@@ -24,10 +23,10 @@ export default {
     id: '0x64',
     name: "Gnosis",
     rpcUrls: ['https://rpc.gnosischain.com'],
-    blockExploreUrls: ['https://blockscout.com'],
+    blockExploreUrls: ['https://blockscout.com/xdai/mainnet/'],
     nativeCurrency: {
       name: 'XDAI',
-      symbol: 'xDai', 
+      symbol: 'xDAI', 
       decimals: 18,
     },
     icon: <GnosisLogo />,

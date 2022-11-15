@@ -15,7 +15,7 @@ import { useFetchAccount } from "../hooks/account";
 import { useFetchSession, useFetchListSubmissionCost, useFetchSubmittedLists } from "../hooks/governor";
 import { useLocalStorage } from '../hooks/local';
 import { capitalizeString } from "../util/text";
-import { useFetchChainId, askForChainChange } from "../hooks/chain";
+import useValidateCurrentChain from "../hooks/chain";
 
 const Dot = styled.div`
   height: 8px;
@@ -130,6 +130,7 @@ export default (props) => {
 
   // Web3 Objects
   const projectInfo = useFetchProjectByName(params.projectName);
+  useValidateCurrentChain(projectInfo.chain);
   const governorContractInstance = new props.web3.eth.Contract(
     GovernorInterface.abi,
     projectInfo.governorAddress
@@ -153,11 +154,6 @@ export default (props) => {
     session.currentSessionNumber || "0"
   );
 
-  const chainId = useFetchChainId(props.web3);
-  if (chainId && chainId != projectInfo.chain.id) {
-    askForChainChange(projectInfo.chain);
-  }
-
   return (
     <StyledProjectHome>
       <Row>
@@ -179,9 +175,9 @@ export default (props) => {
       </Row>
       <InfoBanner
         governorContractInstance={governorContractInstance}
-        chain={projectInfo.chain}
         account={account}
         session={session}
+        chain={projectInfo.chain}
         snapshotSlug={projectInfo.snapshotSlug}
         showTimeout={!!submittedLists.length}
       />

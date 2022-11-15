@@ -5,6 +5,7 @@ import { useFetchSessionStart, useFetchSessionEnd } from "../hooks/governor";
 import { monthIndexToAbbrev } from "../util/text";
 import TimeAgo from "./time-ago";
 import SnapshotLogo from '../assets/logos/snapshot.png'
+import useValidateCurrentChain from "../hooks/chain";
 
 const InfoBanner = styled.div`
   background: #fbf9fe;
@@ -62,10 +63,11 @@ export default ({ governorContractInstance, chain, account, session, snapshotSlu
                 <Button
                   disabled={!account}
                   type="primary"
-                  onClick={() =>
+                  onClick={() =>{
+                    useValidateCurrentChain(chain);
                     sendExecuteSubmissions.send({
                       from: account,
-                    })
+                    })}
                   }
                 >
                   Execute Submissions

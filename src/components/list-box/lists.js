@@ -6,6 +6,7 @@ import { useSubmitPendingList } from "../../hooks/governor";
 import { useFetchMethodsForContract } from "../../hooks/projects";
 import NewTxModal from "../new-list-modal";
 import Web3 from "web3";
+import useValidateCurrentChain from "../../hooks/chain";
 
 const ListsContainer = styled.div`
   background: #ffffff;
@@ -52,7 +53,8 @@ export default ({
     onClear(index)
   }
 
-  const submitEmptyList = () => {
+  const useSubmitEmptyList = () => {
+    useValidateCurrentChain(chain);
     governorContractInstance.methods.submitList([], [], '0x', [], '').send({
       from: submitter,
       value: costPerTx
@@ -127,11 +129,12 @@ export default ({
                     useSubmitPendingList(
                       txs,
                       governorContractInstance,
+                      chain,
                       costPerTx,
                       submitter
                     );
                   else
-                    submitEmptyList()
+                    useSubmitEmptyList()
                 }}
               >
                 <Tooltip title="This deposit will be returned if your list is executed. Deposit can be lost in the event of a dispute.">{`Submit List with ${Web3.utils.fromWei(

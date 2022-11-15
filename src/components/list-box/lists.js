@@ -139,7 +139,7 @@ export default ({
               >
                 <Tooltip title="This deposit will be returned if your list is executed. Deposit can be lost in the event of a dispute.">{`Submit List with ${Web3.utils.fromWei(
                   String(costPerTx)
-                )} ETH Deposit`}</Tooltip>
+                )} ${chain.nativeCurrency.symbol} Deposit`}</Tooltip>
               </SubmitListsButton>
               <NewTxModal
                 setPendingLists={addToPendingLists}

@@ -43,7 +43,7 @@ export default ({ governorContractInstance, chain, account, session, snapshotSlu
           <span>
             Governor decision from{" "}
             <img src={SnapshotLogo} style={{height: '16px'}}/>
-            <a href={`https://snapshot.page/#/${snapshotSlug}`}>Snapshot.</a>
+            <a href={`https://snapshot.org/#/${snapshotSlug}`}>Snapshot.</a>
           </span>
           <br />
           <span>

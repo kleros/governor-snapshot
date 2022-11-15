@@ -1,5 +1,6 @@
 import React from "react";
 import { ReactComponent as EtherscanLogo } from "../assets/logos/etherscan.svg";
+import { ReactComponent as GnosisLogo } from "../assets/logos/gnosis.svg";
 
 export default {
   1: {

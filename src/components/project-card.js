@@ -51,7 +51,7 @@ export default ({ icon, name, address, chain }) => {
           rel="noopener noreferrer"
           href={chain.scanContractUrl(address)}
         >
-          <EtherscanLogo />
+          {chain.icon}
         </EtherscanLink>
       </ProjectFooter>
     </CardFragment>

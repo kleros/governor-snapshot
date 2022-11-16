@@ -6,7 +6,6 @@ import { useSubmitPendingList } from "../../hooks/governor";
 import { useFetchMethodsForContract } from "../../hooks/projects";
 import NewTxModal from "../new-list-modal";
 import Web3 from "web3";
-import useValidateCurrentChain from "../../hooks/chain";
 
 const ListsContainer = styled.div`
   background: #ffffff;
@@ -54,7 +53,6 @@ export default ({
   }
 
   const useSubmitEmptyList = () => {
-    useValidateCurrentChain(chain);
     governorContractInstance.methods.submitList([], [], '0x', [], '').send({
       from: submitter,
       value: costPerTx

@@ -7,7 +7,7 @@ import TimeAgo from "../time-ago";
 import { shortenEthAddress } from "../../util/text";
 import BlueBanner from "../blue-banner";
 import Web3 from "web3";
-import useValidateCurrentChain from "../../hooks/chain";
+import {switchCurrentChain} from "../../hooks/chain";
 
 const StyledAppealSideBox = styled.div`
   box-shadow: 0px 6px 24px rgba(77, 0, 180, 0.25);
@@ -65,7 +65,7 @@ export default ({
     (Number(appealFee || 0) - Number(amountContributed || 0)).toString()
   );
   const useOnFund = (amount) => {
-    useValidateCurrentChain(chain);
+    switchCurrentChain(chain);
     governorContractInstance.methods.fundAppeal(submissionIndex).send({
       from: account,
       value: Web3.utils.toWei(amount).toString(),

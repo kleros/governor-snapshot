@@ -21,7 +21,7 @@ export const useFetchProjectByName = (name) => {
 
 export const useFetchMethodsForContract = (
   contractAddress,
-  network
+  chain
 ) => {
   const [ abiCache, setAbiCache ] = useLocalStorage('ABIS', {})
 
@@ -39,7 +39,7 @@ export const useFetchMethodsForContract = (
       // Fetch from chain block explorer
       if (!_abi) {
         const abiQuery = await fetch(
-          network.scanAbiUrl(contractAddress)
+          chain.scanAbiUrl(contractAddress)
         ).then((response) => response.json());
         if (abiQuery.status === "1") {
           _abi = JSON.parse(abiQuery.result);

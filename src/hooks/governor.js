@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import Web3 from "web3";
 import { orderParametersByHash } from "../util/tx-hash";
-import useValidateCurrentChain from "./chain";
 
 /**
  Fetch the time of the start of the session.
@@ -215,7 +214,6 @@ export const useFetchListSubmissionCost = (
       .call()
       .then((r) => {
         const _web3 = new Web3();
-
         setCostPerList(
           _web3.utils.toBN(submissionBaseDeposit).add(_web3.utils.toBN(r))
         );
@@ -236,7 +234,6 @@ export const useSubmitPendingList = (
     txs
   );
 
-  useValidateCurrentChain(chain);
   governorContractInstance.methods
     .submitList(addresses, values, data, dataSizes, titles)
     .send({

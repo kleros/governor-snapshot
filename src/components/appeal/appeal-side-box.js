@@ -7,6 +7,7 @@ import TimeAgo from "../time-ago";
 import { shortenEthAddress } from "../../util/text";
 import BlueBanner from "../blue-banner";
 import Web3 from "web3";
+import useValidateCurrentChain from "../../hooks/chain";
 
 const StyledAppealSideBox = styled.div`
   box-shadow: 0px 6px 24px rgba(77, 0, 180, 0.25);
@@ -57,12 +58,14 @@ export default ({
   amountContributed,
   rewardPercentage,
   governorContractInstance,
+  chain,
   account,
 }) => {
   const amountRemaining = Web3.utils.fromWei(
     (Number(appealFee || 0) - Number(amountContributed || 0)).toString()
   );
-  const onFund = (amount) => {
+  const useOnFund = (amount) => {
+    useValidateCurrentChain(chain);
     governorContractInstance.methods.fundAppeal(submissionIndex).send({
       from: account,
       value: Web3.utils.toWei(amount).toString(),
@@ -74,7 +77,7 @@ export default ({
       <Row>
         <Col lg={3}>
           <Identicon
-            href={`https://etherscan.io/address/${submitter}`}
+            href={chain.scanAddressUrl(submitter)}
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -111,7 +114,7 @@ export default ({
           "100"
         }
         style={{ marginTop: "25px" }}
-        onSearch={onFund}
+        onSearch={useOnFund}
       />
       <BlueBanner
         heading="For external contributors"

@@ -6,6 +6,7 @@ import { useSubmitPendingList } from "../../hooks/governor";
 import { useFetchMethodsForContract } from "../../hooks/projects";
 import NewTxModal from "../new-list-modal";
 import Web3 from "web3";
+import useValidateCurrentChain from "../../hooks/chain";
 
 const ListsContainer = styled.div`
   background: #ffffff;
@@ -31,6 +32,7 @@ export default ({
   submittable,
   submitter,
   governorContractInstance,
+  chain,
   costPerTx,
   addToPendingLists,
   web3,
@@ -42,7 +44,8 @@ export default ({
   const tx = txs[selectedTx - 1]
   const [decodedData, setDecodedData] = useState();
   const [_, abi, loading] = useFetchMethodsForContract(
-    tx ? tx.address : ''
+    tx ? tx.address : '',
+    chain
   );
 
   const _onClear = (index) => {
@@ -50,7 +53,8 @@ export default ({
     onClear(index)
   }
 
-  const submitEmptyList = () => {
+  const useSubmitEmptyList = () => {
+    useValidateCurrentChain(chain);
     governorContractInstance.methods.submitList([], [], '0x', [], '').send({
       from: submitter,
       value: costPerTx
@@ -85,7 +89,7 @@ export default ({
       else {
         if (tx) {
           setDecodedData(
-            <Tooltip title={"ABI must be verified on Etherscan"}>
+            <Tooltip title={"ABI must be verified on the block explorer"}>
               Not available <InfoCircleOutlined />
             </Tooltip>
           );
@@ -125,11 +129,12 @@ export default ({
                     useSubmitPendingList(
                       txs,
                       governorContractInstance,
+                      chain,
                       costPerTx,
                       submitter
                     );
                   else
-                    submitEmptyList()
+                    useSubmitEmptyList()
                 }}
               >
                 <Tooltip title="This deposit will be returned if your list is executed. Deposit can be lost in the event of a dispute.">{`Submit List with ${Web3.utils.fromWei(
@@ -141,6 +146,7 @@ export default ({
                 addTx={true}
                 web3={web3}
                 governorContractInstance={governorContractInstance}
+                chain={chain}
                 costPerTx={costPerTx}
               />
             </div>

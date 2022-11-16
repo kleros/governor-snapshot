@@ -12,6 +12,7 @@ const NoListsText = styled.div`
 
 export default ({
   governorContractInstance,
+  chain,
   arbitratorContractInstance,
   pendingLists,
   account,
@@ -32,6 +33,7 @@ export default ({
         showByDefault={true}
         costPerTx={costPerTx}
         governorContractInstance={governorContractInstance}
+        chain={chain}
         addToPendingLists={addToPendingLists}
         web3={web3}
         onClear={onClear}
@@ -56,6 +58,7 @@ export default ({
               submitter={sub.submitter}
               web3={web3}
               governorContractInstance={governorContractInstance}
+              chain={chain}
               account={account}
             />
           ))

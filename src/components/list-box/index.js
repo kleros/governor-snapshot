@@ -10,6 +10,7 @@ export default ({
   submittable,
   costPerTx,
   governorContractInstance,
+  chain,
   showByDefault,
   addToPendingLists,
   submittedAt,
@@ -41,6 +42,7 @@ export default ({
         setShowHide={showHideLists}
         withdrawable={isWithdrawable && !submittable && submitter === account}
         governorContractInstance={governorContractInstance}
+        chain={chain}
         account={account}
       />
       {showLists ? (
@@ -49,6 +51,7 @@ export default ({
           submittable={submittable}
           submitter={submitter}
           governorContractInstance={governorContractInstance}
+          chain={chain}
           costPerTx={costPerTx}
           addToPendingLists={addToPendingLists}
           web3={web3}

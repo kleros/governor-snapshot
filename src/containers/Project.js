@@ -15,6 +15,7 @@ import { useFetchAccount } from "../hooks/account";
 import { useFetchSession, useFetchListSubmissionCost, useFetchSubmittedLists } from "../hooks/governor";
 import { useLocalStorage } from '../hooks/local';
 import { capitalizeString } from "../util/text";
+import useValidateCurrentChain from "../hooks/chain";
 
 const Dot = styled.div`
   height: 8px;
@@ -129,6 +130,7 @@ export default (props) => {
 
   // Web3 Objects
   const projectInfo = useFetchProjectByName(params.projectName);
+  useValidateCurrentChain(projectInfo.chain);
   const governorContractInstance = new props.web3.eth.Contract(
     GovernorInterface.abi,
     projectInfo.governorAddress
@@ -160,9 +162,9 @@ export default (props) => {
             <Link to="/">Governor</Link>
             {
               <span style={{ fontWeight: "300" }}>
-                {" "}
+                {" "} 
                 / {projectInfo.icon}
-                {capitalizeString(params.projectName)}
+                {capitalizeString(`${params.projectName} @ ${projectInfo.chain.name}`)}
               </span>
             }
           </StyledHeader>
@@ -175,6 +177,7 @@ export default (props) => {
         governorContractInstance={governorContractInstance}
         account={account}
         session={session}
+        chain={projectInfo.chain}
         snapshotSlug={projectInfo.snapshotSlug}
         showTimeout={!!submittedLists.length}
       />
@@ -258,6 +261,7 @@ export default (props) => {
       )}
       <ListViewer
         governorContractInstance={governorContractInstance}
+        chain={projectInfo.chain}
         arbitratorContractInstance={arbitratorContractInstance}
         account={account}
         pendingLists={pendingLists}
@@ -272,6 +276,7 @@ export default (props) => {
         <AppealModule
           session={session}
           governorContractInstance={governorContractInstance}
+          chain={projectInfo.chain}
           arbitratorContractInstance={arbitratorContractInstance}
           web3={props.web3}
           account={account}

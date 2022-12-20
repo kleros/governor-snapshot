@@ -7,7 +7,7 @@ import { Helmet } from "react-helmet";
 import { ReactComponent as KlerosLogo } from "./assets/kleros-logo.svg";
 import loadable from "@loadable/component";
 import styled from "styled-components";
-import Web3 from "web3";
+import web3 from "./ethereum/web3"
 
 const StyledSpin = styled(Spin)`
   left: 50%;
@@ -57,12 +57,6 @@ const StyledHeader = styled(Layout.Header)`
 
 class App extends PureComponent {
   render() {
-    let web3;
-    if (window.web3) {
-      web3 = new Web3(window.web3.currentProvider);
-      window.ethereum.enable();
-    }
-
     return (
       <div>
         <Helmet>

@@ -8,7 +8,6 @@ const DisputeBanner = styled.div`
   box-sizing: border-box;
   border-radius: 3px;
   padding: 25px 24px;
-  margin: 25px 0px;
 `;
 const Heading = styled.div`
   font-weight: 600;
@@ -27,7 +26,13 @@ const StyledInfoCol = styled(Col)`
   line-height: 34px;
 `;
 
-export default () => {
+interface BlueBanner {
+  heading: string,
+  subtext: string,
+  style: React.CSSProperties;
+}
+
+const blueBanner: React.FC<BlueBanner> = (p) => {
   return (
     <DisputeBanner>
       <Row>
@@ -35,15 +40,12 @@ export default () => {
           <InfoCircleOutlined />
         </StyledInfoCol>
         <Col lg={22}>
-          <Heading>
-            External contributors can fund the appeal and win rewards.
-          </Heading>
-          <Subtext>
-            Note that if you fund the winning side of the dispute you will be
-            gain ETH from funders of the other side.
-          </Subtext>
+          <Heading>{p.heading}</Heading>
+          <Subtext>{p.subtext}</Subtext>
         </Col>
       </Row>
     </DisputeBanner>
   );
-};
+}
+
+export default blueBanner;

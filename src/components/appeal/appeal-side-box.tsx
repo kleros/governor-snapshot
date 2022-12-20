@@ -1,13 +1,15 @@
 import { Col, Row, Progress, Input } from "antd";
 import { HourglassOutlined } from "@ant-design/icons";
 import React from "react";
+import { Contract } from "ethers";
 import styled from "styled-components";
 import makeBlockie from "ethereum-blockies-base64";
 import TimeAgo from "../time-ago";
 import { shortenEthAddress } from "../../util/text";
-import BlueBanner from "../blue-banner";
-import Web3 from "web3";
+import BlueBanner from "../blue-banner-2";
+import Web3 from "../../ethereum/web3";
 import useValidateCurrentChain from "../../hooks/chain";
+import { Chain } from "../../types";
 
 const StyledAppealSideBox = styled.div`
   box-shadow: 0px 6px 24px rgba(77, 0, 180, 0.25);
@@ -48,26 +50,28 @@ const AmountRequired = styled.div`
   color: rgba(0, 0, 0, 0.85);
 `;
 
-export default ({
-  winner,
-  listID,
-  submissionIndex,
-  submitter,
-  deadline,
-  appealFee,
-  amountContributed,
-  rewardPercentage,
-  governorContractInstance,
-  chain,
-  account,
-}) => {
-  const amountRemaining = Web3.utils.fromWei(
-    (Number(appealFee || 0) - Number(amountContributed || 0)).toString()
-  );
-  const useOnFund = (amount) => {
-    useValidateCurrentChain(chain);
-    governorContractInstance.methods.fundAppeal(submissionIndex).send({
-      from: account,
+interface AppealSideBox {
+  winner: string,
+  listID: string,
+  submissionIndex: string,
+  submitter: string,
+  deadline: string,
+  appealFee: number,
+  amountContributed: number,
+  rewardPercentage: string,
+  governorContractInstance: Contract,
+  chain: Chain,
+  account: string
+}
+
+const appealSideBox: React.FC<AppealSideBox> = (p) => {
+  const amountRemaining = Number(Web3.utils.fromWei(
+    (Number(p.appealFee || 0) - Number(p.amountContributed || 0)).toString()
+  ));
+  const useOnFund = (amount: string) => {
+    useValidateCurrentChain(p.chain);
+    p.governorContractInstance.methods.fundAppeal(p.submissionIndex).send({
+      from: p.account,
       value: Web3.utils.toWei(amount).toString(),
     });
   };
@@ -77,40 +81,40 @@ export default ({
       <Row>
         <Col lg={3}>
           <Identicon
-            href={chain.scanAddressUrl(submitter)}
+            href={p.chain.scanAddressUrl(p.submitter)}
             target="_blank"
             rel="noopener noreferrer"
           >
-            {submitter ? (
-              <img src={makeBlockie(submitter)} alt={submitter} />
+            {p.submitter ? (
+              <img src={makeBlockie(p.submitter)} alt={p.submitter} />
             ) : (
               ""
             )}
           </Identicon>
         </Col>
         <Col lg={21}>
-          {shortenEthAddress(submitter)}
-          <div>{winner ? "Previous round winner" : "Previous round loser"}</div>
+          {shortenEthAddress(p.submitter)}
+          <div>{p.winner ? "Previous round winner" : "Previous round loser"}</div>
         </Col>
       </Row>
       <ClaimedHeading> Claimed </ClaimedHeading>
-      <ClaimedContainer> Enforce List {listID} </ClaimedContainer>
+      <ClaimedContainer> Enforce List {p.listID} </ClaimedContainer>
       <AmountRequired>Deposit Required = {amountRemaining} ETH</AmountRequired>
       <Progress
-        percent={((Number(amountRemaining) / Number(appealFee)) * 100).toFixed(
-          0
+        percent={Number(
+          ((Number(amountRemaining) / Number(p.appealFee)) * 100).toFixed(0)
         )}
         style={{ marginTop: "25px" }}
       />
       <HourglassOutlined style={{ margin: "5px" }} />
-      <TimeAgo date={deadline} />
+      <TimeAgo date={p.deadline} />
       <Input.Search
         placeholder="ETH"
         allowClear
         enterButton="Fund"
         size="large"
         disabled={
-          ((Number(amountRemaining) / Number(appealFee)) * 100).toFixed(0) ===
+          ((Number(amountRemaining) / Number(p.appealFee)) * 100).toFixed(0) ===
           "100"
         }
         style={{ marginTop: "25px" }}
@@ -118,9 +122,11 @@ export default ({
       />
       <BlueBanner
         heading="For external contributors"
-        subtext={`If this list wins, you will recieve your deposit back in addition to a ${rewardPercentage}% reward.`}
+        subtext={`If this list wins, you will recieve your deposit back in addition to a ${p.rewardPercentage}% reward.`}
         style={{ marginTop: "25px" }}
       />
     </StyledAppealSideBox>
   );
-};
+}
+
+export default appealSideBox;

@@ -3,7 +3,7 @@ import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
 import React, { useState, Fragment } from "react";
 import styled from "styled-components";
 
-const TopBanner = styled.div`
+const TopBannerStyle = styled.div`
   background: #4d00b4;
   border-radius: 3px;
   padding: 10px 32px;
@@ -14,12 +14,11 @@ const TopBanner = styled.div`
   cursor: pointer;
 `;
 
-export default (props) => {
+const TopBanner: React.FC<{ children: any }> = (p) => {
   const [show, setShow] = useState(true);
-
   return (
     <Fragment>
-      <TopBanner onClick={() => setShow(!show)}>
+      <TopBannerStyle onClick={() => setShow(!show)}>
         <Row>
           <Col lg={20}>Appeal</Col>
           <Col lg={4}>
@@ -30,8 +29,10 @@ export default (props) => {
             )}
           </Col>
         </Row>
-      </TopBanner>
-      {show ? <Fragment>{props.children}</Fragment> : ""}
+      </TopBannerStyle>
+      {show ? <Fragment>{p.children}</Fragment> : ""}
     </Fragment>
   );
-};
+}
+
+export default TopBanner;

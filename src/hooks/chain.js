@@ -1,6 +1,22 @@
+import { useEffect, useState } from "react";
+
 const MISSING_CHAIN_ERROR_CODE = 4902;
 
-const useValidateCurrentChain = async (chain) => {
+export const useFetchChainId = (web3) => {
+  const [chainId, setChainId] = useState();
+
+  useEffect(() => {
+    web3.eth.getChainId().then((chainId) => {
+      const chainIdAsHexa = `0x${chainId.toString(16)}`; 
+      setChainId(chainIdAsHexa)
+    });
+  }, []);
+
+  return chainId;
+};
+
+
+export const switchCurrentChain = async (chain) => {
   if (window.ethereum) {
     try {
       await window.ethereum.request({
@@ -32,5 +48,3 @@ const useValidateCurrentChain = async (chain) => {
     alert('MetaMask is not installed. Please consider installing it: https://metamask.io/download.html');
   } 
 }
-
-export default useValidateCurrentChain;

@@ -1,7 +1,10 @@
 import { Button, Modal, Input, Radio, Select, Tooltip } from "antd";
 import React, { useState, Fragment, useEffect } from "react";
-import { useFetchMethodsForContract } from "../hooks/projects";
+import { useFetchMethodsForContract } from "../hooks/projects-2";
 import styled from "styled-components";
+import web3 from "../ethereum/web3";
+import { Contract, ContractFunction } from "ethers";
+import { Chain } from "../types";
 
 const StyledButton = styled(Button)`
   float: right;
@@ -58,30 +61,28 @@ const Error = styled.div`
   font-size: 12px;
 `;
 
-export default ({
-  setPendingLists,
-  disabled,
-  addTx,
-  web3,
-  abiCache,
-  governorContractInstance,
-  chain,
-  costPerTx,
-  account
-}) => {
+const NewListModal: React.FC<{
+  setPendingLists: any,
+  disabled: boolean,
+  addTx: boolean,
+  web3: typeof web3,
+  governorContractInstance: Contract,
+  chain: Chain,
+  costPerTx: any
+}> = (p) => {
   const [visible, setVisible] = useState(false);
   const [inputType, setInputType] = useState("data");
-  const [title, setTitle] = useState();
-  const [address, setAddress] = useState();
+  const [title, setTitle] = useState<string | undefined>();
+  const [address, setAddress] = useState<string | undefined>();
   const [value, setValue] = useState("0");
-  const [data, setData] = useState();
-  const [errors, setErrors] = useState([]);
+  const [data, setData] = useState<string | undefined>();
+  const [errors, setErrors] = useState<any[]>([]);
   const [submittable, setSubmittable] = useState(false);
-  const [methodSelected, setMethodSelected] = useState();
-  const [methodInputs, setMethodInputs] = useState([]);
+  const [methodSelected, setMethodSelected] = useState<any>();
+  const [methodInputs, setMethodInputs] = useState<any[]>([]);
   const [methods, abi] = useFetchMethodsForContract(
     address,
-    chain
+    p.chain
   );
 
   const methodToData = () => {
@@ -105,7 +106,7 @@ export default ({
 
   const submitNewTx = () => {
     if (inputType === "data") {
-      setPendingLists({
+      p.setPendingLists({
         title,
         address,
         value,
@@ -115,7 +116,7 @@ export default ({
     } else {
       // get data from inputs
       const _data = methodToData();
-      setPendingLists({
+      p.setPendingLists({
         title,
         address,
         value,
@@ -129,7 +130,7 @@ export default ({
     if (methods.length && !data) setInputType("contract");
   }, [methods, data]);
 
-  const _setMethodInput = (val, index) => {
+  const _setMethodInput = (val: any, index: number) => {
     const _methodInputs = [...methodInputs];
     _methodInputs[index] = val;
     setMethodInputs(_methodInputs);
@@ -144,7 +145,7 @@ export default ({
         if (inputType === "contract") {
           // Check to see if all inputs are filled
           const numberOfInputs = methods.filter(
-            (a) => a.name === methodSelected
+            (a: ContractFunction) => a.name === methodSelected
           )[0].inputs.length;
           if (numberOfInputs === methodInputs.length) {
             if (!submittable) setSubmittable(true);
@@ -176,18 +177,18 @@ export default ({
       if (_newErrors) {
         setSubmittable(false);
       }
-    } catch (e) {}
+    } catch (e) { }
 
   }, [title, address, value, data, methodSelected, methodInputs]);
 
   return (
     <Fragment>
       <StyledButton
-        disabled={disabled}
-        type={!addTx && "primary"}
+        disabled={p.disabled}
+        type={p.addTx ? "primary" : "default"}
         onClick={() => setVisible(true)}
       >
-        {addTx ? "Add Tx" : "New List"}
+        {p.addTx ? "Add Tx" : "New List"}
       </StyledButton>
       <Modal
         visible={visible}
@@ -229,7 +230,7 @@ export default ({
         </Radio.Group>
         {inputType === "data" ? (
           <StyledTextArea
-            autosize={{ minRows: 10, maxRows: 20 }}
+            autoSize={{ minRows: 10, maxRows: 20 }}
             allowClear={true}
             value={data}
             placeholder={
@@ -241,7 +242,7 @@ export default ({
           <Fragment>
             <div>
               <StyledSelect onChange={setMethodSelected}>
-                {methods.map((m) => {
+                {methods.map((m: ContractFunction) => {
                   return (
                     <Select.Option key={m.name} value={m.name}>
                       {m.name}
@@ -253,8 +254,8 @@ export default ({
             {methodSelected ? (
               <div>
                 {methods
-                  .filter((a) => a.name === methodSelected)[0]
-                  .inputs.map((input, i) => {
+                  .filter((a: ContractFunction) => a.name === methodSelected)[0]
+                  .inputs.map((input: any, i: number) => {
                     return (
                       <div key={i}>
                         <InputLabel>{input.name}</InputLabel>
@@ -281,4 +282,6 @@ export default ({
       </Modal>
     </Fragment>
   );
-};
+}
+
+export default NewListModal

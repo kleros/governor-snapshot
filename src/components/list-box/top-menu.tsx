@@ -1,11 +1,13 @@
 import { Row, Col } from "antd";
 import makeBlockie from "ethereum-blockies-base64";
+import { Contract } from "ethers";
 import React from "react";
 import styled from "styled-components";
 import { useFetchSubmissionHash } from "../../hooks/governor";
+import { Chain } from "../../types";
 import { monthIndexToAbbrev } from "../../util/text";
 
-const TopMenu = styled.div`
+const StyledTopMenu = styled.div`
   background: #ffffff;
   box-shadow: 0px 6px 24px rgba(77, 0, 180, 0.25);
   border-radius: 3px;
@@ -47,38 +49,38 @@ const WithdrawList = styled.div`
   margin-right: 20px;
 `;
 
-export default ({
-  listNumber,
-  numberOfTxs,
-  submittedAt,
-  submitter,
-  setShowHide,
-  withdrawable,
-  governorContractInstance,
-  chain,
-  account,
-}) => {
+const TopMenu: React.FC<{
+  listNumber: string,
+  numberOfTxs: number,
+  submittedAt: Date,
+  submitter: string,
+  setShowHide: any,
+  withdrawable: boolean,
+  governorContractInstance: Contract,
+  chain: Chain,
+  account: string,
+}> = (p) => {
   const submissionHash = useFetchSubmissionHash(
-    governorContractInstance,
-    listNumber
+    p.governorContractInstance,
+    p.listNumber
   );
 
   const sendWithdrawSubmission = () => {
-    governorContractInstance.methods
-      .withdrawTransactionList(listNumber, submissionHash)
+    p.governorContractInstance.methods
+      .withdrawTransactionList(p.listNumber, submissionHash)
       .send({
-        from: account,
+        from: p.account,
       });
   };
 
   return (
-    <TopMenu onClick={setShowHide}>
+    <StyledTopMenu onClick={p.setShowHide}>
       <Row>
         <Col lg={3} md={4} sm={4} xs={12}>
-          List {listNumber}
+          List {p.listNumber}
         </Col>
         <Col lg={3} md={4} sm={4} xs={12} style={{ color: "#4D00B4" }}>
-          {numberOfTxs} TXs
+          {p.numberOfTxs} TXs
         </Col>
         <Col lg={12} md={10} sm={16} xs={24}>
           <Dot
@@ -88,13 +90,13 @@ export default ({
               marginBottom: "1px",
             }}
           />
-          {submittedAt ? (
+          {p.submittedAt ? (
             <div style={{ display: "inline-block" }}>
               Submitted on{" "}
               {`${monthIndexToAbbrev(
-                submittedAt.getUTCMonth()
-              )} ${submittedAt.getUTCDate()}, ${submittedAt.getUTCFullYear()}`}
-              {withdrawable ? (
+                p.submittedAt.getUTCMonth()
+              )} ${p.submittedAt.getUTCDate()}, ${p.submittedAt.getUTCFullYear()}`}
+              {p.withdrawable ? (
                 <WithdrawList
                   onClick={(event) => {
                     event.stopPropagation();
@@ -116,15 +118,17 @@ export default ({
           <div style={{ float: "right" }}>
             Submitter
             <Identicon
-              href={chain.scanAddressUrl(submitter)}
+              href={p.chain.scanAddressUrl(p.submitter)}
               target="_blank"
               rel="noopener noreferrer"
             >
-              {submitter ? <img src={makeBlockie(submitter)} alt={""} /> : ""}
+              {p.submitter ? <img src={makeBlockie(p.submitter)} alt={""} /> : ""}
             </Identicon>
           </div>
         </Col>
       </Row>
-    </TopMenu>
+    </StyledTopMenu>
   );
-};
+}
+
+export default TopMenu;

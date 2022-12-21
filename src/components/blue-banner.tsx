@@ -26,7 +26,11 @@ const StyledInfoCol = styled(Col)`
   line-height: 34px;
 `;
 
-export default ({ heading, subtext }) => {
+const BlueBanner: React.FC<{
+  heading: string,
+  subtext: string,
+  style: React.CSSProperties;
+}> = (p) => {
   return (
     <DisputeBanner>
       <Row>
@@ -34,10 +38,12 @@ export default ({ heading, subtext }) => {
           <InfoCircleOutlined />
         </StyledInfoCol>
         <Col lg={22}>
-          <Heading>{heading}</Heading>
-          <Subtext>{subtext}</Subtext>
+          <Heading>{p.heading}</Heading>
+          <Subtext>{p.subtext}</Subtext>
         </Col>
       </Row>
     </DisputeBanner>
   );
-};
+}
+
+export default BlueBanner;

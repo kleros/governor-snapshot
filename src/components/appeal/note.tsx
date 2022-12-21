@@ -27,7 +27,7 @@ const StyledInfoCol = styled(Col)`
   line-height: 34px;
 `;
 
-const note: React.FC = (p) => {
+const note: React.FC = () => {
   return (
     <DisputeBanner>
       <Row>

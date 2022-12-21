@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import InfoBanner from "../components/info-banner";
-import NewListModal from "../components/new-list-modal";
 import ListViewer from "../components/list-viewer";
 import AppealModule from "../components/appeal-module";
 import HowItWorks from "../components/how-it-works"

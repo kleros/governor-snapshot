@@ -2,10 +2,12 @@ import { Row, Col, Button, Tooltip, Spin } from "antd";
 import { LoadingOutlined, InfoCircleOutlined } from "@ant-design/icons";
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { useSubmitPendingList } from "../../hooks/governor";
-import { useFetchMethodsForContract } from "../../hooks/projects";
+import { submitEmptyList, submitPendingList } from "../../hooks/governor-2";
+import { useFetchMethodsForContract } from "../../hooks/projects-2";
 import NewTxModal from "../new-list-modal";
-import Web3 from "web3";
+import web3 from "../../ethereum/web3";
+import { Contract } from "ethers";
+import { Chain } from "../../types";
 
 const ListsContainer = styled.div`
   background: #ffffff;
@@ -26,37 +28,27 @@ const SubmitListsButton = styled(Button)`
   margin: 0px 20px;
 `;
 
-export default ({
-  txs,
-  submittable,
-  submitter,
-  governorContractInstance,
-  chain,
-  costPerTx,
-  addToPendingLists,
-  web3,
-  abiCache,
-  setAbiCache,
-  onClear
-}) => {
+const ListBoxLists: React.FC<{
+  txs: any[],
+  submittable: string,
+  submitter: string,
+  governorContractInstance: Contract,
+  chain: Chain,
+  costPerTx: any,
+  addToPendingLists: any
+  onClear: any
+}> = (p) => {
   const [selectedTx, setSelectedTx] = useState(1);
-  const tx = txs[selectedTx - 1]
-  const [decodedData, setDecodedData] = useState();
+  const tx = p.txs[selectedTx - 1]
+  const [decodedData, setDecodedData] = useState<any>();
   const [_, abi, loading] = useFetchMethodsForContract(
     tx ? tx.address : '',
-    chain
+    p.chain
   );
 
-  const _onClear = (index) => {
+  const _onClear = (index: number) => {
     setSelectedTx(1)
-    onClear(index)
-  }
-
-  const useSubmitEmptyList = () => {
-    governorContractInstance.methods.submitList([], [], '0x', [], '').send({
-      from: submitter,
-      value: costPerTx
-    })
+    p.onClear(index)
   }
 
   useEffect(() => {
@@ -71,9 +63,9 @@ export default ({
           if (tx.data.substring(0, 10) === methodSig) {
             const _parameters = abi[i].inputs.length
               ? web3.eth.abi.decodeParameters(
-                  abi[i].inputs,
-                  tx.data.substring(10, tx.data.length)
-                )
+                abi[i].inputs,
+                tx.data.substring(10, tx.data.length)
+              )
               : {};
             parameters = Object.keys(_parameters)
               .splice(abi[i].inputs.length + 1, abi[i].inputs.length * 2)
@@ -104,7 +96,7 @@ export default ({
       <Col lg={16} xs={24}>
         <ListsContainer>
           <EnumeratedListsContainer>
-            {txs.map((tx, i) => {
+            {p.txs.map((tx: any, i: number) => {
               return (
                 <TxRow
                   key={i}
@@ -113,39 +105,40 @@ export default ({
                   selected={i + 1 === selectedTx}
                   onClick={setSelectedTx}
                   onClear={_onClear}
-                  submittable={submittable}
+                  submittable={p.submittable}
                 />
               );
             })}
           </EnumeratedListsContainer>
-          {submittable ? (
+          {p.submittable ? (
             <div>
               <SubmitListsButton
                 type="primary"
                 onClick={() => {
-                  if (txs.length)
-                    useSubmitPendingList(
-                      txs,
-                      governorContractInstance,
-                      chain,
-                      costPerTx,
-                      submitter
+                  if (p.txs.length)
+                    submitPendingList(
+                      p.txs,
+                      p.governorContractInstance,
+                      p.chain,
+                      p.costPerTx,
+                      p.submitter
                     );
                   else
-                    useSubmitEmptyList()
+                    submitEmptyList()
                 }}
               >
-                <Tooltip title="This deposit will be returned if your list is executed. Deposit can be lost in the event of a dispute.">{`Submit List with ${Web3.utils.fromWei(
-                  String(costPerTx)
-                )} ${chain.nativeCurrency.symbol} Deposit`}</Tooltip>
+                <Tooltip title="This deposit will be returned if your list is executed. Deposit can be lost in the event of a dispute.">{`Submit List with ${web3.utils.fromWei(
+                  String(p.costPerTx)
+                )} ${p.chain.nativeCurrency.symbol} Deposit`}</Tooltip>
               </SubmitListsButton>
               <NewTxModal
-                setPendingLists={addToPendingLists}
+                setPendingLists={p.addToPendingLists}
                 addTx={true}
+                disabled={false}
                 web3={web3}
-                governorContractInstance={governorContractInstance}
-                chain={chain}
-                costPerTx={costPerTx}
+                governorContractInstance={p.governorContractInstance}
+                chain={p.chain}
+                costPerTx={p.costPerTx}
               />
             </div>
           ) : (
@@ -174,6 +167,8 @@ export default ({
     </Row>
   );
 };
+
+export default ListBoxLists
 
 /*
  * Tx Row
@@ -207,16 +202,25 @@ const ClearX = styled.div`
   color: rgba(0, 0, 0, 0.4);
   margin-right: 5px;
 `
+const TxRow: React.FC<{
+  title: string,
+  txNumber: number,
+  selected: boolean,
+  onClick: any,
+  onClear: any,
+  submittable: string
+}> = (p) => {
+  const _text = `Tx${p.txNumber}: ${p.title}`;
 
-const TxRow = ({ title, txNumber, selected, onClick, onClear, submittable }) => {
-  const _text = `Tx${txNumber}: ${title}`;
-
-  if (selected) return <TxRowSelected>{_text} {submittable ? (<ClearX onClick={() => onClear(txNumber - 1)}>x</ClearX>) : ''}</TxRowSelected>;
+  if (p.selected)
+    return <TxRowSelected>{_text} {
+      p.submittable ? (<ClearX onClick={() => p.onClear(p.txNumber - 1)}>x</ClearX>) : ''}
+    </TxRowSelected>;
   else
     return (
       <StyledTxRow
         onClick={() => {
-          onClick(txNumber);
+          p.onClick(p.txNumber);
         }}
       >
         {_text}
@@ -251,11 +255,14 @@ const ListBreakdownContent = styled.div`
   overflow-wrap: break-word;
 `;
 
-const ListBreakdownBox = ({ header, content }) => {
+const ListBreakdownBox: React.FC<{
+  header: string,
+  content: string
+}> = (p) => {
   return (
     <ListBreakdownContainer>
-      <ListBreakdownHeader>{header}</ListBreakdownHeader>
-      <ListBreakdownContent>{content || (<br />)}</ListBreakdownContent>
+      <ListBreakdownHeader>{p.header}</ListBreakdownHeader>
+      <ListBreakdownContent>{p.content || (<br />)}</ListBreakdownContent>
     </ListBreakdownContainer>
   );
 };

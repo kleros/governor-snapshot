@@ -6,9 +6,8 @@ import styled from "styled-components";
 import makeBlockie from "ethereum-blockies-base64";
 import TimeAgo from "../time-ago";
 import { shortenEthAddress } from "../../util/text";
-import BlueBanner from "../blue-banner-2";
+import BlueBanner from "../blue-banner";
 import Web3 from "../../ethereum/web3";
-import useValidateCurrentChain from "../../hooks/chain";
 import { Chain } from "../../types";
 
 
@@ -51,26 +50,23 @@ const AmountRequired = styled.div`
   color: rgba(0, 0, 0, 0.85);
 `;
 
-interface AppealSideBox {
-  winner: string,
+const AppealSideBox: React.FC<{
+  winner: any,
   listID: string,
   submissionIndex: string,
   submitter: string,
   deadline: string,
-  appealFee: number,
-  amountContributed: number,
+  appealFee: string,
+  amountContributed: string,
   rewardPercentage: string,
   governorContractInstance: Contract,
   chain: Chain,
   account: string
-}
-
-const appealSideBox: React.FC<AppealSideBox> = (p) => {
-  const amountRemaining = Number(Web3.utils.fromWei(
+}> = (p) => {
+  const amountRemaining = Web3.utils.fromWei(
     (Number(p.appealFee || 0) - Number(p.amountContributed || 0)).toString()
-  ));
-  const useOnFund = (amount: string) => {
-    useValidateCurrentChain(p.chain);
+  );
+  const useOnFund = (amount: any) => {
     p.governorContractInstance.methods.fundAppeal(p.submissionIndex).send({
       from: p.account,
       value: Web3.utils.toWei(amount).toString(),
@@ -130,4 +126,4 @@ const appealSideBox: React.FC<AppealSideBox> = (p) => {
   );
 }
 
-export default appealSideBox;
+export default AppealSideBox;

@@ -23,6 +23,8 @@
     "@types/node": "18.11.15",
     "@types/react": "18.0.26",
     "@types/react-dom": "18.0.9",
+    "@types/react-router-dom": "^5.3.3",
+    "@types/styled-components": "^5.1.26",
     "antd": "^4.24.5",
     "ethereum-blockies-base64": "^1.0.2",
     "ethers": "^5.0.17",
@@ -30,7 +32,7 @@
     "react-dom": "^16.14.0",
     "react-helmet": "^6.1.0",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "^3.4.3",
+    "react-scripts": "^4.0.1",
     "react-time-ago": "^6.2.0",
     "standard-version": "^9.0.0",
     "styled-components": "^5.2.0",
@@ -38,7 +40,6 @@
     "web3": "^1.3.0"
   },
   "devDependencies": {
-    "@types/styled-components": "^5.1.26",
     "prettier": "2.1.2"
   },
   "browserslist": {

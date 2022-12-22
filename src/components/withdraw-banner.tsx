@@ -4,7 +4,7 @@ import React from "react";
 import styled from "styled-components";
 import TimeAgo from "./time-ago";
 
-const WithdrawBanner = styled.div`
+const StyledWithdrawBanner = styled.div`
   border: 1px solid #ff9900;
   box-sizing: border-box;
   border-radius: 3px;
@@ -28,9 +28,11 @@ const StyledInfoCol = styled(Col)`
   line-height: 34px;
 `;
 
-export default ({ timeout }) => {
+const WithdrawBanner: React.FC<{
+  timeout: Date
+}> = (p) => {
   return (
-    <WithdrawBanner>
+    <StyledWithdrawBanner>
       <Row>
         <StyledInfoCol lg={2}>
           <InfoCircleOutlined />
@@ -38,7 +40,7 @@ export default ({ timeout }) => {
         <Col lg={22}>
           <Heading>
             The list has been submitted. Withdrawl timeout:{" "}
-            <TimeAgo date={timeout || new Date()} />
+            <TimeAgo date={p.timeout || new Date()} />
           </Heading>
           <Subtext>
             If you notice someone has posted a similar list or you spot a
@@ -46,6 +48,8 @@ export default ({ timeout }) => {
           </Subtext>
         </Col>
       </Row>
-    </WithdrawBanner>
+    </StyledWithdrawBanner>
   );
-};
+}
+
+export default WithdrawBanner;

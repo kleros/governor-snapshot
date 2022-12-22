@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import Web3 from "web3";
-import { orderParametersByHash } from "../util/tx-hash";
 
 /**
  Fetch the time of the start of the session.
@@ -110,6 +109,7 @@ export const useFetchSubmittedLists = (
   // Fetch Event logs and number of txs for each List
   useEffect(() => {
     const _fetchAllEventsForListIDs = async () => {
+      console.log(`en governor.js 1 ${sessionListIDs}`)
       const _events = await Promise.all(
         sessionListIDs.map((_listID) => {
           return governorContractInstance.getPastEvents("ListSubmitted", {
@@ -141,6 +141,7 @@ export const useFetchSubmittedLists = (
         listEventLogs.length === sessionListIDs.length &&
         numberOfTxs
       ) {
+        console.log(`en governor.js 2 ${sessionListIDs}`)
         _txInfo = await Promise.all(
           sessionListIDs.map(async (_listID, i) => {
             const txs = [];
@@ -221,44 +222,6 @@ export const useFetchListSubmissionCost = (
   }, [extraData, submissionBaseDeposit]);
 
   return costPerList;
-};
-
-export const useSubmitPendingList = (
-  txs,
-  governorContractInstance,
-  chain,
-  costPerTx,
-  account
-) => {
-  const { addresses, values, data, dataSizes, titles } = orderParametersByHash(
-    txs
-  );
-
-  governorContractInstance.methods
-    .submitList(addresses, values, data, dataSizes, titles)
-    .send({
-      value: costPerTx,
-      from: account,
-    });
-};
-
-export const useIsWithdrawable = (governorContractInstance, submittedAt) => {
-  const [timeout, setTimeout] = useState(0);
-
-  // Fetch timeout for this contract
-  useEffect(() => {
-    governorContractInstance.methods
-      .withdrawTimeout()
-      .call()
-      .then((r) => setTimeout(r));
-  }, [governorContractInstance]);
-
-  const now = new Date();
-
-  return [
-    Number(timeout) * 1000 + submittedAt.getTime() > now.getTime(),
-    new Date(Number(timeout) * 1000 + submittedAt.getTime()),
-  ];
 };
 
 export const useFetchSubmissionHash = (governorContractInstance, listID) => {

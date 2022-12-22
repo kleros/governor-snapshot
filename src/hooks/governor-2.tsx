@@ -1,7 +1,8 @@
 import { Contract } from "ethers";
+import { useEffect, useState } from "react";
 import { orderParametersByHash } from "../util/tx-hash";
 
-export const submitPendingList: any = (
+export const submitPendingList = (
   txs: any[],
   governorContractInstance: Contract,
   costPerTx: any,
@@ -29,3 +30,22 @@ export const submitEmptyList: any = (
     value: costPerTx
   })
 }
+
+export const useIsWithdrawable = (governorContractInstance: Contract, submittedAt: Date): [boolean, Date] => {
+  const [timeout, setTimeout] = useState(0);
+
+  // Fetch timeout for this contract
+  useEffect(() => {
+    governorContractInstance.methods
+      .withdrawTimeout()
+      .call()
+      .then((r: number) => setTimeout(r));
+  }, [governorContractInstance]);
+
+  const now = new Date();
+
+  return [
+    Number(timeout) * 1000 + submittedAt.getTime() > now.getTime(),
+    new Date(Number(timeout) * 1000 + submittedAt.getTime()),
+  ];
+};

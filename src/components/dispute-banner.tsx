@@ -3,7 +3,7 @@ import { InfoCircleOutlined } from "@ant-design/icons";
 import React from "react";
 import styled from "styled-components";
 
-const DisputeBanner = styled.div`
+const StyledDisputeBanner = styled.div`
   border: 1px solid #009aff;
   box-sizing: border-box;
   border-radius: 3px;
@@ -26,9 +26,9 @@ const StyledInfoCol = styled(Col)`
   line-height: 34px;
 `;
 
-export default ({ timeout }) => {
+const DisputeBanner: React.FC = () => {
   return (
-    <DisputeBanner>
+    <StyledDisputeBanner>
       <Row>
         <StyledInfoCol lg={2}>
           <InfoCircleOutlined />
@@ -40,6 +40,8 @@ export default ({ timeout }) => {
           <Subtext>A decision will be announced soon.</Subtext>
         </Col>
       </Row>
-    </DisputeBanner>
+    </StyledDisputeBanner>
   );
-};
+}
+
+export default DisputeBanner;

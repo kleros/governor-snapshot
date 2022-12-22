@@ -35,7 +35,7 @@ const ListBoxLists: React.FC<{
   governorContractInstance: Contract,
   chain: Chain,
   costPerTx: any,
-  addToPendingLists: any
+  addToPendingLists: any,
   onClear: any
 }> = (p) => {
   const [selectedTx, setSelectedTx] = useState(1);
@@ -120,8 +120,7 @@ const ListBoxLists: React.FC<{
                       p.txs,
                       p.governorContractInstance,
                       p.chain,
-                      p.costPerTx,
-                      p.submitter
+                      p.costPerTx
                     );
                   else
                     submitEmptyList()

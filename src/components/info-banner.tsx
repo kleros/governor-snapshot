@@ -6,6 +6,7 @@ import { monthIndexToAbbrev } from "../util/text";
 import TimeAgo from "./time-ago";
 import SnapshotLogo from '../assets/logos/snapshot.png'
 import { Contract } from "ethers";
+import { Session } from "../types";
 
 const StyledInfoBanner = styled.div`
   background: #fbf9fe;
@@ -30,7 +31,7 @@ const StyledTimeAgo = styled(TimeAgo)`
 const InfoBanner: React.FC<{
   governorContractInstance: Contract,
   account: string,
-  session: any,
+  session: Session,
   snapshotSlug: string,
   showTimeout: boolean
 }

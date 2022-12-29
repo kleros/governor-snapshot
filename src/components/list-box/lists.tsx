@@ -30,7 +30,7 @@ const SubmitListsButton = styled(Button)`
 
 const ListBoxLists: React.FC<{
   txs: any[],
-  submittable: string,
+  submittable: boolean,
   submitter: string,
   governorContractInstance: Contract,
   chain: Chain,
@@ -207,7 +207,7 @@ const TxRow: React.FC<{
   selected: boolean,
   onClick: any,
   onClear: any,
-  submittable: string
+  submittable: boolean
 }> = (p) => {
   const _text = `Tx${p.txNumber}: ${p.title}`;
 

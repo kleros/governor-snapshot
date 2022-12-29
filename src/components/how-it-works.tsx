@@ -22,7 +22,7 @@ const HowItWorks: React.FC = () => {
       </LinkText>
       <Modal
         title="How it Works"
-        visible={visible}
+        open={visible}
         onCancel={() => { setVisible(false) }}
         footer={null}
       >

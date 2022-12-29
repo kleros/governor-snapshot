@@ -109,7 +109,6 @@ export const useFetchSubmittedLists = (
   // Fetch Event logs and number of txs for each List
   useEffect(() => {
     const _fetchAllEventsForListIDs = async () => {
-      console.log(`en governor.js 1 ${sessionListIDs}`)
       const _events = await Promise.all(
         sessionListIDs.map((_listID) => {
           return governorContractInstance.getPastEvents("ListSubmitted", {
@@ -141,7 +140,6 @@ export const useFetchSubmittedLists = (
         listEventLogs.length === sessionListIDs.length &&
         numberOfTxs
       ) {
-        console.log(`en governor.js 2 ${sessionListIDs}`)
         _txInfo = await Promise.all(
           sessionListIDs.map(async (_listID, i) => {
             const txs = [];

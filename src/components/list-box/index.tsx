@@ -10,17 +10,17 @@ import Web3 from "../../ethereum/web3";
 const ListBoxIndex: React.FC<{
   txs: any[],
   submitter: string,
-  submittable: string,
-  costPerTx: any,
+  submittable: boolean,
+  costPerTx?: any,
   governorContractInstance: Contract,
   chain: Chain,
   showByDefault: boolean,
-  addToPendingLists: any,
-  submittedAt: Date,
+  addToPendingLists?: any,
+  submittedAt?: Date,
   listID: string,
   web3: typeof Web3,
   account: string,
-  onClear: any
+  onClear?: any
 }> = (p) => {
   const [showLists, setShowLists] = useState(p.showByDefault);
   // If list is pending it won't have submittedAt timestamp

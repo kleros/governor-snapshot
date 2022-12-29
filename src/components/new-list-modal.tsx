@@ -191,7 +191,7 @@ const NewListModal: React.FC<{
         {p.addTx ? "Add Tx" : "New List"}
       </StyledButton>
       <Modal
-        visible={visible}
+        open={visible}
         maskClosable
         onCancel={() => setVisible(false)}
         footer={null}

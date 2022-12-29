@@ -213,7 +213,6 @@ export default (props) => {
               governorContractInstance={governorContractInstance}
               account={account}
               session={session}
-              chain={projectInfo.chain}
               snapshotSlug={projectInfo.snapshotSlug}
               showTimeout={!!submittedLists.length}
             />

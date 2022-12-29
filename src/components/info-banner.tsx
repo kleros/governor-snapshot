@@ -5,8 +5,9 @@ import { useFetchSessionStart, useFetchSessionEnd } from "../hooks/governor";
 import { monthIndexToAbbrev } from "../util/text";
 import TimeAgo from "./time-ago";
 import SnapshotLogo from '../assets/logos/snapshot.png'
+import { Contract } from "ethers";
 
-const InfoBanner = styled.div`
+const StyledInfoBanner = styled.div`
   background: #fbf9fe;
   border-top: 2px solid #4d00b4;
   border-radius: 3px;
@@ -26,23 +27,30 @@ const StyledTimeAgo = styled(TimeAgo)`
   line-height: 26px;
 `;
 
-export default ({ governorContractInstance, chain, account, session, snapshotSlug, showTimeout }) => {
-  const sessionStart = useFetchSessionStart(governorContractInstance);
+const InfoBanner: React.FC<{
+  governorContractInstance: Contract,
+  account: string,
+  session: any,
+  snapshotSlug: string,
+  showTimeout: boolean
+}
+> = (p) => {
+  const sessionStart = useFetchSessionStart(p.governorContractInstance);
   const sessionEnd = useFetchSessionEnd(
-    governorContractInstance,
-    session.currentSessionNumber
+    p.governorContractInstance,
+    p.session.currentSessionNumber
   );
 
-  const sendExecuteSubmissions = governorContractInstance.methods.executeSubmissions();
+  const sendExecuteSubmissions = p.governorContractInstance.methods.executeSubmissions();
 
   return (
-    <InfoBanner>
+    <StyledInfoBanner>
       <Row>
         <Col lg={18} md={12} sm={10}>
           <span>
             Governor decision from{" "}
-            <img src={SnapshotLogo} style={{height: '16px'}}/>
-            <a href={`https://snapshot.org/#/${snapshotSlug}`}>Snapshot.</a>
+            <img src={SnapshotLogo} style={{ height: '16px' }} />
+            <a href={`https://snapshot.org/#/${p.snapshotSlug}`}>Snapshot.</a>
           </span>
           <br />
           <span>
@@ -56,16 +64,17 @@ export default ({ governorContractInstance, chain, account, session, snapshotSlu
         <Col lg={6} md={12} sm={14}>
           {Number(sessionEnd.getTime()) < Number(new Date().getTime()) ? (
             <Fragment>
-              {session && Number(session.disputeID) ? (
+              {p.session && Number(p.session.disputeID) ? (
                 <div />
               ) : (
                 <Button
-                  disabled={!account}
+                  disabled={!p.account}
                   type="primary"
                   onClick={() => {
                     sendExecuteSubmissions.send({
-                      from: account,
-                    })}
+                      from: p.account,
+                    })
+                  }
                   }
                 >
                   Execute Submissions
@@ -75,7 +84,7 @@ export default ({ governorContractInstance, chain, account, session, snapshotSlu
           ) : (
             <Fragment>
               {
-                showTimeout ? (
+                p.showTimeout ? (
                   <SessionEndText>
                     Session ends in <br />
                     <StyledTimeAgo date={sessionEnd || new Date()} />
@@ -86,6 +95,8 @@ export default ({ governorContractInstance, chain, account, session, snapshotSlu
           )}
         </Col>
       </Row>
-    </InfoBanner>
+    </StyledInfoBanner>
   );
-};
+}
+
+export default InfoBanner;

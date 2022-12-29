@@ -52,7 +52,7 @@ const WithdrawList = styled.div`
 const TopMenu: React.FC<{
   listNumber: string,
   numberOfTxs: number,
-  submittedAt: Date,
+  submittedAt?: Date,
   submitter: string,
   setShowHide: any,
   withdrawable: boolean,

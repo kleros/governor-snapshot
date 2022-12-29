@@ -2,7 +2,7 @@ import { Contract } from "ethers";
 import { useEffect, useState } from "react";
 import { orderParametersByHash } from "../util/tx-hash";
 import web3 from "../ethereum/web3";
-import { RoundInfo } from "../types";
+import { RoundInfo, Session } from "../types";
 
 export const submitPendingList = (
   txs: any[],
@@ -180,4 +180,61 @@ export const useFetchRoundInfo = (governorContractInstance: Contract, sessionNum
     ...roundInformation,
     numberOfRounds,
   };
+};
+
+export const useFetchSession = (governorContractInstance: Contract) => {
+  const [currentSessionNumber, setCurrentSessionNumber] = useState<number>(0);
+  const [session, setSession] = useState<Session>(new Session({ disputeID: 0, currentSessionNumber: 0 }));
+
+  useEffect(() => {
+    governorContractInstance.methods
+      .getCurrentSessionNumber()
+      .call()
+      .then((r: number) => setCurrentSessionNumber(r));
+  }, [governorContractInstance]);
+
+  useEffect(() => {
+    governorContractInstance.methods
+      .sessions(currentSessionNumber)
+      .call()
+      .then((r: Session) => setSession(r));
+  }, [currentSessionNumber]);
+
+  return {
+    ...session,
+    currentSessionNumber,
+  };
+};
+
+export const useFetchListSubmissionCost = (
+  governorContractInstance: Contract,
+  arbitratorContractInstance: Contract
+) => {
+  const [submissionBaseDeposit, setSubmissionBaseDeposit] = useState(0);
+  const [extraData, setExtraData] = useState("0x00");
+  const [costPerList, setCostPerList] = useState(0);
+
+  useEffect(() => {
+    governorContractInstance.methods
+      .submissionBaseDeposit()
+      .call()
+      .then((r: number) => setSubmissionBaseDeposit(r));
+    governorContractInstance.methods
+      .arbitratorExtraData()
+      .call()
+      .then((r: string) => setExtraData(r));
+  }, [governorContractInstance]);
+
+  useEffect(() => {
+    arbitratorContractInstance.methods
+      .arbitrationCost(extraData)
+      .call()
+      .then((r: string) => {
+        setCostPerList(
+          Number(web3.utils.toBN(submissionBaseDeposit).add(web3.utils.toBN(r)))
+        );
+      });
+  }, [extraData, submissionBaseDeposit]);
+
+  return costPerList;
 };

@@ -5,7 +5,6 @@ import { useIsWithdrawable } from "../../hooks/governor-2";
 import WithdrawBanner from "../withdraw-banner";
 import { Contract } from "ethers";
 import { Chain } from "../../types";
-import Web3 from "../../ethereum/web3";
 
 const ListBoxIndex: React.FC<{
   txs: any[],
@@ -18,7 +17,6 @@ const ListBoxIndex: React.FC<{
   addToPendingLists?: any,
   submittedAt?: Date,
   listID: string,
-  web3: typeof Web3,
   account: string,
   onClear?: any
 }> = (p) => {

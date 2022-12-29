@@ -35,7 +35,6 @@ const ListViewer: React.FC<{
         governorContractInstance={p.governorContractInstance}
         chain={p.chain}
         addToPendingLists={p.addToPendingLists}
-        web3={web3}
         onClear={p.onClear}
         account={p.account}
       />
@@ -57,7 +56,6 @@ const ListViewer: React.FC<{
             showByDefault={false}
             submittedAt={sub.submittedAt}
             submitter={sub.submitter}
-            web3={web3}
             governorContractInstance={p.governorContractInstance}
             chain={p.chain}
             account={p.account}

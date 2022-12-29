@@ -5,6 +5,7 @@ import styled from "styled-components";
 
 import ProjectCard from "../components/project-card";
 import { useFetchAllProjects } from "../hooks/projects";
+import { Project } from "../types";
 
 const StyledHome = styled.div`
   margin-top: 64px;
@@ -30,7 +31,7 @@ const StyledSubheading = styled.div`
   line-height: 19px;
 `;
 
-export default (props) => {
+const Home: React.FC = (p) => {
   const projects = useFetchAllProjects();
 
   return (
@@ -39,17 +40,19 @@ export default (props) => {
       <StyledSearch placeholder="Search" prefix={<SearchOutlined />} />
       <StyledSubheading>{projects.length} Projects</StyledSubheading>
       <Row style={{ marginTop: "32px" }}>
-        {projects.map((p, i) => (
+        {projects.map((project: Project, i) => (
           <Col lg={6} md={8} sm={12} xs={24} key={i}>
             <ProjectCard
-              icon={p.icon}
-              name={p.name}
-              address={p.governorAddress}
-              chain={p.chain}
+              icon={project.icon}
+              name={project.name}
+              address={project.governorAddress}
+              chain={project.chain}
             />
           </Col>
         ))}
       </Row>
     </StyledHome>
   );
-};
+}
+
+export default Home;

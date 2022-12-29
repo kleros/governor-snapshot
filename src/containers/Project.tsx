@@ -11,7 +11,7 @@ import GovernorInterface from "../constants/abis/governor.json";
 import ArbitratorInterface from "../constants/abis/court.json";
 import { useFetchProjectByName } from "../hooks/projects";
 import { useFetchAccount } from "../hooks/account";
-import { useFetchSession, useFetchListSubmissionCost, useFetchSubmittedLists } from "../hooks/governor";
+import { useFetchSession, useFetchListSubmissionCost, useFetchSubmittedLists } from "../hooks/governor-2";
 import { useLocalStorage } from '../hooks/local';
 import { capitalizeString } from "../util/text";
 import { switchCurrentChain, useFetchChainId } from "../hooks/chain";
@@ -83,32 +83,32 @@ const CSVUpload = styled.div`
   margin-top: 7px;
 `
 
-export default (props) => {
+const ProjectHome: React.FC = (props: any) => {
   const {
     match: { params },
   } = props;
-  const [ cachedPendingLists, setPendingListsCache ] = useLocalStorage('CACHED_LISTS', undefined)
-  const [listsShown, setListsShown] = useState("current");
+  const [cachedPendingLists, setPendingListsCache] = useLocalStorage('CACHED_LISTS', undefined)
+  const [listsShown, setListsShown] = useState<any>("current");
   const [pendingLists, setPendingLists] = useState(cachedPendingLists);
   const [isLoadingChainData, setIsLoadingChainData] = useState(false);
 
   useEffect(() => {
-    if(window.ethereum) {
+    if (window.ethereum) {
       window.ethereum.on('chainChanged', () => {
         window.location.reload();
       })
-    }  
+    }
   });
 
-  const addToPendingLists = (newList) => {
+  const addToPendingLists = (newList: any[]) => {
     const pendingListsCopy = [...pendingLists];
     pendingListsCopy.push(newList);
     setPendingListsCache(pendingListsCopy)
     setPendingLists(pendingListsCopy);
   };
 
-  const clearTx = (index) => {
-    const _pendingLists = [ ...pendingLists ]
+  const clearTx = (index: number) => {
+    const _pendingLists = [...pendingLists]
     if (index > -1) {
       _pendingLists.splice(index, 1)
       setPendingListsCache(_pendingLists)
@@ -121,11 +121,11 @@ export default (props) => {
     setPendingLists(undefined)
   }
 
-  const _uploadTxs = (rows) => {
+  const _uploadTxs = (rows: any[]) => {
     console.log(rows)
     const _rows = []
-    for (let i=0; i < rows.length; i++) {
-      if (rows[i][3] && rows[i][3].substring(0,2) !== '0x')
+    for (let i = 0; i < rows.length; i++) {
+      if (rows[i][3] && rows[i][3].substring(0, 2) !== '0x')
         rows[i][3] = '0x' + rows[i][3]
 
       if (rows[i][0]) {
@@ -146,7 +146,7 @@ export default (props) => {
   const projectInfo = useFetchProjectByName(params.projectName);
   const chainId = useFetchChainId(props.web3);
   let correctChain = chainId == projectInfo.chain.id;
-  
+
   const governorContractInstance = new props.web3.eth.Contract(
     GovernorInterface.abi,
     projectInfo.governorAddress
@@ -155,7 +155,7 @@ export default (props) => {
     ArbitratorInterface.abi,
     projectInfo.arbitratorAddress
   );
-  const account = useFetchAccount(props.web3);
+  const account: string = useFetchAccount();
 
   const session = useFetchSession(governorContractInstance);
 
@@ -166,8 +166,7 @@ export default (props) => {
 
   const submittedLists = useFetchSubmittedLists(
     governorContractInstance,
-    props.web3,
-    session.currentSessionNumber || "0"
+    session.currentSessionNumber || 0
   );
 
   return (
@@ -178,7 +177,7 @@ export default (props) => {
             <Link to="/">Governor</Link>
             {
               <span style={{ fontWeight: "300" }}>
-                {" "} 
+                {" "}
                 / {projectInfo.icon}
                 {capitalizeString(`${params.projectName} @ ${projectInfo.chain.name}`)}
               </span>
@@ -186,146 +185,147 @@ export default (props) => {
           </StyledHeader>
         </Col>
         <Col lg={4} md={6} sm={6} xs={8}>
-          { 
+          {
             chainId === undefined || isLoadingChainData ?
-                <Spin/>
+              <Spin />
               :
-                (correctChain ? 
-                  <HowItWorks /> 
-                : 
-                  <Button
-                    type="danger"
-                    onClick={() => {
-                      setIsLoadingChainData(true);  
-                      switchCurrentChain(projectInfo.chain);
-                    } }>
-                      Switch Network
-                  </Button>
-                )
+              (correctChain ?
+                <HowItWorks />
+                :
+                <Button
+                  danger
+                  onClick={() => {
+                    setIsLoadingChainData(true);
+                    switchCurrentChain(projectInfo.chain);
+                  }}>
+                  Switch Network
+                </Button>
+              )
           }
         </Col>
       </Row>
-      { 
-        correctChain ? 
-        (
-          <div>
-            <InfoBanner
-              governorContractInstance={governorContractInstance}
-              account={account}
-              session={session}
-              snapshotSlug={projectInfo.snapshotSlug}
-              showTimeout={!!submittedLists.length}
-            />
-            <ListOptionsRow>
-              <Col lg={20} md={12} sm={12} xs={12}>
-                <StyledSelect
-                  onChange={setListsShown}
-                  defaultValue="current"
-                  disabled={true}
-                >
-                  <Select.Option value="current">
-                    <span>
-                      <Dot
-                        style={{
-                          backgroundColor: "#009AFF",
-                          marginRight: "8px",
-                          marginBottom: "1px",
-                        }}
-                      />
-                      Current Lists
-                    </span>
-                  </Select.Option>
-                  <Select.Option value="executed">
-                    <span>
-                      <Dot
-                        style={{
-                          backgroundColor: "#00C42B",
-                          marginRight: "8px",
-                          marginBottom: "1px",
-                        }}
-                      />
-                      Executed Lists
-                    </span>
-                  </Select.Option>
-                </StyledSelect>
-              </Col>
-              <Col lg={4} md={12} sm={12} xs={12}>
-                <Button
-                  type="primary"
-                  disabled={pendingLists}
-                  style={{float: 'right'}}
-                  onClick={() => setPendingLists([])}
-                >New List</Button>
-                {
-                  pendingLists && pendingLists.length === 0 && (
-                    <div>
-                      <Upload
-                        accept=".csv"
-                        showUploadList={false}
-                        beforeUpload={file => {
-                          const reader = new FileReader()
-      
-                          reader.onload = e => {
+      {
+        correctChain ?
+          (
+            <div>
+              <InfoBanner
+                governorContractInstance={governorContractInstance}
+                account={account}
+                session={session}
+                snapshotSlug={projectInfo.snapshotSlug}
+                showTimeout={!!submittedLists.length}
+              />
+              <ListOptionsRow>
+                <Col lg={20} md={12} sm={12} xs={12}>
+                  <StyledSelect
+                    onChange={setListsShown}
+                    defaultValue="current"
+                    disabled={true}
+                  >
+                    <Select.Option value="current">
+                      <span>
+                        <Dot
+                          style={{
+                            backgroundColor: "#009AFF",
+                            marginRight: "8px",
+                            marginBottom: "1px",
+                          }}
+                        />
+                        Current Lists
+                      </span>
+                    </Select.Option>
+                    <Select.Option value="executed">
+                      <span>
+                        <Dot
+                          style={{
+                            backgroundColor: "#00C42B",
+                            marginRight: "8px",
+                            marginBottom: "1px",
+                          }}
+                        />
+                        Executed Lists
+                      </span>
+                    </Select.Option>
+                  </StyledSelect>
+                </Col>
+                <Col lg={4} md={12} sm={12} xs={12}>
+                  <Button
+                    type="primary"
+                    disabled={pendingLists}
+                    style={{ float: 'right' }}
+                    onClick={() => setPendingLists([])}
+                  >New List</Button>
+                  {
+                    pendingLists && pendingLists.length === 0 && (
+                      <div>
+                        <Upload
+                          accept=".csv"
+                          showUploadList={false}
+                          beforeUpload={file => {
+                            const reader = new FileReader()
+
+                            reader.onload = e => {
+                              if (!e?.target?.result || typeof e.target.result !== "string") {
+                                throw new Error("Cannot read .csv");
+                              }
                               const _csvRows = e.target.result.split(/\r?\n/)
-                              const _csvCols = []
+                              const _csvCols: any[] = []
                               _csvRows.forEach(row => {
                                 _csvCols.push(row.split(','))
                               })
                               _uploadTxs(_csvCols)
-                          }
-                          reader.readAsText(file)
-      
-                          // Prevent upload
-                          return false;
-                      }}>
-                        <Tooltip title="Row Format: title, contract address, WEI value, data">
-                          <CSVUpload>Upload CSV</CSVUpload>
-                        </Tooltip>
-                    </Upload>
-                  </div>
-                  )
-                }
-              </Col>
-            </ListOptionsRow>
-            {pendingLists ? (
+                            }
+                            reader.readAsText(file)
+
+                            // Prevent upload
+                            return false;
+                          }}>
+                          <Tooltip title="Row Format: title, contract address, WEI value, data">
+                            <CSVUpload>Upload CSV</CSVUpload>
+                          </Tooltip>
+                        </Upload>
+                      </div>
+                    )
+                  }
+                </Col>
+              </ListOptionsRow>
+              {pendingLists ? (
                 <ReturnButton onClick={() => clearAllPendingLists()}>
                   <ArrowLeftOutlined /> Return
                 </ReturnButton>
               ) : (
                 ""
-            )}
-            <ListViewer
-              governorContractInstance={governorContractInstance}
-              chain={projectInfo.chain}
-              arbitratorContractInstance={arbitratorContractInstance}
-              account={account}
-              pendingLists={pendingLists}
-              addToPendingLists={addToPendingLists}
-              web3={props.web3}
-              session={session}
-              costPerTx={costPerTx}
-              onClear={clearTx}
-              submittedLists={submittedLists}
-            />
-            {session.disputeID ? (
+              )}
+              <ListViewer
+                governorContractInstance={governorContractInstance}
+                chain={projectInfo.chain}
+                account={account}
+                pendingLists={pendingLists}
+                addToPendingLists={addToPendingLists}
+                costPerTx={costPerTx}
+                onClear={clearTx}
+                submittedLists={submittedLists}
+              />
+              {session.disputeID ? (
                 <AppealModule
                   session={session}
                   governorContractInstance={governorContractInstance}
                   chain={projectInfo.chain}
                   arbitratorContractInstance={arbitratorContractInstance}
-                  web3={props.web3}
                   account={account}
                 />
               ) : (
                 ""
-            )}
-          </div>) : 
+              )}
+            </div>) :
           <div>
             <StyledInvalidNetwork>
               Invalid network.
             </StyledInvalidNetwork>
           </div>
-        }
+      }
     </StyledProjectHome>
   );
-};
+}
+
+export default ProjectHome;

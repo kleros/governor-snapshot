@@ -27,7 +27,7 @@ const ListViewer: React.FC<{
     return (
       <ListBox
         txs={p.pendingLists}
-        listID={"1"}
+        listID={1}
         submitter={p.account}
         submittable={true}
         showByDefault={true}

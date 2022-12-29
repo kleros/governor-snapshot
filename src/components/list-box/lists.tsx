@@ -2,7 +2,7 @@ import { Row, Col, Button, Tooltip, Spin } from "antd";
 import { LoadingOutlined, InfoCircleOutlined } from "@ant-design/icons";
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { submitEmptyList, submitPendingList } from "../../hooks/governor-2";
+import { submitEmptyList, submitPendingList } from "../../hooks/governor";
 import { useFetchMethodsForContract } from "../../hooks/projects-2";
 import NewTxModal from "../new-list-modal";
 import web3 from "../../ethereum/web3";

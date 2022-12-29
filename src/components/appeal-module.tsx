@@ -4,23 +4,19 @@ import styled from "styled-components";
 import TopBanner from "./appeal/top-banner";
 import Note from "./appeal/note";
 import AppealSideBox from "./appeal/appeal-side-box";
-import getAppealCost from "../util/get-appeal-cost";
+import { getAppealCost } from "../util/get-appeal-cost";
 import {
+  useFetchCrowdfundingVariables,
   useFetchArbitratorExtraData,
-  useFetchCrowdfundingVariables
-} from "../hooks/governor";
-import {
   useFetchRoundInfo,
   useFetchSubmittedLists
-} from "../hooks/governor-2"
+} from "../hooks/governor"
 import {
   useFetchAppealFee,
-} from "../hooks/arbitrator";
-import {
   useFetchAppealTimes,
   useFetchDispute,
   useFetchCurrentRuling
-} from "../hooks/arbitrator-2";
+} from "../hooks/arbitrator";
 import { Contract } from "ethers";
 import { AppealPeriod, Chain, Dispute, Session } from "../types";
 
@@ -75,7 +71,7 @@ const AppealModule: React.FC<{
   );
   const appealFee = useFetchAppealFee(
     p.arbitratorContractInstance,
-    p.session.disputeID || "0",
+    p.session.disputeID || 0,
     arbitratorExtraData || "0x0"
   );
   const appealTimes: AppealPeriod | undefined = useFetchAppealTimes(

@@ -4,6 +4,66 @@ import { orderParametersByHash } from "../util/tx-hash";
 import web3 from "../ethereum/web3";
 import { RoundInfo, Session } from "../types";
 
+/**
+ Fetch the time of the start of the session.
+ param: governorContractInstance - web3 Contract object
+ return: Date object at the start of the session
+ */
+export const useFetchSessionStart = (governorContractInstance: Contract) => {
+  const [sessionStart, setSessionStart] = useState(new Date(0));
+
+  useEffect(() => {
+    const _getLastApprovalTime = async () => {
+      const _lastApprovalTime = await governorContractInstance.methods
+        .lastApprovalTime()
+        .call();
+      setSessionStart(new Date(Number(_lastApprovalTime) * 1000));
+    };
+    _getLastApprovalTime();
+  }, []);
+
+  return sessionStart;
+};
+
+/**
+ Fetch the end of the current session.
+ param: governorContractInstance - web3 Contract object
+ return: Date object at the end of the session
+ */
+export const useFetchSessionEnd = (governorContractInstance: Contract, sessionNumber: number) => {
+  const [submissionTimeout, setSubmissionTimeout] = useState(0);
+  const [durationOffset, setDurationOffset] = useState(0);
+  const sessionStart = useFetchSessionStart(governorContractInstance);
+
+  // Initial calls
+  useEffect(() => {
+    // Fetch submission timeout
+    governorContractInstance.methods
+      .submissionTimeout()
+      .call()
+      .then((r: number) => {
+        setSubmissionTimeout(Number(r));
+      });
+  }, []);
+
+  // Fetch durationOffset after we have the session number
+  useEffect(() => {
+    governorContractInstance.methods
+      .sessions(sessionNumber)
+      .call()
+      .then((r: { durationOffset: number }) => {
+        setDurationOffset(Number(r.durationOffset));
+      });
+  }, [sessionNumber]);
+
+  return new Date(
+    (sessionStart.getTime() / 1000 +
+      Number(submissionTimeout) +
+      Number(durationOffset)) *
+    1000
+  );
+};
+
 export const submitPendingList = (
   txs: any[],
   governorContractInstance: Contract,
@@ -156,6 +216,65 @@ export const useFetchSubmittedLists = (
   }, [listEventLogs, numberOfTxs, sessionListIDs]);
 
   return listTxData;
+};
+
+export const useFetchSubmissionHash = (governorContractInstance: Contract, listID: number) => {
+  const [submissionHash, setSubmissionHash] = useState<string>("");
+
+  useEffect(() => {
+    governorContractInstance.methods
+      .submissions(listID)
+      .call()
+      .then((r: { listHash: string }) => setSubmissionHash(r.listHash));
+  }, [governorContractInstance, listID]);
+
+  return submissionHash;
+};
+
+export const useFetchArbitratorExtraData = (governorContractInstance: Contract) => {
+  const [arbitratorExtraData, setArbitratorExtraData] = useState("0x0");
+
+  useEffect(() => {
+    governorContractInstance.methods
+      .arbitratorExtraData()
+      .call()
+      .then((r: string) => setArbitratorExtraData(r));
+  }, [governorContractInstance]);
+
+  return arbitratorExtraData;
+};
+
+export const useFetchCrowdfundingVariables = (governorContractInstance: Contract) => {
+  const [winnerMultiplier, setWinnerMultiplier] = useState(0);
+  const [loserMultiplier, setLoserMultiplier] = useState(0);
+  const [sharedMultiplier, setSharedMultiplier] = useState(0);
+  const [multiplierDivisor, setMultiplierDivisor] = useState(1);
+
+  useEffect(() => {
+    governorContractInstance.methods
+      .winnerMultiplier()
+      .call()
+      .then((r: number) => setWinnerMultiplier(r));
+    governorContractInstance.methods
+      .loserMultiplier()
+      .call()
+      .then((r: number) => setLoserMultiplier(r));
+    governorContractInstance.methods
+      .sharedMultiplier()
+      .call()
+      .then((r: number) => setSharedMultiplier(r));
+    governorContractInstance.methods
+      .MULTIPLIER_DIVISOR()
+      .call()
+      .then((r: number) => setMultiplierDivisor(r));
+  }, [governorContractInstance]);
+
+  return {
+    winnerMultiplier,
+    loserMultiplier,
+    sharedMultiplier,
+    multiplierDivisor,
+  };
 };
 
 export const useFetchRoundInfo = (governorContractInstance: Contract, sessionNumber: number) => {

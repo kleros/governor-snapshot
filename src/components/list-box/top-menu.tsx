@@ -50,7 +50,7 @@ const WithdrawList = styled.div`
 `;
 
 const TopMenu: React.FC<{
-  listNumber: string,
+  listNumber: number,
   numberOfTxs: number,
   submittedAt?: Date,
   submitter: string,

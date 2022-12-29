@@ -43,3 +43,20 @@ export const useFetchAppealTimes = (arbitratorContractInstance: Contract, disput
 
   return appealTimes;
 };
+
+export const useFetchAppealFee = (
+  arbitratorContractInstance: Contract,
+  disputeID: number,
+  extraData: string
+) => {
+  const [appealFee, setAppealFee] = useState<number>(0);
+
+  useEffect(() => {
+    arbitratorContractInstance.methods
+      .appealCost(disputeID, extraData)
+      .call()
+      .then((r: number) => setAppealFee(r));
+  }, [arbitratorContractInstance, disputeID, extraData]);
+
+  return appealFee;
+};

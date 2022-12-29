@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import ListBoxTopMenu from "./top-menu";
 import ListBoxLists from "./lists";
-import { useIsWithdrawable } from "../../hooks/governor-2";
+import { useIsWithdrawable } from "../../hooks/governor";
 import WithdrawBanner from "../withdraw-banner";
 import { Contract } from "ethers";
 import { Chain } from "../../types";
@@ -16,7 +16,7 @@ const ListBoxIndex: React.FC<{
   showByDefault: boolean,
   addToPendingLists?: any,
   submittedAt?: Date,
-  listID: string,
+  listID: number,
   account: string,
   onClear?: any
 }> = (p) => {

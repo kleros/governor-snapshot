@@ -151,3 +151,10 @@ export class RoundInfo implements IRoundInfo {
         this.successfullyPaid = props.successfullyPaid;
     }
 }
+
+export interface Transaction {
+    data: string,
+    address: string,
+    value: any,
+    title: string
+}

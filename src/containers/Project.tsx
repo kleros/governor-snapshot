@@ -193,6 +193,7 @@ const ProjectHome: React.FC = (props: any) => {
                 <HowItWorks />
                 :
                 <Button
+                  type="primary"
                   danger
                   onClick={() => {
                     setIsLoadingChainData(true);

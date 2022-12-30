@@ -1,15 +1,15 @@
-import Web3 from "web3";
+import web3 from "../ethereum/web3";
+import { Transaction } from "../types";
 
-export const txHash = (target, value, data) => {
-  const web3 = new Web3();
-  return web3.utils.soliditySha3(target, value, data);
+export const txHash = (target: string, value: any, data: string) => {
+  return web3.utils.soliditySha3(target, value, data) || "0";
 };
 
-export const orderParametersByHash = (txs) => {
-  const addresses = [];
-  const values = [];
+export const orderParametersByHash = (txs: Transaction[]) => {
+  const addresses: string[] = [];
+  const values: any[] = [];
   let data = "0x";
-  const dataSizes = [];
+  const dataSizes: number[] = [];
   let titles = "";
 
   txs.forEach((tx, i) => {
@@ -19,7 +19,7 @@ export const orderParametersByHash = (txs) => {
     }
   });
 
-  const _sortedTxs = txs.sort((a, b) => {
+  const _sortedTxs = txs.sort((a: Transaction, b: Transaction) => {
     return (
       parseInt(txHash(a.address, a.value, "0x" + a.data), 16) -
       parseInt(txHash(b.address, b.value, "0x" + b.data), 16)

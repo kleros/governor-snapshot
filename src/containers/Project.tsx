@@ -15,6 +15,7 @@ import { useFetchSession, useFetchListSubmissionCost, useFetchSubmittedLists } f
 import { useLocalStorage } from '../hooks/local';
 import { capitalizeString } from "../util/text";
 import { switchCurrentChain, useFetchChainId } from "../hooks/chain";
+import _404 from "./404";
 
 const Dot = styled.div`
   height: 8px;
@@ -144,6 +145,9 @@ const ProjectHome: React.FC = (props: any) => {
 
   // Web3 Objects
   const projectInfo = useFetchProjectByName(params.projectName);
+  if (!projectInfo) {
+    return <_404 />;
+  }
   const chainId = useFetchChainId();
   let correctChain = chainId == projectInfo.chain.id;
 

@@ -1,6 +1,6 @@
 import { Button, Modal, Input, Radio, Select, Tooltip } from "antd";
 import React, { useState, Fragment, useEffect } from "react";
-import { useFetchMethodsForContract } from "../hooks/projects-2";
+import { useFetchMethodsForContract } from "../hooks/projects";
 import styled from "styled-components";
 import web3 from "../ethereum/web3";
 import { Contract, ContractFunction } from "ethers";

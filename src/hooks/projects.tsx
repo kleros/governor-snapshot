@@ -7,7 +7,7 @@ interface Method {
   name: string,
   inputs: any
 }
-export const useFetchAllProjects: any = () => {
+export const useFetchAllProjects = () => {
   const [allProjects, setAllProjects] = useState<Project[]>([]);
 
   // TODO have it fetch from remote server

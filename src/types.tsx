@@ -8,7 +8,7 @@ interface IChain {
     id: string,
     name: string,
     rpcUrls: string[],
-    blockExploreUrls: string[],
+    blockExplorerUrls: string[],
     nativeCurrency: NativeCurrency,
     icon: any,
     scanContractUrl: (_: string) => string,
@@ -20,7 +20,7 @@ export class Chain implements IChain {
     id: string
     name: string
     rpcUrls: string[]
-    blockExploreUrls: string[]
+    blockExplorerUrls: string[]
     nativeCurrency: NativeCurrency
     icon: any
     scanContractUrl: (_: string) => string
@@ -31,7 +31,7 @@ export class Chain implements IChain {
         this.id = props.id
         this.name = props.name
         this.rpcUrls = props.rpcUrls
-        this.blockExploreUrls = props.blockExploreUrls
+        this.blockExplorerUrls = props.blockExplorerUrls
         this.nativeCurrency = props.nativeCurrency
         this.icon = props.icon
         this.scanContractUrl = props.scanContractUrl

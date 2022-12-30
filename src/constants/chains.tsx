@@ -7,7 +7,7 @@ const mainnet: Chain = new Chain({
   id: '0x1',
   name: "Mainnet",
   rpcUrls: ['https://mainnet.infura.io/v3/'],
-  blockExploreUrls: ['https://etherscan.io'],
+  blockExplorerUrls: ['https://etherscan.io'],
   nativeCurrency: {
     name: 'ETH',
     symbol: 'ETH',
@@ -25,7 +25,7 @@ const gnosis: Chain = new Chain({
   id: '0x64',
   name: "Gnosis",
   rpcUrls: ['https://rpc.gnosischain.com'],
-  blockExploreUrls: ['https://blockscout.com/xdai/mainnet/'],
+  blockExplorerUrls: ['https://blockscout.com/xdai/mainnet/'],
   nativeCurrency: {
     name: 'XDAI',
     symbol: 'xDAI',

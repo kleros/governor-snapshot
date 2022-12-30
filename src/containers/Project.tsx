@@ -144,7 +144,7 @@ const ProjectHome: React.FC = (props: any) => {
 
   // Web3 Objects
   const projectInfo = useFetchProjectByName(params.projectName);
-  const chainId = useFetchChainId(props.web3);
+  const chainId = useFetchChainId();
   let correctChain = chainId == projectInfo.chain.id;
 
   const governorContractInstance = new props.web3.eth.Contract(

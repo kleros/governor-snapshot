@@ -40,7 +40,7 @@ const Home: React.FC = (p) => {
       <StyledSearch placeholder="Search" prefix={<SearchOutlined />} />
       <StyledSubheading>{projects.length} Projects</StyledSubheading>
       <Row style={{ marginTop: "32px" }}>
-        {projects.map((project: Project, i) => (
+        {projects.map((project: Project, i: number) => (
           <Col lg={6} md={8} sm={12} xs={24} key={i}>
             <ProjectCard
               icon={project.icon}

@@ -1,8 +1,8 @@
-import React from "react";
 import Chains from "./chains";
 import { ReactComponent as KlerosLogo } from "../assets/logos/kleros.svg";
 import { ReactComponent as PohLogo } from "../assets/logos/poh.svg";
 import { ReactComponent as UbiLogo } from "../assets/logos/ubi.svg";
+import { ReactComponent as ForkDAOLogo } from "../assets/logos/forkdao.svg";
 import { Project } from "../types";
 
 const Projects: Project[] = [
@@ -29,6 +29,15 @@ const Projects: Project[] = [
     arbitratorAddress: "0x988b3a538b618c7a603e1c11ab82cd16dbe28069",
     snapshotSlug: "ubi-voting.eth",
     chain: Chains[1],
+  },
+  {
+    name: "Fork DAO",
+    icon: <ForkDAOLogo />,
+    governorAddress: "0xf7dE5537eCD69a94695fcF4BCdBDeE6329b63322",
+    arbitratorAddress: "0x9c1da9a04925bdfdedf0f6421bc7eea8305f9002",
+    snapshotSlug: "elfork.eth",
+    chain: Chains[100]
   }
 ]
-export default Projects
+
+export default Projects;

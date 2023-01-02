@@ -16,32 +16,13 @@ export interface Chain {
     scanAbiUrl: (_: string) => string
 }
 
-interface IProject {
+export interface Project {
     name: string,
     icon: any,
     governorAddress: string,
     arbitratorAddress: string,
     snapshotSlug: string,
     chain: Chain,
-}
-
-export class Project implements IProject {
-    name: string
-    icon: any
-    governorAddress: string
-    arbitratorAddress: string
-    snapshotSlug: string
-    chain: Chain
-
-    constructor(props: IProject) {
-        this.name = props.name
-        this.icon = props.icon
-        this.governorAddress = props.governorAddress
-        this.arbitratorAddress = props.arbitratorAddress
-        this.snapshotSlug = props.snapshotSlug
-        this.chain = props.chain
-    }
-
 }
 
 interface ISession {

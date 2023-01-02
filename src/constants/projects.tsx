@@ -6,14 +6,14 @@ import { ReactComponent as ForkDAOLogo } from "../assets/logos/forkdao.svg";
 import { Project } from "../types";
 
 const Projects: Project[] = [
-  new Project({
+  {
     name: "kleros",
     icon: <KlerosLogo />,
     governorAddress: "0xe5bcea6f87aaee4a81f64dfdb4d30d400e0e5cf4",
     arbitratorAddress: "0x988b3a538b618c7a603e1c11ab82cd16dbe28069",
     snapshotSlug: "kleros",
     chain: Chains[1],
-  }),
+  },
   {
     name: "Proof of Humanity",
     icon: <PohLogo />,

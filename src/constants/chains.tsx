@@ -2,7 +2,7 @@ import { ReactComponent as EtherscanLogo } from "../assets/logos/etherscan.svg";
 import { ReactComponent as GnosisLogo } from "../assets/logos/gnosis.svg";
 import { Chain } from "../types"
 
-const mainnet: Chain = new Chain({
+const mainnet: Chain = {
   id: '0x1',
   name: "Mainnet",
   rpcUrls: ['https://mainnet.infura.io/v3/'],
@@ -18,9 +18,9 @@ const mainnet: Chain = new Chain({
   scanAddressUrl: (address) => `https://etherscan.io/address/${address}`,
   scanAbiUrl: (contractAddress) =>
     `https://api.etherscan.io/api?module=contract&action=getabi&address=${contractAddress}`,
-})
+};
 
-const goerli: Chain = new Chain({
+const goerli: Chain = {
   id: '0x5',
   name: "Goerli",
   rpcUrls: ['https://goerli.infura.io/v3'],
@@ -37,9 +37,9 @@ const goerli: Chain = new Chain({
     `https://goerli.etherscan.io/address/${address}`,
   scanAbiUrl: (contractAddress) =>
     `https://api-goerli.etherscan.io/api?module=contract&action=getabi&address=${contractAddress}`,
-})
+};
 
-const gnosis: Chain = new Chain({
+const gnosis: Chain = {
   id: '0x64',
   name: "Gnosis",
   rpcUrls: ['https://rpc.gnosischain.com'],
@@ -56,7 +56,7 @@ const gnosis: Chain = new Chain({
     `https://blockscout.com/xdai/mainnet/address/${address}`,
   scanAbiUrl: (contractAddress) =>
     `https://blockscout.com/xdai/mainnet/api?module=contract&action=getabi&address=${contractAddress}`,
-})
+};
 
 const chainMap: any = {
   1: mainnet,

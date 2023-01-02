@@ -5,7 +5,6 @@ import ListBox from "./list-box/index";
 import DisputeBanner from "./dispute-banner";
 import { Contract } from "web3-eth-contract"
 import { Chain } from "../types";
-import web3 from "../ethereum/web3";
 
 const NoListsText = styled.div`
   font-size: 16px;

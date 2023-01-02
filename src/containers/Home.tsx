@@ -31,7 +31,7 @@ const StyledSubheading = styled.div`
   line-height: 19px;
 `;
 
-const Home: React.FC = (p) => {
+const Home: React.FC = () => {
   const projects = useFetchAllProjects();
 
   return (

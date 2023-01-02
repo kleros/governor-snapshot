@@ -3,7 +3,8 @@ import React, { useState, Fragment, useEffect } from "react";
 import { useFetchMethodsForContract } from "../hooks/projects";
 import styled from "styled-components";
 import web3 from "../ethereum/web3";
-import { Contract, ContractFunction } from "ethers";
+import { ContractFunction } from "ethers";
+import { Contract } from "web3-eth-contract"
 import { Chain } from "../types";
 
 const StyledButton = styled(Button)`

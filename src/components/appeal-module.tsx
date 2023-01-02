@@ -17,7 +17,7 @@ import {
   useFetchDispute,
   useFetchCurrentRuling
 } from "../hooks/arbitrator";
-import { Contract } from "ethers";
+import { Contract } from "web3-eth-contract"
 import { AppealPeriod, Chain, Dispute, Session } from "../types";
 
 const StyledAppealModule = styled.div`

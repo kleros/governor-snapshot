@@ -5,7 +5,7 @@ import { useFetchSessionStart, useFetchSessionEnd } from "../hooks/governor";
 import { monthIndexToAbbrev } from "../util/text";
 import TimeAgo from "./time-ago";
 import SnapshotLogo from '../assets/logos/snapshot.png'
-import { Contract } from "ethers";
+import { Contract } from "web3-eth-contract"
 import { Session } from "../types";
 
 const StyledInfoBanner = styled.div`

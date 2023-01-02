@@ -3,7 +3,7 @@ import ListBoxTopMenu from "./top-menu";
 import ListBoxLists from "./lists";
 import { useIsWithdrawable } from "../../hooks/governor";
 import WithdrawBanner from "../withdraw-banner";
-import { Contract } from "ethers";
+import { Contract } from "web3-eth-contract"
 import { Chain } from "../../types";
 
 const ListBoxIndex: React.FC<{

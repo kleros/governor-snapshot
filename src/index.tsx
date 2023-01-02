@@ -5,9 +5,8 @@ import ReactDOM from "react-dom";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { ReactComponent as KlerosLogo } from "./assets/kleros-logo.svg";
-import loadable from "@loadable/component";
+import loadable, { LoadableComponent } from "@loadable/component";
 import styled from "styled-components";
-import web3 from "./ethereum/web3"
 
 const StyledSpin = styled(Spin)`
   left: 50%;
@@ -27,10 +26,10 @@ const Home = loadable(
     fallback: <StyledSpin />,
   }
 );
-const Project = loadable(
+const Project: LoadableComponent<{ match: any }> = loadable(
   () => import(/* webpackPrefetch: true */ "./containers/Project"),
   {
-    fallback: <StyledSpin />,
+    fallback: <StyledSpin />
   }
 );
 const StyledCol = styled(Col)`
@@ -90,12 +89,12 @@ class App extends PureComponent {
             <StyledLayoutContent>
               <Switch>
                 <Route
-                  render={(props) => <Home {...props} web3={web3} />}
+                  render={() => <Home />}
                   exact
                   path="/"
                 />
                 <Route
-                  render={(props) => <Project {...props} web3={web3} />}
+                  render={(props) => <Project match={props.match} />}
                   exact
                   path="/:projectName"
                 />

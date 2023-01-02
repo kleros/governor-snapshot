@@ -1,6 +1,6 @@
 import { Row, Col } from "antd";
 import makeBlockie from "ethereum-blockies-base64";
-import { Contract } from "ethers";
+import { Contract } from "web3-eth-contract"
 import React from "react";
 import styled from "styled-components";
 import { useFetchSubmissionHash } from "../../hooks/governor";

@@ -6,7 +6,7 @@ import { submitEmptyList, submitPendingList } from "../../hooks/governor";
 import { useFetchMethodsForContract } from "../../hooks/projects";
 import NewTxModal from "../new-list-modal";
 import web3 from "../../ethereum/web3";
-import { Contract } from "ethers";
+import { Contract } from "web3-eth-contract"
 import { Chain } from "../../types";
 
 const ListsContainer = styled.div`

@@ -15,7 +15,7 @@ import { useFetchSession, useFetchListSubmissionCost, useFetchSubmittedLists } f
 import { useLocalStorage } from '../hooks/local';
 import { capitalizeString } from "../util/text";
 import { switchCurrentChain, useFetchChainId } from "../hooks/chain";
-import _404 from "./404";
+import web3 from "../ethereum/web3";
 
 const Dot = styled.div`
   height: 8px;
@@ -49,13 +49,6 @@ const StyledInvalidNetwork = styled.div`
   line-height: 33px;
   align-items: center;
 `;
-const LinkText = styled.div`
-  font-weight: 600;
-  font-size: 14px;
-  line-height: 19px;
-  color: #009aff;
-  cursor: pointer;
-`;
 const ListOptionsRow = styled(Row)`
   margin: 35px 0px;
 `;
@@ -84,7 +77,7 @@ const CSVUpload = styled.div`
   margin-top: 7px;
 `
 
-const ProjectHome: React.FC = (props: any) => {
+const ProjectHome: React.FC<{ match: any }> = (props) => {
   const {
     match: { params },
   } = props;
@@ -123,7 +116,6 @@ const ProjectHome: React.FC = (props: any) => {
   }
 
   const _uploadTxs = (rows: any[]) => {
-    console.log(rows)
     const _rows = []
     for (let i = 0; i < rows.length; i++) {
       if (rows[i][3] && rows[i][3].substring(0, 2) !== '0x')
@@ -145,18 +137,18 @@ const ProjectHome: React.FC = (props: any) => {
 
   // Web3 Objects
   const projectInfo = useFetchProjectByName(params.projectName);
-  if (!projectInfo) {
-    return <_404 />;
-  }
   const chainId = useFetchChainId();
   let correctChain = chainId == projectInfo.chain.id;
 
-  const governorContractInstance = new props.web3.eth.Contract(
-    GovernorInterface.abi,
+  const governorInterfaceABI: any = GovernorInterface.abi;
+  const governorContractInstance = new web3.eth.Contract(
+    governorInterfaceABI,
     projectInfo.governorAddress
   );
-  const arbitratorContractInstance = new props.web3.eth.Contract(
-    ArbitratorInterface.abi,
+
+  const arbitratorInterfaceABI: any = ArbitratorInterface.abi;
+  const arbitratorContractInstance = new web3.eth.Contract(
+    arbitratorInterfaceABI,
     projectInfo.arbitratorAddress
   );
   const account: string = useFetchAccount();

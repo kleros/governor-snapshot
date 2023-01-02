@@ -1,7 +1,7 @@
 import { Col, Row, Progress, Input } from "antd";
 import { HourglassOutlined } from "@ant-design/icons";
 import React from "react";
-import { Contract } from "ethers";
+import { Contract } from "web3-eth-contract"
 import styled from "styled-components";
 import makeBlockie from "ethereum-blockies-base64";
 import TimeAgo from "../time-ago";

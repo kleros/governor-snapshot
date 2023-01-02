@@ -303,7 +303,7 @@ export const useFetchRoundInfo = (governorContractInstance: Contract, sessionNum
 
 export const useFetchSession = (governorContractInstance: Contract) => {
   const [currentSessionNumber, setCurrentSessionNumber] = useState<number>(0);
-  const [session, setSession] = useState<Session>(new Session({ disputeID: 0, currentSessionNumber: 0 }));
+  const [session, setSession] = useState<Session>({ disputeID: 0, currentSessionNumber: 0 });
 
   useEffect(() => {
     governorContractInstance.methods

@@ -6,8 +6,8 @@ const Projects: Project[] = [
   {
     name: "kleros-goerli",
     icon: <KlerosLogo />,
-    governorAddress: "0xea7CA2EcBC122dd12027ef19509c656080155E67",
-    arbitratorAddress: "0x988b3a538b618c7a603e1c11ab82cd16dbe28069",
+    governorAddress: "0xd74AB183e2B793A68cB3e647D8f4Df60936B59cA",
+    arbitratorAddress: "0x1128eD55ab2d796fa92D2F8E1f336d745354a77A",
     snapshotSlug: "kleros",
     chain: Chains[5],
   }

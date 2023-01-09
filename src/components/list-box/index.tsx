@@ -54,6 +54,7 @@ const ListBoxIndex: React.FC<{
           costPerTx={p.costPerTx}
           addToPendingLists={p.addToPendingLists}
           onClear={p.onClear}
+          account={p.account}
         />
       ) : (
         ""

@@ -67,10 +67,12 @@ const AppealSideBox: React.FC<{
     (Number(p.appealFee || 0) - Number(p.amountContributed || 0)).toString()
   );
   const useOnFund = (amount: any) => {
-    p.governorContractInstance.methods.fundAppeal(p.submissionIndex).send({
-      from: p.account,
-      value: Web3.utils.toWei(amount).toString(),
-    });
+    if (amount) {
+      p.governorContractInstance.methods.fundAppeal(p.submissionIndex).send({
+        from: p.account,
+        value: Web3.utils.toWei(amount).toString(),
+      });
+    }
   };
 
   return (

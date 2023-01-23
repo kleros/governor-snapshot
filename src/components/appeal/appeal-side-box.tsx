@@ -51,7 +51,7 @@ const AmountRequired = styled.div`
 `;
 
 const AppealSideBox: React.FC<{
-  winner: any,
+  winner: boolean,
   listID: string,
   submissionIndex: number,
   submitter: string,
@@ -66,7 +66,7 @@ const AppealSideBox: React.FC<{
   const amountRemaining = Web3.utils.fromWei(
     (Number(p.appealFee || 0) - Number(p.amountContributed || 0)).toString()
   );
-  const useOnFund = (amount: any) => {
+  const useOnFund = (amount: string) => {
     if (amount) {
       p.governorContractInstance.methods.fundAppeal(p.submissionIndex).send({
         from: p.account,
@@ -109,6 +109,7 @@ const AppealSideBox: React.FC<{
       <TimeAgo date={p.deadline} />
       <Input.Search
         placeholder="ETH"
+        type="number"
         allowClear
         enterButton="Fund"
         size="large"

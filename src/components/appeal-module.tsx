@@ -61,10 +61,16 @@ const AppealModule: React.FC<{
   );
 
   // Get appeal information from Arbitrator
-  const dispute: Dispute | undefined = useFetchDispute(
-    p.arbitratorContractInstance,
-    p.session.disputeID || 0
-  );
+  const dispute: Dispute | undefined = {
+    subcourtId: 1,
+    arbitrated: "0xd74AB183e2B793A68cB3e647D8f4Df60936B59cA",
+    numberOfChoices: 2,
+    period: 3,
+    lastPeriodChange: 0,
+    drawsInRound: 0,
+    commitsInRound: 0,
+    ruled: false
+  }
   const currentRuling: number = useFetchCurrentRuling(
     p.arbitratorContractInstance,
     p.session.disputeID || 0

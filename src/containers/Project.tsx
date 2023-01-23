@@ -16,6 +16,7 @@ import { useLocalStorage } from '../hooks/local';
 import { capitalizeString } from "../util/text";
 import { switchCurrentChain, useFetchChainId } from "../hooks/chain";
 import web3 from "../ethereum/web3";
+import { ProjectParams, SubmissionList, Transaction } from "../types";
 
 const Dot = styled.div`
   height: 8px;
@@ -77,7 +78,7 @@ const CSVUpload = styled.div`
   margin-top: 7px;
 `
 
-const ProjectHome: React.FC<{ match: any }> = (props) => {
+const ProjectHome: React.FC<{ match: ProjectParams }> = (props) => {
   const {
     match: { params },
   } = props;
@@ -94,7 +95,7 @@ const ProjectHome: React.FC<{ match: any }> = (props) => {
     }
   });
 
-  const addToPendingLists = (newList: any[]) => {
+  const addToPendingLists = (newList: SubmissionList[]) => {
     const pendingListsCopy = [...pendingLists];
     pendingListsCopy.push(newList);
     setPendingListsCache(pendingListsCopy)
@@ -115,7 +116,7 @@ const ProjectHome: React.FC<{ match: any }> = (props) => {
     setPendingLists(undefined)
   }
 
-  const _uploadTxs = (rows: any[]) => {
+  const _uploadTxs = (rows: string[][]) => {
     const _rows = []
     for (let i = 0; i < rows.length; i++) {
       if (rows[i][3] && rows[i][3].substring(0, 2) !== '0x')
@@ -266,7 +267,7 @@ const ProjectHome: React.FC<{ match: any }> = (props) => {
                                 throw new Error("Cannot read .csv");
                               }
                               const _csvRows = e.target.result.split(/\r?\n/)
-                              const _csvCols: any[] = []
+                              const _csvCols: string[][] = []
                               _csvRows.forEach(row => {
                                 _csvCols.push(row.split(','))
                               })

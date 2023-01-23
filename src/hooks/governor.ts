@@ -2,7 +2,8 @@ import { Contract } from "web3-eth-contract"
 import { useEffect, useState } from "react";
 import { orderParametersByHash } from "../util/tx-hash";
 import web3 from "../ethereum/web3";
-import { RoundInfo, Session } from "../types";
+import { RoundInfo, Session, SubmissionList, Transaction } from "../types";
+import { EventData } from "web3-eth-contract"
 
 /**
  Fetch the time of the start of the session.
@@ -65,9 +66,9 @@ export const useFetchSessionEnd = (governorContractInstance: Contract, sessionNu
 };
 
 export const submitPendingList = (
-  txs: any[],
+  txs: Transaction[],
   governorContractInstance: Contract,
-  costPerTx: any,
+  costPerTx: number | undefined,
   account: string
 ) => {
   const { addresses, values, data, dataSizes, titles } = orderParametersByHash(
@@ -82,10 +83,10 @@ export const submitPendingList = (
     });
 };
 
-export const submitEmptyList: any = (
+export const submitEmptyList = (
   governorContractInstance: Contract,
   submitter: string,
-  costPerTx: any
+  costPerTx: number | undefined
 ) => {
   governorContractInstance.methods.submitList([], [], '0x', [], '').send({
     from: submitter,
@@ -124,7 +125,7 @@ export const useFetchSubmittedLists = (
   const [sessionListIDs, setSessionListIDs] = useState<number[]>([]);
   const [listEventLogs, setListEventLogs] = useState<any[]>([]);
   const [numberOfTxs, setNumberOfTxs] = useState<number[]>([]);
-  const [listTxData, setListTxData] = useState<any[]>([]);
+  const [listTxData, setListTxData] = useState<SubmissionList[]>([]);
 
   // Fetch ListIDs for session
   useEffect(() => {
@@ -139,7 +140,7 @@ export const useFetchSubmittedLists = (
   // Fetch Event logs and number of txs for each List
   useEffect(() => {
     const _fetchAllEventsForListIDs = async () => {
-      const _events: any[] = await Promise.all(
+      const _events: EventData[][] = await Promise.all(
         sessionListIDs.map((_listID) => {
           return governorContractInstance.getPastEvents("ListSubmitted", {
             filter: { _listID },
@@ -218,7 +219,7 @@ export const useFetchSubmittedLists = (
   return listTxData;
 };
 
-export const useFetchSubmissionHash = (governorContractInstance: Contract, listID: number) => {
+export const useFetchSubmissionHash = (governorContractInstance: Contract, listID: string) => {
   const [submissionHash, setSubmissionHash] = useState<string>("");
 
   useEffect(() => {
@@ -331,7 +332,7 @@ export const useFetchListSubmissionCost = (
 ) => {
   const [submissionBaseDeposit, setSubmissionBaseDeposit] = useState(0);
   const [extraData, setExtraData] = useState("0x00");
-  const [costPerList, setCostPerList] = useState(0);
+  const [costPerList, setCostPerList] = useState<number | undefined>(0);
 
   useEffect(() => {
     governorContractInstance.methods

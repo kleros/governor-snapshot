@@ -1,13 +1,13 @@
 import web3 from "../ethereum/web3";
 import { Transaction } from "../types";
 
-export const txHash = (target: string, value: any, data: string) => {
+export const txHash = (target: string, value: number, data: string) => {
   return web3.utils.soliditySha3(target, value, data) || "0";
 };
 
 export const orderParametersByHash = (txs: Transaction[]) => {
   const addresses: string[] = [];
-  const values: any[] = [];
+  const values: number[] = [];
   let data = "0x";
   const dataSizes: number[] = [];
   let titles = "";

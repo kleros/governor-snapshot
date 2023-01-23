@@ -1,3 +1,5 @@
+import { ReactNode } from "react"
+
 interface NativeCurrency {
     name: string,
     symbol: string,
@@ -10,7 +12,7 @@ export interface Chain {
     rpcUrls: string[],
     blockExplorerUrls: string[],
     nativeCurrency: NativeCurrency,
-    icon: any,
+    icon: ReactNode,
     scanContractUrl: (_: string) => string,
     scanAddressUrl: (_: string) => string,
     scanAbiUrl: (_: string) => string
@@ -18,7 +20,7 @@ export interface Chain {
 
 export interface Project {
     name: string,
-    icon: any,
+    icon: ReactNode,
     governorAddress: string,
     arbitratorAddress: string,
     snapshotSlug: string,
@@ -56,6 +58,33 @@ export interface RoundInfo {
 export interface Transaction {
     data: string,
     address: string,
-    value: any,
+    value: number,
     title: string
+}
+
+export interface ProjectParams {
+    path: string,
+    url: string,
+    isExact: boolean,
+    params: {
+        projectName: string
+    }
+}
+
+export interface SubmissionList {
+    submitter: string,
+    submittedAt: Date,
+    txs: Transaction[],
+    listID: string
+}
+
+export interface Method {
+    name: string,
+    inputs: any,
+    constant?: boolean
+}
+
+export interface MethodInput {
+    name: string,
+    type: string
 }

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { Chain } from "../types";
@@ -37,7 +37,7 @@ const EtherscanLink = styled.a`
 `;
 
 const ProjectCard: React.FC<{
-  icon: any,
+  icon: ReactNode,
   name: string,
   address: string,
   chain: Chain

@@ -4,21 +4,21 @@ import ListBoxLists from "./lists";
 import { useIsWithdrawable } from "../../hooks/governor";
 import WithdrawBanner from "../withdraw-banner";
 import { Contract } from "web3-eth-contract"
-import { Chain } from "../../types";
+import { Chain, Transaction } from "../../types";
 
 const ListBoxIndex: React.FC<{
-  txs: any[],
+  txs: Transaction[],
   submitter: string,
   submittable: boolean,
-  costPerTx?: any,
+  costPerTx?: number | undefined,
   governorContractInstance: Contract,
   chain: Chain,
   showByDefault: boolean,
-  addToPendingLists?: any,
+  addToPendingLists: Function,
   submittedAt?: Date,
-  listID: number,
+  listID: string,
   account: string,
-  onClear?: any
+  onClear: Function
 }> = (p) => {
   const [showLists, setShowLists] = useState(p.showByDefault);
   // If list is pending it won't have submittedAt timestamp

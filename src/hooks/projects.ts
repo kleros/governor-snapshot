@@ -1,12 +1,8 @@
 import { useState, useEffect } from "react";
 import Projects from "../constants/projects";
 import { useLocalStorage } from "./local";
-import { Chain, Project } from "../types";
+import { Chain, Method, Project } from "../types";
 
-interface Method {
-  name: string,
-  inputs: any
-}
 export const useFetchAllProjects = () => {
   const [allProjects, setAllProjects] = useState<Project[]>([]);
 
@@ -18,19 +14,19 @@ export const useFetchAllProjects = () => {
   return allProjects;
 };
 
-export const useFetchProjectByName: any = (name: string) => {
+export const useFetchProjectByName = (name: string) => {
   const _project = Projects.filter((p) => p.name === name);
 
   return _project[0];
 };
 
-export const useFetchMethodsForContract: any = (
+export const useFetchMethodsForContract = (
   contractAddress: string,
   network: Chain
 ) => {
   const [abiCache, setAbiCache] = useLocalStorage('ABIS', {})
   const [methods, setMethods] = useState<Method[]>([]);
-  const [abi, setAbi] = useState([]);
+  const [abi, setAbi] = useState<Method[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -72,7 +68,7 @@ export const useFetchMethodsForContract: any = (
         setAbi(_abi);
         const _methods: Method[] = [];
         await Promise.all(
-          _abi.map((abiItem: any, i: any) => {
+          _abi.map((abiItem: any, i: number) => {
             if (!abiItem.constant && abiItem.type === "function") {
               _methods.push({
                 name: abiItem.name,
@@ -88,5 +84,9 @@ export const useFetchMethodsForContract: any = (
     if (contractAddress) _fetchABI();
   }, [contractAddress]);
 
-  return [methods, abi, loading];
+  return {
+    methods: methods,
+    abi: abi,
+    loading: loading
+  };
 };

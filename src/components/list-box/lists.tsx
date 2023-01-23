@@ -7,7 +7,7 @@ import { useFetchMethodsForContract } from "../../hooks/projects";
 import NewTxModal from "../new-list-modal";
 import web3 from "../../ethereum/web3";
 import { Contract } from "web3-eth-contract"
-import { Chain } from "../../types";
+import { Chain, Transaction } from "../../types";
 
 const ListsContainer = styled.div`
   background: #ffffff;
@@ -29,20 +29,20 @@ const SubmitListsButton = styled(Button)`
 `;
 
 const ListBoxLists: React.FC<{
-  txs: any[],
+  txs: Transaction[],
   submittable: boolean,
   submitter: string,
   governorContractInstance: Contract,
   chain: Chain,
-  costPerTx: any,
-  addToPendingLists: any,
-  onClear: any,
+  costPerTx: number | undefined,
+  addToPendingLists: Function,
+  onClear: Function,
   account: string
 }> = (p) => {
   const [selectedTx, setSelectedTx] = useState(1);
   const tx = p.txs[selectedTx - 1]
   const [decodedData, setDecodedData] = useState<any>();
-  const [_, abi, loading] = useFetchMethodsForContract(
+  const { methods, abi, loading } = useFetchMethodsForContract(
     tx ? tx.address : '',
     p.chain
   );
@@ -60,7 +60,8 @@ const ListBoxLists: React.FC<{
       let parameters;
       for (let i = 0; i < abi.length; i++) {
         if (abi[i].name && !abi[i].constant) {
-          const methodSig = web3.eth.abi.encodeFunctionSignature(abi[i]);
+          const abiAsAny: any = abi[i];
+          const methodSig = web3.eth.abi.encodeFunctionSignature(abiAsAny);
           if (tx.data.substring(0, 10) === methodSig) {
             const _parameters = abi[i].inputs.length
               ? web3.eth.abi.decodeParameters(
@@ -97,7 +98,7 @@ const ListBoxLists: React.FC<{
       <Col lg={16} xs={24}>
         <ListsContainer>
           <EnumeratedListsContainer>
-            {p.txs.map((tx: any, i: number) => {
+            {p.txs.map((tx: Transaction, i: number) => {
               return (
                 <TxRow
                   key={i}
@@ -124,7 +125,10 @@ const ListBoxLists: React.FC<{
                       p.account
                     );
                   else
-                    submitEmptyList()
+                    submitEmptyList(p.governorContractInstance,
+                      p.submitter,
+                      p.costPerTx
+                    );
                 }}
               >
                 <Tooltip title="This deposit will be returned if your list is executed. Deposit can be lost in the event of a dispute.">{`Submit List with ${web3.utils.fromWei(
@@ -153,7 +157,7 @@ const ListBoxLists: React.FC<{
         />
         <ListBreakdownBox
           header={"Value"}
-          content={tx ? tx.value : ''}
+          content={tx ? tx.value.toString() : ''}
         />
         <ListBreakdownBox
           header={"Data Input"}
@@ -206,8 +210,8 @@ const TxRow: React.FC<{
   title: string,
   txNumber: number,
   selected: boolean,
-  onClick: any,
-  onClear: any,
+  onClick: Function,
+  onClear: Function,
   submittable: boolean
 }> = (p) => {
   const _text = `Tx${p.txNumber}: ${p.title}`;

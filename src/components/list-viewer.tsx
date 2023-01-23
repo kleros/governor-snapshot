@@ -4,7 +4,7 @@ import styled from "styled-components";
 import ListBox from "./list-box/index";
 import DisputeBanner from "./dispute-banner";
 import { Contract } from "web3-eth-contract"
-import { Chain } from "../types";
+import { Chain, SubmissionList, Transaction } from "../types";
 
 const NoListsText = styled.div`
   font-size: 16px;
@@ -15,18 +15,18 @@ const NoListsText = styled.div`
 const ListViewer: React.FC<{
   governorContractInstance: Contract,
   chain: Chain,
-  pendingLists: any[],
+  pendingLists: Transaction[],
   account: string,
-  addToPendingLists: any,
-  costPerTx: any,
-  onClear: any,
-  submittedLists: any[]
+  addToPendingLists: Function,
+  costPerTx: number | undefined,
+  onClear: Function,
+  submittedLists: SubmissionList[]
 }> = (p) => {
   if (p.pendingLists) {
     return (
       <ListBox
         txs={p.pendingLists}
-        listID={1}
+        listID="1"
         submitter={p.account}
         submittable={true}
         showByDefault={true}
@@ -58,6 +58,8 @@ const ListViewer: React.FC<{
             governorContractInstance={p.governorContractInstance}
             chain={p.chain}
             account={p.account}
+            onClear={() => { }}
+            addToPendingLists={() => { }}
           />
         ))
         : ""}

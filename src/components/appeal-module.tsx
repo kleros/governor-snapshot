@@ -18,7 +18,7 @@ import {
   useFetchCurrentRuling
 } from "../hooks/arbitrator";
 import { Contract } from "web3-eth-contract"
-import { AppealPeriod, Chain, Dispute, Session } from "../types";
+import { AppealPeriod, Chain, Dispute, SubmissionList, Session } from "../types";
 
 const StyledAppealModule = styled.div`
   margin-top: 25px;
@@ -55,22 +55,15 @@ const AppealModule: React.FC<{
   const crowdfundingVariables = useFetchCrowdfundingVariables(
     p.governorContractInstance
   );
-  const submittedLists: any[] = useFetchSubmittedLists(
+  const submittedLists: SubmissionList[] = useFetchSubmittedLists(
     p.governorContractInstance,
     p.session.currentSessionNumber
   );
-
   // Get appeal information from Arbitrator
-  const dispute: Dispute | undefined = {
-    subcourtId: 1,
-    arbitrated: "0xd74AB183e2B793A68cB3e647D8f4Df60936B59cA",
-    numberOfChoices: 2,
-    period: 3,
-    lastPeriodChange: 0,
-    drawsInRound: 0,
-    commitsInRound: 0,
-    ruled: false
-  }
+  const dispute: Dispute | undefined = useFetchDispute(
+    p.arbitratorContractInstance,
+    p.session.disputeID || 0
+  );
   const currentRuling: number = useFetchCurrentRuling(
     p.arbitratorContractInstance,
     p.session.disputeID || 0

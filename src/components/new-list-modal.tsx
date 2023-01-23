@@ -3,9 +3,8 @@ import React, { useState, Fragment, useEffect } from "react";
 import { useFetchMethodsForContract } from "../hooks/projects";
 import styled from "styled-components";
 import web3 from "../ethereum/web3";
-import { ContractFunction } from "ethers";
 import { Contract } from "web3-eth-contract"
-import { Chain } from "../types";
+import { Chain, Method, MethodInput } from "../types";
 
 const StyledButton = styled(Button)`
   float: right;
@@ -63,31 +62,32 @@ const Error = styled.div`
 `;
 
 const NewListModal: React.FC<{
-  setPendingLists: any,
+  setPendingLists: Function,
   disabled: boolean,
   addTx: boolean,
   web3: typeof web3,
   governorContractInstance: Contract,
   chain: Chain,
-  costPerTx: any
+  costPerTx: number | undefined
 }> = (p) => {
   const [visible, setVisible] = useState(false);
   const [inputType, setInputType] = useState("data");
   const [title, setTitle] = useState<string | undefined>();
-  const [address, setAddress] = useState<string | undefined>();
+  const [address, setAddress] = useState<string>();
   const [value, setValue] = useState("0");
   const [data, setData] = useState<string | undefined>();
   const [errors, setErrors] = useState<any[]>([]);
   const [submittable, setSubmittable] = useState(false);
   const [methodSelected, setMethodSelected] = useState<any>();
   const [methodInputs, setMethodInputs] = useState<any[]>([]);
-  const [methods, abi] = useFetchMethodsForContract(
-    address,
+  const { methods, abi } = useFetchMethodsForContract(
+    address || "",
     p.chain
   );
 
   const methodToData = () => {
-    const contractInstance = new web3.eth.Contract(abi, address);
+    const abiAsAny: any = abi;
+    const contractInstance = new web3.eth.Contract(abiAsAny, address);
     return contractInstance.methods[methodSelected](
       ...methodInputs
     ).encodeABI();
@@ -96,7 +96,7 @@ const NewListModal: React.FC<{
   const clearForm = () => {
     setInputType("data");
     setTitle(undefined);
-    setAddress(undefined);
+    setAddress("");
     setValue("0");
     setData(undefined);
     setSubmittable(true);
@@ -131,7 +131,7 @@ const NewListModal: React.FC<{
     if (methods.length && !data) setInputType("contract");
   }, [methods, data]);
 
-  const _setMethodInput = (val: any, index: number) => {
+  const _setMethodInput = (val: string, index: number) => {
     const _methodInputs = [...methodInputs];
     _methodInputs[index] = val;
     setMethodInputs(_methodInputs);
@@ -146,7 +146,7 @@ const NewListModal: React.FC<{
         if (inputType === "contract") {
           // Check to see if all inputs are filled
           const numberOfInputs = methods.filter(
-            (a: ContractFunction) => a.name === methodSelected
+            (method: Method) => method.name === methodSelected
           )[0].inputs.length;
           if (numberOfInputs === methodInputs.length) {
             if (!submittable) setSubmittable(true);
@@ -216,6 +216,7 @@ const NewListModal: React.FC<{
         </InputLabel>
         <Input
           placeholder={"eg. 0"}
+          type="number"
           value={value}
           onChange={(e) => setValue(e.target.value)}
         />
@@ -243,10 +244,10 @@ const NewListModal: React.FC<{
           <Fragment>
             <div>
               <StyledSelect onChange={setMethodSelected}>
-                {methods.map((m: ContractFunction) => {
+                {methods.map((method: Method) => {
                   return (
-                    <Select.Option key={m.name} value={m.name}>
-                      {m.name}
+                    <Select.Option key={method.name} value={method.name}>
+                      {method.name}
                     </Select.Option>
                   );
                 })}
@@ -255,8 +256,8 @@ const NewListModal: React.FC<{
             {methodSelected ? (
               <div>
                 {methods
-                  .filter((a: ContractFunction) => a.name === methodSelected)[0]
-                  .inputs.map((input: any, i: number) => {
+                  .filter((method: Method) => method.name === methodSelected)[0]
+                  .inputs.map((input: MethodInput, i: number) => {
                     return (
                       <div key={i}>
                         <InputLabel>{input.name}</InputLabel>

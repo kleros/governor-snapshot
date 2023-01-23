@@ -58,7 +58,7 @@ const gnosis: Chain = {
     `https://blockscout.com/xdai/mainnet/api?module=contract&action=getabi&address=${contractAddress}`,
 };
 
-const chainMap: any = {
+const chainMap = {
   1: mainnet,
   5: goerli,
   100: gnosis

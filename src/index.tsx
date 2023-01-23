@@ -7,6 +7,7 @@ import { Helmet } from "react-helmet";
 import { ReactComponent as KlerosLogo } from "./assets/kleros-logo.svg";
 import loadable, { LoadableComponent } from "@loadable/component";
 import styled from "styled-components";
+import { ProjectParams } from "./types";
 
 const StyledSpin = styled(Spin)`
   left: 50%;
@@ -26,7 +27,7 @@ const Home = loadable(
     fallback: <StyledSpin />,
   }
 );
-const Project: LoadableComponent<{ match: any }> = loadable(
+const Project: LoadableComponent<{ match: ProjectParams }> = loadable(
   () => import(/* webpackPrefetch: true */ "./containers/Project"),
   {
     fallback: <StyledSpin />

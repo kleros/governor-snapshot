@@ -50,11 +50,11 @@ const WithdrawList = styled.div`
 `;
 
 const TopMenu: React.FC<{
-  listNumber: number,
+  listNumber: string,
   numberOfTxs: number,
   submittedAt?: Date,
   submitter: string,
-  setShowHide: any,
+  setShowHide: React.MouseEventHandler,
   withdrawable: boolean,
   governorContractInstance: Contract,
   chain: Chain,

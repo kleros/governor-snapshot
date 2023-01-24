@@ -62,6 +62,13 @@ export interface Transaction {
     title: string
 }
 
+export interface TransactionInfo {
+    target: string,
+    value: number,
+    data: string,
+    executed: boolean
+}
+
 export interface ProjectParams {
     path: string,
     url: string,
@@ -80,7 +87,7 @@ export interface SubmissionList {
 
 export interface Method {
     name: string,
-    inputs: any,
+    inputs: MethodInput[],
     constant?: boolean
 }
 

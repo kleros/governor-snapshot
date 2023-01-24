@@ -1,6 +1,6 @@
 import { Col, Row } from "antd";
 import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
-import React, { useState, Fragment } from "react";
+import React, { useState, Fragment, ReactNode } from "react";
 import styled from "styled-components";
 
 const StyledTopBanner = styled.div`
@@ -14,7 +14,7 @@ const StyledTopBanner = styled.div`
   cursor: pointer;
 `;
 
-const TopBanner: React.FC<{ children: any }> = (p) => {
+const TopBanner: React.FC<{ children: ReactNode }> = (p) => {
   const [show, setShow] = useState(true);
   return (
     <Fragment>

@@ -2,7 +2,7 @@ import { Contract } from "web3-eth-contract"
 import { useEffect, useState } from "react";
 import { orderParametersByHash } from "../util/tx-hash";
 import web3 from "../ethereum/web3";
-import { RoundInfo, Session, SubmissionList, Transaction } from "../types";
+import { RoundInfo, Session, SubmissionList, Transaction, TransactionInfo } from "../types";
 import { EventData } from "web3-eth-contract"
 
 /**
@@ -123,7 +123,7 @@ export const useFetchSubmittedLists = (
   sessionNumber: number
 ) => {
   const [sessionListIDs, setSessionListIDs] = useState<number[]>([]);
-  const [listEventLogs, setListEventLogs] = useState<any[]>([]);
+  const [listEventLogs, setListEventLogs] = useState<EventData[][]>([]);
   const [numberOfTxs, setNumberOfTxs] = useState<number[]>([]);
   const [listTxData, setListTxData] = useState<SubmissionList[]>([]);
 
@@ -164,7 +164,7 @@ export const useFetchSubmittedLists = (
   // Get transaction info for each List
   useEffect(() => {
     const _fetchTxInfo = async () => {
-      let _txInfo: any[] = [];
+      let _txInfo: SubmissionList[] = [];
       if (
         listEventLogs.length &&
         sessionListIDs &&
@@ -179,7 +179,7 @@ export const useFetchSubmittedLists = (
             );
             for (let j = 0; j < numberOfTxs[i]; j++) {
               // Get tx info
-              const info = await governorContractInstance.methods
+              const info: TransactionInfo = await governorContractInstance.methods
                 .getTransactionInfo(_listID, j)
                 .call();
               txs.push({
@@ -205,7 +205,7 @@ export const useFetchSubmittedLists = (
               submitter: listEventLogs[i][0].returnValues._submitter,
               submittedAt: new Date(Number(submittedAt) * 1000),
               txs,
-              listID: _listID,
+              listID: _listID.toString(),
             };
           })
         );

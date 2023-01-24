@@ -76,18 +76,22 @@ const NewListModal: React.FC<{
   const [address, setAddress] = useState<string>();
   const [value, setValue] = useState("0");
   const [data, setData] = useState<string | undefined>();
-  const [errors, setErrors] = useState<any[]>([]);
+  const [errors, setErrors] = useState<(string | undefined)[]>([]);
   const [submittable, setSubmittable] = useState(false);
-  const [methodSelected, setMethodSelected] = useState<any>();
-  const [methodInputs, setMethodInputs] = useState<any[]>([]);
+  const [methodSelected, setMethodSelected] = useState<string>("");
+  const [methodInputs, setMethodInputs] = useState<string[]>([]);
   const { methods, abi } = useFetchMethodsForContract(
     address || "",
     p.chain
   );
 
+  const onMethodSelected = (value: unknown) => {
+    const newMethodSelected: string = value ? value.toString() : "";
+    setMethodSelected(newMethodSelected);
+  };
+
   const methodToData = () => {
-    const abiAsAny: any = abi;
-    const contractInstance = new web3.eth.Contract(abiAsAny, address);
+    const contractInstance = new web3.eth.Contract(abi, address);
     return contractInstance.methods[methodSelected](
       ...methodInputs
     ).encodeABI();
@@ -100,7 +104,7 @@ const NewListModal: React.FC<{
     setValue("0");
     setData(undefined);
     setSubmittable(true);
-    setMethodSelected(undefined);
+    setMethodSelected("");
     setMethodInputs([]);
     setVisible(false);
   };
@@ -243,7 +247,7 @@ const NewListModal: React.FC<{
         ) : (
           <Fragment>
             <div>
-              <StyledSelect onChange={setMethodSelected}>
+              <StyledSelect onChange={onMethodSelected}>
                 {methods.map((method: Method) => {
                   return (
                     <Select.Option key={method.name} value={method.name}>

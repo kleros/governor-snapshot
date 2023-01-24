@@ -8,6 +8,7 @@ import NewTxModal from "../new-list-modal";
 import web3 from "../../ethereum/web3";
 import { Contract } from "web3-eth-contract"
 import { Chain, Transaction } from "../../types";
+import { AbiInput } from "web3-utils";
 
 const ListsContainer = styled.div`
   background: #ffffff;
@@ -60,17 +61,17 @@ const ListBoxLists: React.FC<{
       let parameters;
       for (let i = 0; i < abi.length; i++) {
         if (abi[i].name && !abi[i].constant) {
-          const abiAsAny: any = abi[i];
-          const methodSig = web3.eth.abi.encodeFunctionSignature(abiAsAny);
+          const methodSig = web3.eth.abi.encodeFunctionSignature(abi[i]);
+          const abiInputs: AbiInput[] = abi[i].inputs || [];
           if (tx.data.substring(0, 10) === methodSig) {
-            const _parameters = abi[i].inputs.length
+            const _parameters = abiInputs.length
               ? web3.eth.abi.decodeParameters(
-                abi[i].inputs,
+                abiInputs,
                 tx.data.substring(10, tx.data.length)
               )
               : {};
             parameters = Object.keys(_parameters)
-              .splice(abi[i].inputs.length + 1, abi[i].inputs.length * 2)
+              .splice(abiInputs.length + 1, abiInputs.length * 2)
               .map((k) => `${k} : ${_parameters[k]}`);
             methodName = abi[i].name;
             break;

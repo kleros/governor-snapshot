@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Projects from "../constants/projects";
 import { useLocalStorage } from "./local";
 import { Chain, Method, Project } from "../types";
+import { AbiItem } from "web3-utils";
 
 export const useFetchAllProjects = () => {
   const [allProjects, setAllProjects] = useState<Project[]>([]);
@@ -26,7 +27,7 @@ export const useFetchMethodsForContract = (
 ) => {
   const [abiCache, setAbiCache] = useLocalStorage('ABIS', {})
   const [methods, setMethods] = useState<Method[]>([]);
-  const [abi, setAbi] = useState<Method[]>([]);
+  const [abi, setAbi] = useState<AbiItem[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -68,8 +69,8 @@ export const useFetchMethodsForContract = (
         setAbi(_abi);
         const _methods: Method[] = [];
         await Promise.all(
-          _abi.map((abiItem: any, i: number) => {
-            if (!abiItem.constant && abiItem.type === "function") {
+          _abi.map((abiItem: AbiItem, i: number) => {
+            if (!abiItem.constant && abiItem.type === "function" && abiItem.name && abiItem.inputs) {
               _methods.push({
                 name: abiItem.name,
                 inputs: abiItem.inputs,

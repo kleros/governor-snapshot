@@ -7,8 +7,8 @@ import InfoBanner from "../components/info-banner";
 import ListViewer from "../components/list-viewer";
 import AppealModule from "../components/appeal-module";
 import HowItWorks from "../components/how-it-works"
-import GovernorInterface from "../constants/abis/governor.json";
-import ArbitratorInterface from "../constants/abis/court.json";
+import governorInterfaceABI from "../constants/abis/governor";
+import arbitratorInterfaceABI from "../constants/abis/court";
 import { useFetchProjectByName } from "../hooks/projects";
 import { useFetchAccount } from "../hooks/account";
 import { useFetchSession, useFetchListSubmissionCost, useFetchSubmittedLists } from "../hooks/governor";
@@ -16,7 +16,8 @@ import { useLocalStorage } from '../hooks/local';
 import { capitalizeString } from "../util/text";
 import { switchCurrentChain, useFetchChainId } from "../hooks/chain";
 import web3 from "../ethereum/web3";
-import { ProjectParams, SubmissionList, Transaction } from "../types";
+import { ProjectParams, SubmissionList } from "../types";
+import { AbiItem } from "web3-utils";
 
 const Dot = styled.div`
   height: 8px;
@@ -83,12 +84,18 @@ const ProjectHome: React.FC<{ match: ProjectParams }> = (props) => {
     match: { params },
   } = props;
   const [cachedPendingLists, setPendingListsCache] = useLocalStorage('CACHED_LISTS', undefined)
-  const [listsShown, setListsShown] = useState<any>("current");
+  const [listsShown, setListsShown] = useState<string>("current");
   const [pendingLists, setPendingLists] = useState(cachedPendingLists);
   const [isLoadingChainData, setIsLoadingChainData] = useState(false);
 
+  const onListShownChange = (value: unknown) => {
+    const newListShown: string = value ? value.toString() : "current";
+    setListsShown(newListShown);
+  };
+
   useEffect(() => {
     if (window.ethereum) {
+      console.log(`ethereum is ${JSON.stringify(window.ethereum)}`)
       window.ethereum.on('chainChanged', () => {
         window.location.reload();
       })
@@ -141,17 +148,16 @@ const ProjectHome: React.FC<{ match: ProjectParams }> = (props) => {
   const chainId = useFetchChainId();
   let correctChain = chainId == projectInfo.chain.id;
 
-  const governorInterfaceABI: any = GovernorInterface.abi;
   const governorContractInstance = new web3.eth.Contract(
     governorInterfaceABI,
     projectInfo.governorAddress
   );
 
-  const arbitratorInterfaceABI: any = ArbitratorInterface.abi;
   const arbitratorContractInstance = new web3.eth.Contract(
     arbitratorInterfaceABI,
     projectInfo.arbitratorAddress
   );
+
   const account: string = useFetchAccount();
 
   const session = useFetchSession(governorContractInstance);
@@ -216,7 +222,7 @@ const ProjectHome: React.FC<{ match: ProjectParams }> = (props) => {
               <ListOptionsRow>
                 <Col lg={20} md={12} sm={12} xs={12}>
                   <StyledSelect
-                    onChange={setListsShown}
+                    onChange={onListShownChange}
                     defaultValue="current"
                     disabled={true}
                   >

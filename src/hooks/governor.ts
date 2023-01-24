@@ -4,6 +4,7 @@ import { orderParametersByHash } from "../util/tx-hash";
 import web3 from "../ethereum/web3";
 import { RoundInfo, Session, SubmissionList, Transaction, TransactionInfo } from "../types";
 import { EventData } from "web3-eth-contract"
+import { BlockTransactionString } from "web3-eth";
 
 /**
  Fetch the time of the start of the session.
@@ -190,7 +191,7 @@ export const useFetchSubmittedLists = (
               });
             }
             const submittedAt = (
-              await new Promise<any>((resolve, reject) => {
+              await new Promise<BlockTransactionString>((resolve, reject) => {
                 web3.eth.getBlock(
                   listEventLogs[i][0].blockNumber,
                   (error, result) => {

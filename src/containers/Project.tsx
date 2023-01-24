@@ -95,7 +95,6 @@ const ProjectHome: React.FC<{ match: ProjectParams }> = (props) => {
 
   useEffect(() => {
     if (window.ethereum) {
-      console.log(`ethereum is ${JSON.stringify(window.ethereum)}`)
       window.ethereum.on('chainChanged', () => {
         window.location.reload();
       })

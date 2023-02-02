@@ -1,5 +1,4 @@
 import { ReactComponent as Acropolis } from "../assets/acropolis.svg";
-import PropTypes from "prop-types";
 import React from "react";
 import styled from "styled-components";
 import web3 from "../ethereum/web3";
@@ -58,14 +57,6 @@ const _404: React.FC = () => {
       </StyledMessageLine3>
     </StyledInfoDiv>
   </StyledDiv>
-};
-
-_404.propTypes = {
-  Web3: PropTypes.bool,
-};
-
-_404.defaultProps = {
-  Web3: false,
 };
 
 export default _404;

@@ -56,7 +56,7 @@ const InfoBanner: React.FC<{
           <br />
           <span>
             <b>Session:</b> Votes approved before{" "}
-            {sessionStart &&
+            {sessionStart.getTime() !== 0 &&
               `${monthIndexToAbbrev(
                 sessionStart.getUTCMonth()
               )} ${sessionStart.getUTCDate()}, ${sessionStart.getUTCFullYear()} - ${sessionStart.getUTCHours()}h ${sessionStart.getUTCMinutes()}m`}
@@ -87,8 +87,8 @@ const InfoBanner: React.FC<{
               {
                 p.showTimeout ? (
                   <SessionEndText>
-                    Session ends in <br />
-                    <StyledTimeAgo date={sessionEnd || new Date()} />
+                    Session ends <br />
+                    <StyledTimeAgo date={sessionEnd.getTime() !== 0 ? sessionEnd : new Date()} />
                   </SessionEndText>
                 ) : ''
               }

@@ -65,9 +65,22 @@ const TopMenu: React.FC<{
     p.listNumber
   );
 
-  const sendWithdrawSubmission = () => {
+  const sendWithdrawSubmission = async () => {
+    // lists have two identifiers:
+    // a global identifier, they will forever hold within the contract
+    // and their index within the session. to withdraw, you need this index
+    const currentSessionNumber: string = await p.governorContractInstance.methods
+      .getCurrentSessionNumber()
+      .call()
+      
+    const submittedLists: string[] = await p.governorContractInstance.methods
+      .getSubmittedLists(currentSessionNumber)
+      .call()
+
+    const index = submittedLists.findIndex(l => l === p.listNumber)
+
     p.governorContractInstance.methods
-      .withdrawTransactionList(p.listNumber, submissionHash)
+      .withdrawTransactionList(index, submissionHash)
       .send({
         from: p.account,
       });

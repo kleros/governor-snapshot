@@ -96,7 +96,7 @@ const App = () => (
               exact
               path="/:projectName"
             />
-            {/* <Route component={C404} /> */}
+            <Route component={C404} />
           </Switch>
         </StyledLayoutContent>
       </Layout>

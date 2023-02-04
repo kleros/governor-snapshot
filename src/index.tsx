@@ -1,6 +1,5 @@
 import { Col, Layout, Row, Spin } from "antd";
 import "antd/dist/antd.css";
-import React, { PureComponent } from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { Helmet } from "react-helmet";
@@ -55,58 +54,55 @@ const StyledHeader = styled(Layout.Header)`
   background: #4d00b4;
 `;
 
-class App extends PureComponent {
-  render() {
-    return (
-      <div>
-        <Helmet>
-          <title>Kleros · Governor</title>
-          <link
-            href="https://fonts.googleapis.com/css?family=Roboto:400,400i,500,500i,700,700i"
-            rel="stylesheet"
-          />
-        </Helmet>
-        <BrowserRouter>
-          <Layout>
-            <StyledHeader>
-              <Row>
-                <StyledCol lg={4} md={4} sm={16} xs={12}>
-                  <KlerosLogo />
-                </StyledCol>
-                <Col
-                  lg={16}
-                  md={16}
-                  xs={12}
-                  style={{
-                    textAlign: "center",
-                    color: "rgba(255, 255, 255, 0.85)",
-                  }}
-                >
-                  Governor
-                </Col>
-                <StyledCol lg={4} md={4} sm={8} xs={24} />
-              </Row>
-            </StyledHeader>
-            <StyledLayoutContent>
-              <Switch>
-                <Route
-                  render={() => <Home />}
-                  exact
-                  path="/"
-                />
-                <Route
-                  render={(props) => <Project match={props.match} />}
-                  exact
-                  path="/:projectName"
-                />
-                <Route component={C404} />
-              </Switch>
-            </StyledLayoutContent>
-          </Layout>
-        </BrowserRouter>
-      </div>
-    );
-  }
-}
+const App = () => (
+  <div>
+    <Helmet>
+      <title>Kleros · Governor</title>
+      <link
+        href="https://fonts.googleapis.com/css?family=Roboto:400,400i,500,500i,700,700i"
+        rel="stylesheet"
+      />
+    </Helmet>
+    <BrowserRouter>
+      <Layout>
+        <StyledHeader>
+          <Row>
+            <StyledCol lg={4} md={4} sm={16} xs={12}>
+              <KlerosLogo />
+            </StyledCol>
+            <Col
+              lg={16}
+              md={16}
+              xs={12}
+              style={{
+                textAlign: "center",
+                color: "rgba(255, 255, 255, 0.85)",
+              }}
+            >
+              Governor
+            </Col>
+            <StyledCol lg={4} md={4} sm={8} xs={24} />
+          </Row>
+        </StyledHeader>
+        <StyledLayoutContent>
+          <Switch>
+            <Route
+              render={() => <Home />}
+              exact
+              path="/"
+            />
+            <Route
+              render={(props) => <Project match={props.match} />}
+              exact
+              path="/:projectName"
+            />
+            {/* <Route component={C404} /> */}
+          </Switch>
+        </StyledLayoutContent>
+      </Layout>
+    </BrowserRouter>
+  </div>
+);
+
 
 ReactDOM.render(<App />, document.getElementById("root"));

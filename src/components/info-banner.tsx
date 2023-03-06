@@ -1,7 +1,7 @@
 import { Row, Col, Button } from "antd";
 import React, { Fragment } from "react";
 import styled from "styled-components";
-import { useFetchSessionStart, useFetchSessionEnd } from "../hooks/governor";
+import { useFetchSessionStart, useFetchSessionEnd, useFetchSession } from "../hooks/governor";
 import { monthIndexToAbbrev } from "../util/text";
 import TimeAgo from "./time-ago";
 import SnapshotLogo from '../assets/logos/snapshot.png'
@@ -41,7 +41,9 @@ const InfoBanner: React.FC<{
     p.governorContractInstance,
     p.session.currentSessionNumber
   );
+  const session = useFetchSession(p.governorContractInstance)
 
+  console.log(session)
   const sendExecuteSubmissions = p.governorContractInstance.methods.executeSubmissions();
 
   return (
@@ -69,7 +71,13 @@ const InfoBanner: React.FC<{
                 <div />
               ) : (
                 <Button
-                  disabled={!p.account}
+                  // executeSubmissions is gated by two things:
+                  // duringApprovalPeriod
+                  // not in dispute
+                  disabled={
+                    !(new Date().getTime() > sessionEnd.getTime()
+                    && session.status == 0)
+                  }
                   type="primary"
                   onClick={() => {
                     sendExecuteSubmissions.send({

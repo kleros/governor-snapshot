@@ -29,7 +29,8 @@ export interface Project {
 
 export interface Session {
     currentSessionNumber: number,
-    disputeID: number
+    disputeID: number,
+    status: number
 }
 
 export interface Dispute {

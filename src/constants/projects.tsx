@@ -35,7 +35,7 @@ const Projects: Project[] = [
     icon: <ForkDAOLogo />,
     governorAddress: "0xf7dE5537eCD69a94695fcF4BCdBDeE6329b63322",
     arbitratorAddress: "0x9c1da9a04925bdfdedf0f6421bc7eea8305f9002",
-    snapshotSlug: "elfork.eth",
+    snapshotSlug: "fork-dao.eth",
     chain: Chains[100]
   }
 ]

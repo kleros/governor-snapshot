@@ -1,11 +1,15 @@
 import { Row, Col, Button } from "antd";
 import React, { Fragment } from "react";
 import styled from "styled-components";
-import { useFetchSessionStart, useFetchSessionEnd, useFetchSession } from "../hooks/governor";
+import {
+  useFetchSessionStart,
+  useFetchSessionEnd,
+  useFetchSession,
+} from "../hooks/governor";
 import { monthIndexToAbbrev } from "../util/text";
 import TimeAgo from "./time-ago";
-import SnapshotLogo from '../assets/logos/snapshot.png'
-import { Contract } from "web3-eth-contract"
+import SnapshotLogo from "../assets/logos/snapshot.png";
+import { Contract } from "web3-eth-contract";
 import { Session } from "../types";
 
 const StyledInfoBanner = styled.div`
@@ -29,21 +33,19 @@ const StyledTimeAgo = styled(TimeAgo)`
 `;
 
 const InfoBanner: React.FC<{
-  governorContractInstance: Contract,
-  account: string,
-  session: Session,
-  snapshotSlug: string,
-  showTimeout: boolean
-}
-> = (p) => {
+  governorContractInstance: Contract;
+  account: string;
+  session: Session;
+  snapshotSlug: string;
+  showTimeout: boolean;
+}> = (p) => {
   const sessionStart = useFetchSessionStart(p.governorContractInstance);
   const sessionEnd = useFetchSessionEnd(
     p.governorContractInstance,
     p.session.currentSessionNumber
   );
-  const session = useFetchSession(p.governorContractInstance)
+  const session = useFetchSession(p.governorContractInstance);
 
-  console.log(session)
   const sendExecuteSubmissions = p.governorContractInstance.methods.executeSubmissions();
 
   return (
@@ -52,7 +54,7 @@ const InfoBanner: React.FC<{
         <Col lg={18} md={12} sm={10}>
           <span>
             Governor decision from{" "}
-            <img src={SnapshotLogo} style={{ height: '16px' }} />
+            <img src={SnapshotLogo} style={{ height: "16px" }} />
             <a href={`https://snapshot.org/#/${p.snapshotSlug}`}>Snapshot.</a>
           </span>
           <br />
@@ -75,16 +77,17 @@ const InfoBanner: React.FC<{
                   // duringApprovalPeriod
                   // not in dispute
                   disabled={
-                    !(new Date().getTime() > sessionEnd.getTime()
-                    && session.status == 0)
+                    !(
+                      new Date().getTime() > sessionEnd.getTime() &&
+                      session.status == 0
+                    )
                   }
                   type="primary"
                   onClick={() => {
                     sendExecuteSubmissions.send({
                       from: p.account,
-                    })
-                  }
-                  }
+                    });
+                  }}
                 >
                   Execute Submissions
                 </Button>
@@ -92,20 +95,22 @@ const InfoBanner: React.FC<{
             </Fragment>
           ) : (
             <Fragment>
-              {
-                p.showTimeout ? (
-                  <SessionEndText>
-                    Session ends <br />
-                    <StyledTimeAgo date={sessionEnd.getTime() !== 0 ? sessionEnd : new Date()} />
-                  </SessionEndText>
-                ) : ''
-              }
+              {p.showTimeout ? (
+                <SessionEndText>
+                  Session ends <br />
+                  <StyledTimeAgo
+                    date={sessionEnd.getTime() !== 0 ? sessionEnd : new Date()}
+                  />
+                </SessionEndText>
+              ) : (
+                ""
+              )}
             </Fragment>
           )}
         </Col>
       </Row>
     </StyledInfoBanner>
   );
-}
+};
 
 export default InfoBanner;

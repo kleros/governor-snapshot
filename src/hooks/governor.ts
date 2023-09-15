@@ -1,9 +1,15 @@
-import { Contract } from "web3-eth-contract"
+import { Contract } from "web3-eth-contract";
 import { useEffect, useState } from "react";
 import { orderParametersByHash } from "../util/tx-hash";
 import web3 from "../ethereum/web3";
-import { RoundInfo, Session, SubmissionList, Transaction, TransactionInfo } from "../types";
-import { EventData } from "web3-eth-contract"
+import {
+  RoundInfo,
+  Session,
+  SubmissionList,
+  Transaction,
+  TransactionInfo,
+} from "../types";
+import { EventData } from "web3-eth-contract";
 import { BlockTransactionString } from "web3-eth";
 
 /**
@@ -32,7 +38,10 @@ export const useFetchSessionStart = (governorContractInstance: Contract) => {
  param: governorContractInstance - web3 Contract object
  return: Date object at the end of the session
  */
-export const useFetchSessionEnd = (governorContractInstance: Contract, sessionNumber: number) => {
+export const useFetchSessionEnd = (
+  governorContractInstance: Contract,
+  sessionNumber: number
+) => {
   const [submissionTimeout, setSubmissionTimeout] = useState(0);
   const [durationOffset, setDurationOffset] = useState(0);
   const sessionStart = useFetchSessionStart(governorContractInstance);
@@ -62,7 +71,7 @@ export const useFetchSessionEnd = (governorContractInstance: Contract, sessionNu
     (sessionStart.getTime() / 1000 +
       Number(submissionTimeout) +
       Number(durationOffset)) *
-    1000
+      1000
   );
 };
 
@@ -89,13 +98,16 @@ export const submitEmptyList = (
   submitter: string,
   costPerTx: number | undefined
 ) => {
-  governorContractInstance.methods.submitList([], [], '0x', [], '').send({
+  governorContractInstance.methods.submitList([], [], "0x", [], "").send({
     from: submitter,
-    value: costPerTx
-  })
-}
+    value: costPerTx,
+  });
+};
 
-export const useIsWithdrawable = (governorContractInstance: Contract, submittedAt: Date): [boolean, Date] => {
+export const useIsWithdrawable = (
+  governorContractInstance: Contract,
+  submittedAt: Date
+): [boolean, Date] => {
   const [timeout, setTimeout] = useState(0);
 
   // Fetch timeout for this contract
@@ -123,12 +135,13 @@ export const useFetchSubmittedLists = (
   governorContractInstance: Contract,
   sessionNumber: number
 ) => {
+  const [fromBlock, setFromBlock] = useState<number>();
   const [sessionListIDs, setSessionListIDs] = useState<number[]>([]);
   const [listEventLogs, setListEventLogs] = useState<EventData[][]>([]);
   const [numberOfTxs, setNumberOfTxs] = useState<number[]>([]);
   const [listTxData, setListTxData] = useState<SubmissionList[]>([]);
 
-  // Fetch ListIDs for session
+  // Fetch ListIDs for session. Also fetch fromBlock, the reference point to query logs
   useEffect(() => {
     governorContractInstance.methods
       .getSubmittedLists(sessionNumber)
@@ -136,6 +149,8 @@ export const useFetchSubmittedLists = (
       .then((r: number[]) => {
         setSessionListIDs(r);
       });
+    // could be -50_000 in mainnet, but -100_000 works for both
+    web3.eth.getBlockNumber().then((block) => setFromBlock(block - 100_000));
   }, [sessionNumber]);
 
   // Fetch Event logs and number of txs for each List
@@ -145,7 +160,7 @@ export const useFetchSubmittedLists = (
         sessionListIDs.map((_listID) => {
           return governorContractInstance.getPastEvents("ListSubmitted", {
             filter: { _listID },
-            fromBlock: 0,
+            fromBlock: fromBlock,
           });
         })
       );
@@ -160,7 +175,7 @@ export const useFetchSubmittedLists = (
       setNumberOfTxs(_numberOfTxs);
     };
     _fetchAllEventsForListIDs();
-  }, [sessionListIDs]);
+  }, [sessionListIDs, fromBlock]);
 
   // Get transaction info for each List
   useEffect(() => {
@@ -220,7 +235,10 @@ export const useFetchSubmittedLists = (
   return listTxData;
 };
 
-export const useFetchSubmissionHash = (governorContractInstance: Contract, listID: string) => {
+export const useFetchSubmissionHash = (
+  governorContractInstance: Contract,
+  listID: string
+) => {
   const [submissionHash, setSubmissionHash] = useState<string>("");
 
   useEffect(() => {
@@ -233,7 +251,9 @@ export const useFetchSubmissionHash = (governorContractInstance: Contract, listI
   return submissionHash;
 };
 
-export const useFetchArbitratorExtraData = (governorContractInstance: Contract) => {
+export const useFetchArbitratorExtraData = (
+  governorContractInstance: Contract
+) => {
   const [arbitratorExtraData, setArbitratorExtraData] = useState("0x0");
 
   useEffect(() => {
@@ -246,7 +266,9 @@ export const useFetchArbitratorExtraData = (governorContractInstance: Contract) 
   return arbitratorExtraData;
 };
 
-export const useFetchCrowdfundingVariables = (governorContractInstance: Contract) => {
+export const useFetchCrowdfundingVariables = (
+  governorContractInstance: Contract
+) => {
   const [winnerMultiplier, setWinnerMultiplier] = useState(0);
   const [loserMultiplier, setLoserMultiplier] = useState(0);
   const [sharedMultiplier, setSharedMultiplier] = useState(0);
@@ -279,9 +301,14 @@ export const useFetchCrowdfundingVariables = (governorContractInstance: Contract
   };
 };
 
-export const useFetchRoundInfo = (governorContractInstance: Contract, sessionNumber: number) => {
+export const useFetchRoundInfo = (
+  governorContractInstance: Contract,
+  sessionNumber: number
+) => {
   const [numberOfRounds, setNumberOfRounds] = useState<number>(0);
-  const [roundInformation, setRoundInformation] = useState<RoundInfo | undefined>(undefined);
+  const [roundInformation, setRoundInformation] = useState<
+    RoundInfo | undefined
+  >(undefined);
 
   useEffect(() => {
     governorContractInstance.methods
@@ -305,7 +332,11 @@ export const useFetchRoundInfo = (governorContractInstance: Contract, sessionNum
 
 export const useFetchSession = (governorContractInstance: Contract) => {
   const [currentSessionNumber, setCurrentSessionNumber] = useState<number>(0);
-  const [session, setSession] = useState<Session>({ disputeID: 0, currentSessionNumber: 0, status: 0 });
+  const [session, setSession] = useState<Session>({
+    disputeID: 0,
+    currentSessionNumber: 0,
+    status: 0,
+  });
 
   useEffect(() => {
     governorContractInstance.methods

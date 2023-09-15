@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState } from "react";
 
 export const useLocalStorage = (key: string, initialValue: any) => {
   // State to store our value
@@ -11,7 +11,6 @@ export const useLocalStorage = (key: string, initialValue: any) => {
       return item ? JSON.parse(item) : initialValue;
     } catch (error) {
       // If error also return initialValue
-      console.log(error);
       return initialValue;
     }
   });
@@ -34,4 +33,4 @@ export const useLocalStorage = (key: string, initialValue: any) => {
   };
 
   return [storedValue, setValue];
-}
+};

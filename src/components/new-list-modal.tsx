@@ -3,7 +3,7 @@ import React, { useState, Fragment, useEffect } from "react";
 import { useFetchMethodsForContract } from "../hooks/projects";
 import styled from "styled-components";
 import web3 from "../ethereum/web3";
-import { Contract } from "web3-eth-contract"
+import { Contract } from "web3-eth-contract";
 import { Chain, Method, MethodInput } from "../types";
 
 const StyledButton = styled(Button)`
@@ -62,13 +62,13 @@ const Error = styled.div`
 `;
 
 const NewListModal: React.FC<{
-  setPendingLists: Function,
-  disabled: boolean,
-  addTx: boolean,
-  web3: typeof web3,
-  governorContractInstance: Contract,
-  chain: Chain,
-  costPerTx: number | undefined
+  setPendingLists: Function;
+  disabled: boolean;
+  addTx: boolean;
+  web3: typeof web3;
+  governorContractInstance: Contract;
+  chain: Chain;
+  costPerTx: number | undefined;
 }> = (p) => {
   const [visible, setVisible] = useState(false);
   const [inputType, setInputType] = useState("data");
@@ -80,10 +80,7 @@ const NewListModal: React.FC<{
   const [submittable, setSubmittable] = useState(false);
   const [methodSelected, setMethodSelected] = useState<string>("");
   const [methodInputs, setMethodInputs] = useState<string[]>([]);
-  const { methods, abi } = useFetchMethodsForContract(
-    address || "",
-    p.chain
-  );
+  const { methods, abi } = useFetchMethodsForContract(address || "", p.chain);
 
   const onMethodSelected = (value: unknown) => {
     const newMethodSelected: string = value ? value.toString() : "";
@@ -108,6 +105,7 @@ const NewListModal: React.FC<{
     setMethodInputs([]);
     setVisible(false);
   };
+  console.debug({ data });
 
   const submitNewTx = () => {
     if (inputType === "data") {
@@ -182,8 +180,7 @@ const NewListModal: React.FC<{
       if (_newErrors) {
         setSubmittable(false);
       }
-    } catch (e) { }
-
+    } catch (e) {}
   }, [title, address, value, data, methodSelected, methodInputs]);
 
   return (
@@ -288,6 +285,6 @@ const NewListModal: React.FC<{
       </Modal>
     </Fragment>
   );
-}
+};
 
-export default NewListModal
+export default NewListModal;

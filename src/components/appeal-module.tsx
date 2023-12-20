@@ -9,16 +9,22 @@ import {
   useFetchCrowdfundingVariables,
   useFetchArbitratorExtraData,
   useFetchRoundInfo,
-  useFetchSubmittedLists
-} from "../hooks/governor"
+  useFetchSubmittedLists,
+} from "../hooks/governor";
 import {
   useFetchAppealFee,
   useFetchAppealTimes,
   useFetchDispute,
-  useFetchCurrentRuling
+  useFetchCurrentRuling,
 } from "../hooks/arbitrator";
-import { Contract } from "web3-eth-contract"
-import { AppealPeriod, Chain, Dispute, SubmissionList, Session } from "../types";
+import { Contract } from "web3-eth-contract";
+import {
+  AppealPeriod,
+  Chain,
+  Dispute,
+  SubmissionList,
+  Session,
+} from "../types";
 
 const StyledAppealModule = styled.div`
   margin-top: 25px;
@@ -38,11 +44,11 @@ const AppealSubtext = styled.div`
 `;
 
 const AppealModule: React.FC<{
-  governorContractInstance: Contract,
-  chain: Chain,
-  arbitratorContractInstance: Contract,
-  session: Session,
-  account: string,
+  governorContractInstance: Contract;
+  chain: Chain;
+  arbitratorContractInstance: Contract;
+  session: Session;
+  account: string;
 }> = (p) => {
   // Get appeal information from Governor
   const sessionRoundInformation = useFetchRoundInfo(
@@ -114,11 +120,12 @@ const AppealModule: React.FC<{
                       i === currentRuling - 1
                         ? new Date(Number(appealTimes?.end) * 1000)
                         : new Date(
-                          (Number(appealTimes?.end) -
                             (Number(appealTimes?.end) -
-                              Number(appealTimes?.start))) *
-                          1000
-                        )
+                              (Number(appealTimes?.end) -
+                                Number(appealTimes?.start)) /
+                                2) *
+                              1000
+                          )
                     }
                     appealFee={i === currentRuling - 1 ? winnerFee : loserFee}
                     amountContributed={
@@ -141,6 +148,6 @@ const AppealModule: React.FC<{
       )}
     </StyledAppealModule>
   );
-}
+};
 
 export default AppealModule;

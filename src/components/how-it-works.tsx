@@ -32,7 +32,7 @@ const HowItWorks: React.FC = () => {
         <br /><br />
         If a competing list is submitted in the same session, a dispute will be created in Kleros Court to choose which list is correct. After dispute resolution concludes the deposit from the losing list will be used to pay the jurors and reward the user that submitted the winning list.
         <br /><br />
-        Lists that most completely enforce the greatest number of governance decisions will be accepted. The process for choosing between lists can be seen <a href="https://ipfs.kleros.io/ipfs/QmPt2oTHCYZYUShuLxiK4QWH6sXPHjvgXTqMDpCShKogQY/KlerosGovernorPrimaryDocument.pdf">here</a>.
+        Lists that most completely enforce the greatest number of governance decisions will be accepted. The process for choosing between lists can be seen <a href="https://cdn.kleros.link/ipfs/QmPt2oTHCYZYUShuLxiK4QWH6sXPHjvgXTqMDpCShKogQY/KlerosGovernorPrimaryDocument.pdf">here</a>.
       </Modal>
     </Fragment>
   )

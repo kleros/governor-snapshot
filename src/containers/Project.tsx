@@ -178,9 +178,10 @@ const ProjectHome: React.FC<{ match: ProjectParams }> = (props) => {
     arbitratorContractInstance
   );
 
-  const submittedLists = useFetchSubmittedLists(
+  const { submittedLists, loading: loadingLists } = useFetchSubmittedLists(
     governorContractInstance,
-    session.currentSessionNumber || 0
+    session.currentSessionNumber || 0,
+    projectInfo.chain
   );
 
   return (
@@ -322,6 +323,7 @@ const ProjectHome: React.FC<{ match: ProjectParams }> = (props) => {
             costPerTx={costPerTx}
             onClear={clearTx}
             submittedLists={submittedLists}
+            loading={loadingLists}
           />
           {session.disputeID ? (
             <AppealModule

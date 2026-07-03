@@ -16,8 +16,12 @@ const mainnet: Chain = {
   scanContractUrl: (contractAddress) =>
     `https://etherscan.io/address/${contractAddress}#code`,
   scanAddressUrl: (address) => `https://etherscan.io/address/${address}`,
+  //Blockscout because Etherscan V1 API was discontinued and V2 requires an API key
+  //We can switch later if needed
   scanAbiUrl: (contractAddress) =>
-    `https://api.etherscan.io/api?module=contract&action=getabi&address=${contractAddress}`,
+    `https://eth.blockscout.com/api?module=contract&action=getabi&address=${contractAddress}`,
+  scanListSubmittedLogsUrl: (address, eventSignature, session) =>
+    `https://eth.blockscout.com/api?module=logs&action=getLogs&fromBlock=0&toBlock=latest&address=${address}&topic0=${eventSignature}&topic3=${session}&topic0_3_opr=and`,
 };
 
 const goerli: Chain = {
@@ -36,6 +40,8 @@ const goerli: Chain = {
   scanAddressUrl: (address) => `https://goerli.etherscan.io/address/${address}`,
   scanAbiUrl: (contractAddress) =>
     `https://api-goerli.etherscan.io/api?module=contract&action=getabi&address=${contractAddress}`,
+  scanListSubmittedLogsUrl: (address, eventSignature, session) =>
+    `https://eth-goerli.blockscout.com/api?module=logs&action=getLogs&fromBlock=0&toBlock=latest&address=${address}&topic0=${eventSignature}&topic3=${session}&topic0_3_opr=and`,
 };
 
 const gnosis: Chain = {
@@ -55,6 +61,8 @@ const gnosis: Chain = {
     `https://gnosis.blockscout.com/address/${address}`,
   scanAbiUrl: (contractAddress) =>
     `https://gnosis.blockscout.com/api?module=contract&action=getabi&address=${contractAddress}`,
+  scanListSubmittedLogsUrl: (address, eventSignature, session) =>
+    `https://gnosis.blockscout.com/api?module=logs&action=getLogs&fromBlock=0&toBlock=latest&address=${address}&topic0=${eventSignature}&topic3=${session}&topic0_3_opr=and`,
 };
 
 const chainMap = {

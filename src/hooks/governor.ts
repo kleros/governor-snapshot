@@ -2,15 +2,15 @@ import { Contract } from "web3-eth-contract";
 import { useEffect, useState } from "react";
 import { orderParametersByHash } from "../util/tx-hash";
 import web3 from "../ethereum/web3";
+import governorInterfaceABI from "../constants/abis/governor";
 import {
+  Chain,
   RoundInfo,
   Session,
   SubmissionList,
   Transaction,
   TransactionInfo,
 } from "../types";
-import { EventData } from "web3-eth-contract";
-import { BlockTransactionString } from "web3-eth";
 
 /**
  Fetch the time of the start of the session.
@@ -127,112 +127,130 @@ export const useIsWithdrawable = (
 };
 
 /**
- Fetch the end of the current session.
- param: governorContractInstance - web3 Contract object
- return: Date object at the end of the session
+ * Tx titles are not stored in contract, only emitted in the ListSubmitted event.
+ * The app relies on user wallet RPCs, which most likely will not serve old event logs,
+ * so we try to get them from the block explorer API. We can match titles to list exactly
+ * because the event also contains the list ID.
+ * Note that if this fails for some reason, lists still render, but without titles.
+ */
+const fetchListTitles = async (
+  governorAddress: string,
+  chain: Chain,
+  sessionNumber: number
+): Promise<{ [listID: string]: string[] }> => {
+  const titlesByListID: { [listID: string]: string[] } = {};
+  try {
+    const listSubmittedAbi = governorInterfaceABI.find(
+      (item) => item.name === "ListSubmitted" && item.type === "event"
+    );
+    if (!listSubmittedAbi) return titlesByListID;
+    const eventSignature = web3.eth.abi.encodeEventSignature(listSubmittedAbi);
+    const session = web3.eth.abi.encodeParameter("uint256", sessionNumber);
+    const response = await fetch(
+      chain.scanListSubmittedLogsUrl(governorAddress, eventSignature, session)
+    ).then((r) => r.json());
+    if (!Array.isArray(response.result)) return titlesByListID;
+
+    for (const log of response.result) {
+      const decoded = web3.eth.abi.decodeLog(
+        listSubmittedAbi.inputs || [],
+        log.data,
+        log.topics.slice(1) //the event topics without the event signature
+      );
+      titlesByListID[decoded._listID] = String(decoded._description).split(",");
+    }
+  } catch (error) {
+    console.warn("Could not fetch list titles from block explorer", error);
+  }
+  return titlesByListID;
+};
+
+/**
+ * Fetch all lists submitted during a session.
+ * All list data, except titles, is read from the contract directly.
+ * This way we avoid asking the user wallet RPCs for old event logs, which will, most likely, fail.
  */
 export const useFetchSubmittedLists = (
   governorContractInstance: Contract,
-  sessionNumber: number
+  sessionNumber: number,
+  chain: Chain
 ) => {
-  const [fromBlock, setFromBlock] = useState<number>();
-  const [sessionListIDs, setSessionListIDs] = useState<number[]>([]);
-  const [listEventLogs, setListEventLogs] = useState<EventData[][]>([]);
-  const [numberOfTxs, setNumberOfTxs] = useState<number[]>([]);
   const [listTxData, setListTxData] = useState<SubmissionList[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
-  // Fetch ListIDs for session. Also fetch fromBlock, the reference point to query logs
   useEffect(() => {
-    governorContractInstance.methods
-      .getSubmittedLists(sessionNumber)
-      .call()
-      .then((r: number[]) => {
-        setSessionListIDs(r);
-      });
-    // could be -50_000 in mainnet, but -100_000 works for both
-    web3.eth.getBlockNumber().then((block) => setFromBlock(block - 100_000));
-  }, [sessionNumber]);
+    const _fetchLists = async () => {
+      setLoading(true);
+      try {
+        //Fetch IDs of the lists submitted during the session
+        const listIDs: string[] = await governorContractInstance.methods
+          .getSubmittedLists(sessionNumber)
+          .call();
 
-  // Fetch Event logs and number of txs for each List
-  useEffect(() => {
-    const _fetchAllEventsForListIDs = async () => {
-      const _events: EventData[][] = await Promise.all(
-        sessionListIDs.map((_listID) => {
-          return governorContractInstance.getPastEvents("ListSubmitted", {
-            filter: { _listID },
-            fromBlock: fromBlock,
-          });
-        })
-      );
-      const _numberOfTxs: number[] = await Promise.all(
-        sessionListIDs.map((_listID) => {
-          return governorContractInstance.methods
-            .getNumberOfTransactions(_listID)
-            .call();
-        })
-      );
-      setListEventLogs(_events);
-      setNumberOfTxs(_numberOfTxs);
-    };
-    _fetchAllEventsForListIDs();
-  }, [sessionListIDs, fromBlock]);
+        if (!listIDs.length) {
+          setListTxData([]);
+          return;
+        }
 
-  // Get transaction info for each List
-  useEffect(() => {
-    const _fetchTxInfo = async () => {
-      let _txInfo: SubmissionList[] = [];
-      if (
-        listEventLogs.length &&
-        sessionListIDs &&
-        listEventLogs.length === sessionListIDs.length &&
-        numberOfTxs
-      ) {
-        _txInfo = await Promise.all(
-          sessionListIDs.map(async (_listID, i) => {
-            const txs = [];
-            const titles = listEventLogs[i][0].returnValues._description.split(
-              ","
+        //Attempt to get the titles for every list
+        const titlesByListID = await fetchListTitles(
+          governorContractInstance.options.address,
+          chain,
+          sessionNumber
+        );
+
+        const lists: SubmissionList[] = await Promise.all(
+          listIDs.map(async (listID) => {
+            //Fetch the submission data for the list
+            const submission = await governorContractInstance.methods
+              .submissions(listID)
+              .call();
+
+            //Fetch the number of transactions for the list
+            const numberOfTxs = Number(
+              await governorContractInstance.methods
+                .getNumberOfTransactions(listID)
+                .call()
             );
-            for (let j = 0; j < numberOfTxs[i]; j++) {
-              // Get tx info
-              const info: TransactionInfo = await governorContractInstance.methods
-                .getTransactionInfo(_listID, j)
-                .call();
-              txs.push({
-                title: titles[j],
-                data: info.data || "0x",
-                address: info.target,
-                value: info.value,
-              });
-            }
-            const submittedAt = (
-              await new Promise<BlockTransactionString>((resolve, reject) => {
-                web3.eth.getBlock(
-                  listEventLogs[i][0].blockNumber,
-                  (error, result) => {
-                    if (error) reject(error);
 
-                    resolve(result);
-                  }
-                );
+            //Attempt to get the title for the list from the existing map
+            const titles = titlesByListID[listID.toString()] || [];
+
+            //For each transaction in the list, fetch its data from the contract
+            const txs: Transaction[] = await Promise.all(
+              Array.from({ length: numberOfTxs }, async (_, i) => {
+                const txInfo: TransactionInfo = await governorContractInstance.methods
+                  .getTransactionInfo(listID, i)
+                  .call();
+                return {
+                  title: titles[i] || "",
+                  data: txInfo.data || "0x",
+                  address: txInfo.target,
+                  value: txInfo.value,
+                };
               })
-            ).timestamp;
+            );
+
             return {
-              submitter: listEventLogs[i][0].returnValues._submitter,
-              submittedAt: new Date(Number(submittedAt) * 1000),
+              submitter: submission.submitter,
+              submittedAt: new Date(Number(submission.submissionTime) * 1000),
               txs,
-              listID: _listID.toString(),
+              listID: listID.toString(),
             };
           })
         );
+
+        setListTxData(lists);
+      } finally {
+        //Always stop loading, even if a fetch fails, so the UI is not stuck on a spinner
+        setLoading(false);
       }
-      setListTxData(_txInfo);
     };
 
-    _fetchTxInfo();
-  }, [listEventLogs, numberOfTxs, sessionListIDs]);
+    _fetchLists();
+  }, [sessionNumber]);
 
-  return listTxData;
+  return { submittedLists: listTxData, loading };
 };
 
 export const useFetchSubmissionHash = (

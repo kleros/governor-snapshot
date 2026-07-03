@@ -1,7 +1,7 @@
 import { Col, Layout, Row, Spin } from "antd";
 import "antd/dist/antd.css";
 import ReactDOM from "react-dom";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { BrowserRouter, Link, Route, Switch } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { ReactComponent as KlerosLogo } from "./assets/kleros-logo.svg";
 import loadable, { LoadableComponent } from "@loadable/component";
@@ -68,7 +68,9 @@ const App = () => (
         <StyledHeader>
           <Row>
             <StyledCol lg={4} md={4} sm={16} xs={12}>
-              <KlerosLogo />
+              <Link to="/" style={{ display: "flex" }}>
+                <KlerosLogo />
+              </Link>
             </StyledCol>
             <Col
               lg={16}

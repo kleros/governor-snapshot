@@ -22,7 +22,6 @@ import {
   AppealPeriod,
   Chain,
   Dispute,
-  SubmissionList,
   Session,
 } from "../types";
 
@@ -61,9 +60,10 @@ const AppealModule: React.FC<{
   const crowdfundingVariables = useFetchCrowdfundingVariables(
     p.governorContractInstance
   );
-  const submittedLists: SubmissionList[] = useFetchSubmittedLists(
+  const { submittedLists } = useFetchSubmittedLists(
     p.governorContractInstance,
-    p.session.currentSessionNumber
+    p.session.currentSessionNumber,
+    p.chain
   );
   // Get appeal information from Arbitrator
   const dispute: Dispute | undefined = useFetchDispute(

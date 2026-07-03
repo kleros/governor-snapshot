@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { Spin } from "antd";
 
 import ListBox from "./list-box/index";
 import DisputeBanner from "./dispute-banner";
@@ -11,6 +12,11 @@ const NoListsText = styled.div`
   line-height: 22px;
   color: #cccccc;
 `;
+const CenteredSpin = styled(Spin)`
+  display: block;
+  text-align: center;
+  padding: 50px 0px;
+`;
 
 const ListViewer: React.FC<{
   governorContractInstance: Contract,
@@ -20,7 +26,8 @@ const ListViewer: React.FC<{
   addToPendingLists: Function,
   costPerTx: number | undefined,
   onClear: Function,
-  submittedLists: SubmissionList[]
+  submittedLists: SubmissionList[],
+  loading: boolean
 }> = (p) => {
   if (p.pendingLists) {
     return (
@@ -39,6 +46,8 @@ const ListViewer: React.FC<{
       />
     );
   }
+
+  if (p.loading) return <CenteredSpin />;
 
   if (!p.submittedLists || !p.submittedLists.length)
     return <NoListsText>No Lists Yet</NoListsText>;

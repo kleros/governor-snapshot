@@ -15,7 +15,8 @@ export interface Chain {
     icon: ReactNode,
     scanContractUrl: (_: string) => string,
     scanAddressUrl: (_: string) => string,
-    scanAbiUrl: (_: string) => string
+    scanAbiUrl: (_: string) => string,
+    scanListSubmittedLogsUrl: (_address: string, _eventSignature: string, _session: string) => string
 }
 
 export interface Project {

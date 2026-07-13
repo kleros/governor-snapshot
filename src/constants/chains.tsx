@@ -24,26 +24,6 @@ const mainnet: Chain = {
     `https://eth.blockscout.com/api?module=logs&action=getLogs&fromBlock=0&toBlock=latest&address=${address}&topic0=${eventSignature}&topic3=${session}&topic0_3_opr=and`,
 };
 
-const goerli: Chain = {
-  id: "0x5",
-  name: "Goerli",
-  rpcUrls: ["https://goerli.infura.io/v3"],
-  blockExplorerUrls: ["https://goerli.etherscan.io"],
-  nativeCurrency: {
-    name: "GoerliETH",
-    symbol: "GoerliETH",
-    decimals: 18,
-  },
-  icon: <EtherscanLogo />,
-  scanContractUrl: (contractAddress) =>
-    `https://goerli.etherscan.io/address/${contractAddress}#code`,
-  scanAddressUrl: (address) => `https://goerli.etherscan.io/address/${address}`,
-  scanAbiUrl: (contractAddress) =>
-    `https://api-goerli.etherscan.io/api?module=contract&action=getabi&address=${contractAddress}`,
-  scanListSubmittedLogsUrl: (address, eventSignature, session) =>
-    `https://eth-goerli.blockscout.com/api?module=logs&action=getLogs&fromBlock=0&toBlock=latest&address=${address}&topic0=${eventSignature}&topic3=${session}&topic0_3_opr=and`,
-};
-
 const gnosis: Chain = {
   id: "0x64",
   name: "Gnosis",
@@ -67,7 +47,6 @@ const gnosis: Chain = {
 
 const chainMap = {
   1: mainnet,
-  5: goerli,
   100: gnosis,
 };
 

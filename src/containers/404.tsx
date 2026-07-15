@@ -52,7 +52,7 @@ const _404: React.FC = () => {
       </StyledMessageLine2>
       <StyledMessageLine3 className="ternary-color theme-color">
         {web3
-          ? "Please make sure you have your wallet unlocked on Mainnet, Gnosis or Goerli. If you don't have a wallet, we recommend you install MetaMask on desktop and Trust on mobile."
+          ? "Please make sure you have your wallet unlocked on Mainnet or Gnosis. If you don't have a wallet, we recommend you install MetaMask on desktop and Trust on mobile."
           : "The greek gods are not available at the moment."}
       </StyledMessageLine3>
     </StyledInfoDiv>

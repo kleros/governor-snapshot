@@ -39,7 +39,7 @@ const WithdrawBanner: React.FC<{
         </StyledInfoCol>
         <Col lg={22}>
           <Heading>
-            The list has been submitted. Withdrawl timeout:{" "}
+            The list has been submitted. Withdrawal timeout:{" "}
             <TimeAgo date={p.timeout || new Date()} />
           </Heading>
           <Subtext>

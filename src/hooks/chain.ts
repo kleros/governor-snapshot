@@ -4,13 +4,6 @@ import { Chain } from "../types";
 
 const MISSING_CHAIN_ERROR_CODE = 4902;
 
-class ChainError {
-  code: number
-  constructor(props: { code: number }) {
-    this.code = props.code;
-  }
-}
-
 export const useFetchChainId = () => {
   const [chainId, setChainId] = useState<string>("");
 
@@ -19,6 +12,10 @@ export const useFetchChainId = () => {
       const chainIdAsHexa = `0x${chainId.toString(16)}`;
       setChainId(chainIdAsHexa)
     });
+
+    const onChainChanged = () => window.location.reload();
+    window.ethereum?.on?.("chainChanged", onChainChanged);
+    return () => window.ethereum?.removeListener?.("chainChanged", onChainChanged);
   }, []);
 
   return chainId;
@@ -33,7 +30,9 @@ export const switchCurrentChain = async (chain: Chain) => {
         params: [{ chainId: chain.id }],
       });
     } catch (error) {
-      const errorCode: number = error instanceof ChainError ? error.code : 0;
+      const err: any = error;
+      //MM mobile nests the error code in a different structure
+      const errorCode: number = err?.data?.originalError?.code ?? err?.code ?? 0;
       if (MISSING_CHAIN_ERROR_CODE === errorCode) {
         try {
           await window.ethereum.request({

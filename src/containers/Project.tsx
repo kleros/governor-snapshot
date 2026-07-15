@@ -1,6 +1,6 @@
 import { Col, Row, Select, Button, Upload, Tooltip, Spin } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import InfoBanner from "../components/info-banner";
@@ -99,14 +99,6 @@ const ProjectHome: React.FC<{ match: ProjectParams }> = (props) => {
     const newListShown: string = value ? value.toString() : "current";
     setListsShown(newListShown);
   };
-
-  useEffect(() => {
-    if (window.ethereum) {
-      window.ethereum.on("chainChanged", () => {
-        window.location.reload();
-      });
-    }
-  }, []);
 
   const addToPendingLists = (newList: SubmissionList[]) => {
     const pendingListsCopy = [...pendingLists];

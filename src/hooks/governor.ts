@@ -319,32 +319,64 @@ export const useFetchCrowdfundingVariables = (
   };
 };
 
+/**
+ Fetch the funding state of the current appeal round of a session.
+ param: refreshKey - change it to force a re-read, e.g. after a successful fundAppeal
+ */
 export const useFetchRoundInfo = (
   governorContractInstance: Contract,
-  sessionNumber: number
+  sessionNumber: number,
+  refreshKey: number = 0
 ) => {
-  const [numberOfRounds, setNumberOfRounds] = useState<number>(0);
-  const [roundInformation, setRoundInformation] = useState<
-    RoundInfo | undefined
+  //Round data is stored with the session it belongs to, so a previous session's data is never shown for another one
+  const [round, setRound] = useState<
+    | { session: string; numberOfRounds: number; info?: RoundInfo }
+    | undefined
   >(undefined);
 
   useEffect(() => {
-    governorContractInstance.methods
-      .getSessionRoundsNumber(sessionNumber)
-      .call()
-      .then((r: number) => setNumberOfRounds(r));
-  }, [governorContractInstance]);
+    //Ignore answers to an older request (e.g. for a previous session number), so they can't overwrite newer data
+    let isLatestRequest = true;
 
-  useEffect(() => {
-    governorContractInstance.methods
-      .getRoundInfo(sessionNumber, numberOfRounds)
-      .call()
-      .then((r: RoundInfo) => setRoundInformation(r));
-  }, [numberOfRounds]);
+    const _fetchRoundInfo = async () => {
+      const rounds = Number(
+        await governorContractInstance.methods
+          .getSessionRoundsNumber(sessionNumber)
+          .call()
+      );
+
+      //No dispute in this session, so there is no round to read
+      if (rounds === 0) {
+        if (isLatestRequest) {
+          setRound({ session: String(sessionNumber), numberOfRounds: 0 });
+        }
+        return;
+      }
+
+      //Rounds are 0-indexed, so the round being funded is the last one
+      const info: RoundInfo = await governorContractInstance.methods
+        .getRoundInfo(sessionNumber, rounds - 1)
+        .call();
+      if (isLatestRequest) {
+        setRound({ session: String(sessionNumber), numberOfRounds: rounds, info });
+      }
+    };
+
+    _fetchRoundInfo().catch((error) =>
+      console.warn("Could not fetch the appeal round information", error)
+    );
+
+    return () => {
+      isLatestRequest = false;
+    };
+  }, [governorContractInstance, sessionNumber, refreshKey]);
+
+  const current =
+    round && round.session === String(sessionNumber) ? round : undefined;
 
   return {
-    ...roundInformation,
-    numberOfRounds,
+    ...current?.info,
+    numberOfRounds: current ? current.numberOfRounds : 0,
   };
 };
 

@@ -1,5 +1,5 @@
 import { Row, Col } from "antd";
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import TopBanner from "./appeal/top-banner";
 import Note from "./appeal/note";
@@ -49,10 +49,14 @@ const AppealModule: React.FC<{
   session: Session;
   account: string;
 }> = (p) => {
+  //Bumped after a successful funding, so the round and the dispute are re-read without a page reload
+  const [refreshKey, setRefreshKey] = useState(0);
+
   // Get appeal information from Governor
   const sessionRoundInformation = useFetchRoundInfo(
     p.governorContractInstance,
-    p.session.currentSessionNumber || 0
+    p.session.currentSessionNumber || 0,
+    refreshKey
   );
   const arbitratorExtraData = useFetchArbitratorExtraData(
     p.governorContractInstance
@@ -68,9 +72,10 @@ const AppealModule: React.FC<{
   // Get appeal information from Arbitrator
   const dispute: Dispute | undefined = useFetchDispute(
     p.arbitratorContractInstance,
-    p.session.disputeID || 0
+    p.session.disputeID || 0,
+    refreshKey
   );
-  const currentRuling: number = useFetchCurrentRuling(
+  const currentRuling: number | undefined = useFetchCurrentRuling(
     p.arbitratorContractInstance,
     p.session.disputeID || 0
   );
@@ -94,10 +99,27 @@ const AppealModule: React.FC<{
     crowdfundingVariables.loserMultiplier,
     crowdfundingVariables.multiplierDivisor
   );
+  const sharedFee = getAppealCost(
+    appealFee,
+    crowdfundingVariables.sharedMultiplier,
+    crowdfundingVariables.multiplierDivisor
+  );
+
+  //Ruling 0 means the jurors refused to arbitrate or tied, so no list won the previous round.
+  //In that case the contract charges every list the shared fee and lets every list fund until the end of the appeal period.
+  const ruling = currentRuling;
+  const appealEnd = new Date(Number(appealTimes?.end) * 1000);
+  //The previous round loser can only fund during the first half of the appeal period
+  const loserDeadline = new Date(
+    (Number(appealTimes?.end) -
+      (Number(appealTimes?.end) - Number(appealTimes?.start)) / 2) *
+      1000
+  );
 
   return (
     <StyledAppealModule>
-      {dispute && Number(dispute.period) === 3 ? (
+      {/* Wait for the ruling: it decides each list's fee and deadline */}
+      {dispute && Number(dispute.period) === 3 && ruling !== undefined ? (
         <TopBanner>
           <AppealHeading>Appeal the decision</AppealHeading>
           <AppealSubtext>
@@ -110,33 +132,39 @@ const AppealModule: React.FC<{
           <Note />
           <Row>
             {submittedLists.map((l, i) => {
+              //Rulings are 1-indexed (0 is no winner), lists are 0-indexed
+              const isWinner = ruling !== 0 && i === ruling - 1;
+              const isLoser = ruling !== 0 && !isWinner;
               return (
                 <Col lg={12} key={i}>
                   <AppealSideBox
-                    winner={i === currentRuling - 1}
+                    previousRoundLabel={
+                      isWinner
+                        ? "Previous round winner"
+                        : isLoser
+                        ? "Previous round loser"
+                        : "No winner in previous round"
+                    }
                     listID={l.listID}
                     submitter={l.submitter}
-                    deadline={
-                      i === currentRuling - 1
-                        ? new Date(Number(appealTimes?.end) * 1000)
-                        : new Date(
-                            (Number(appealTimes?.end) -
-                              (Number(appealTimes?.end) -
-                                Number(appealTimes?.start)) /
-                                2) *
-                              1000
-                          )
+                    deadline={isLoser ? loserDeadline : appealEnd}
+                    appealFee={
+                      isWinner ? winnerFee : isLoser ? loserFee : sharedFee
                     }
-                    appealFee={i === currentRuling - 1 ? winnerFee : loserFee}
                     amountContributed={
                       sessionRoundInformation.paidFees &&
                       sessionRoundInformation.paidFees[i]
                     }
-                    rewardPercentage={i === currentRuling - 1 ? "100" : "50"}
+                    hasPaid={
+                      !!sessionRoundInformation.hasPaid &&
+                      sessionRoundInformation.hasPaid[i] === true
+                    }
+                    rewardPercentage={isWinner ? "100" : "50"}
                     governorContractInstance={p.governorContractInstance}
                     chain={p.chain}
                     submissionIndex={i}
                     account={p.account}
+                    onFunded={() => setRefreshKey((k) => k + 1)}
                   />
                 </Col>
               );

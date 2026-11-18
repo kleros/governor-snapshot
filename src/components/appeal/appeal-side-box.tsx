@@ -51,27 +51,50 @@ const AmountRequired = styled.div`
 `;
 
 const AppealSideBox: React.FC<{
-  winner: boolean,
+  previousRoundLabel: string,
   listID: string,
   submissionIndex: number,
   submitter: string,
   deadline: Date,
   appealFee: string,
   amountContributed?: number,
+  hasPaid: boolean,
   rewardPercentage: string,
   governorContractInstance: Contract,
   chain: Chain,
-  account: string
+  account: string,
+  onFunded: () => void
 }> = (p) => {
-  const amountRemaining = Web3.utils.fromWei(
-    (Number(p.appealFee || 0) - Number(p.amountContributed || 0)).toString()
-  );
+  //Amounts are in wei and web3 returns them as strings, so use BN to avoid JS number precision loss
+  const toBN = Web3.utils.toBN;
+  const fee = toBN(String(p.appealFee || 0));
+  const contributed = toBN(String(p.amountContributed || 0));
+  //The contract flags a fully funded side (hasPaid), so trust that over our own maths
+  const remaining =
+    p.hasPaid || contributed.gte(fee) ? toBN(0) : fee.sub(contributed);
+  const amountRemaining = Web3.utils.fromWei(remaining);
+  //Share of the fee already paid, from 0 to 100. A fee of 0 means the fees are still loading
+  const percentFunded = p.hasPaid
+    ? 100
+    : fee.isZero()
+    ? 0
+    : Math.min(100, contributed.muln(100).div(fee).toNumber());
+
   const useOnFund = (amount: string) => {
     if (amount) {
-      p.governorContractInstance.methods.fundAppeal(p.submissionIndex).send({
-        from: p.account,
-        value: Web3.utils.toWei(amount).toString(),
-      });
+      p.governorContractInstance.methods
+        .fundAppeal(p.submissionIndex)
+        .send({
+          from: p.account,
+          value: Web3.utils.toWei(amount).toString(),
+        })
+        //Once mined, re-read the round so the new funding shows without a page reload
+        .then(() => p.onFunded())
+        .catch((error: unknown) => {
+          console.warn("Funding the appeal failed", error);
+          //Re-read anyway: the tx may still have been mined, e.g. if it was sped up in the wallet and web3 lost track of it
+          p.onFunded();
+        });
     }
   };
 
@@ -93,18 +116,15 @@ const AppealSideBox: React.FC<{
         </Col>
         <Col lg={21}>
           {shortenEthAddress(p.submitter)}
-          <div>{p.winner ? "Previous round winner" : "Previous round loser"}</div>
+          <div>{p.previousRoundLabel}</div>
         </Col>
       </Row>
       <ClaimedHeading> Claimed </ClaimedHeading>
       <ClaimedContainer> Enforce List {p.listID} </ClaimedContainer>
-      <AmountRequired>Deposit Required = {amountRemaining} ETH</AmountRequired>
-      <Progress
-        percent={Number(
-          ((Number(amountRemaining) / Number(p.appealFee)) * 100).toFixed(0)
-        )}
-        style={{ marginTop: "25px" }}
-      />
+      <AmountRequired>
+        {p.hasPaid ? "Fully funded" : `Deposit Required = ${amountRemaining} ETH`}
+      </AmountRequired>
+      <Progress percent={percentFunded} style={{ marginTop: "25px" }} />
       <HourglassOutlined style={{ margin: "5px" }} />
       <TimeAgo date={p.deadline} />
       <Input.Search
@@ -113,10 +133,8 @@ const AppealSideBox: React.FC<{
         allowClear
         enterButton="Fund"
         size="large"
-        disabled={
-          ((Number(amountRemaining) / Number(p.appealFee)) * 100).toFixed(0) ===
-          "100"
-        }
+        //The contract rejects more funding once a side is fully funded
+        disabled={p.hasPaid}
         style={{ marginTop: "25px" }}
         onSearch={useOnFund}
       />
